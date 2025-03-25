@@ -1,0 +1,1 @@
+export type Roles = 'Donor' | 'Recipient' | 'Admin';
