@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from "mongoose";
 
 const MONGODB_URL = process.env.DB_URL;
@@ -20,17 +19,16 @@ const dbConnect = async () => {
     return;
   }
 
-  console.log(MONGODB_URL);
-
   try {
     mongoose.connect(MONGODB_URL, {
       dbName: "foodRescueHub",
       bufferCommands: true,
     });
     console.log("Connected");
-  } catch (err: any) {
-    console.log("Error: ", err);
-    throw new Error("Error: ", err);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error("Failed to connect to the database");
+    }
   }
 };
 
