@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { Roles } from "@/@types/index";
+import { Role } from "@/@types/index";
 import { roleOptions } from "./constant";
 
 export const validationSchema = Yup.object().shape({
@@ -34,7 +34,7 @@ export const validationSchema = Yup.object().shape({
             .required("Longitude is required"),
     }),
 
-    role: Yup.mixed<Roles>()
+    role: Yup.mixed<Role>()
         .oneOf(Object.values(roleOptions), "Invalid role")
         .required("Role is required"),
 });

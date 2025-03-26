@@ -1,4 +1,4 @@
-import { Roles } from "@/@types/index";
+import { Role } from "@/@types/index";
 import { FormValues } from "./type";
 
 export const INITIAL_VALUES: FormValues = {
@@ -7,7 +7,7 @@ export const INITIAL_VALUES: FormValues = {
     password: "",
     confirmPassword: "",
     location: {lng: 0, lat: 0},
-    role: 'Recipient',
+    role: Role.Recipient,
 };
 
-export const roleOptions: Exclude<Roles, "Admin"> []= ["Donor", "Recipient"];
+export const roleOptions: Exclude<Role, "Admin"> []= [Role.Donor, Role.Recipient];
