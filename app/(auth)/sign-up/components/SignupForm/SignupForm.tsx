@@ -115,9 +115,10 @@ const SignupForm = () => {
                 />
 
                 {/* Submit Button */}
+        
                 <Button 
                 type="submit" 
-                className="w-full bg-green-700 text-white border-none rounded-xl px-4 py-2 my-2"
+                className="w-full bg-green-700 text-white border-transparent rounded-xl px-4 py-2 my-2 transition-all duration-300 ease-in-out hover:bg-white hover:border-2 hover:border-green-700 hover:text-green-700 cursor-pointer"
                 disabled={formik.isSubmitting}>
                     Signup
                 </Button>
