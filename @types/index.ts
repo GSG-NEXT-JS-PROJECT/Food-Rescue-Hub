@@ -35,6 +35,7 @@ export interface IUser {
   location: LocationType;
   password: string;
   role: Role;
+  isVerified: boolean;
 }
 
 export interface IDonation {
