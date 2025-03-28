@@ -50,3 +50,8 @@ export interface IDonation {
   imageUrl?: string;
   pickupInstruction?: string;
 }
+
+export interface ILogin{
+  email: string;
+  password: string;
+}
