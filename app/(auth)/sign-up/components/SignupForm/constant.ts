@@ -6,6 +6,7 @@ export const INITIAL_VALUES: FormValues = {
     email: "",
     password: "",
     confirmPassword: "",
+    isVerified: false,
     location: {lng: 0, lat: 0},
     role: Role.Recipient,
 };
