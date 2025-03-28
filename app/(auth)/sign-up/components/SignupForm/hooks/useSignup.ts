@@ -3,8 +3,8 @@
 import { useFormik } from "formik";
 import { FormValues } from "../type";
 import { INITIAL_VALUES } from "../constant";
-import { validationSchema } from "../ValidationSchema";
 import { toast } from "sonner"
+import { validationSchema } from "../ValidationSchema";
 
 const useSignup = () => {
     const handleSignup = async (values: FormValues, resetForm: () => void, setSubmitting: (isSubmitting: boolean) => void) => {
@@ -18,7 +18,6 @@ const useSignup = () => {
             });
 
             const data = await response.json();
-            console.log(data);
             if (!response.ok) {
                 toast.error(`${data.error}`);
                 return;

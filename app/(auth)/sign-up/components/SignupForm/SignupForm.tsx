@@ -1,9 +1,9 @@
 "use client";
 
-import { roleOptions } from "../../constant";
+import { roleOptions } from "./constant";
 import { Button } from "@/components/ui/button";
 import { FormikProvider, Form } from "formik";
-import useSignup from "../../hooks/useSignup";
+import useSignup from "./hooks/useSignup";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import TextField from "@/components/text-field";
