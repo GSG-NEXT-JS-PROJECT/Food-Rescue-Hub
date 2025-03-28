@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { FormikProvider, Form } from "formik";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
 import { roleOptions } from "./constant";
 import useSignup from "./hooks/useSignup";
+import { Button } from "@/components/ui/button";
 
 const SignupForm = () => {
   const { formik } = useSignup();
@@ -102,6 +102,13 @@ const SignupForm = () => {
           onValueChange={(value) => formik.setFieldValue("role", value)}
           defaultValue={formik.values.role}
         />
+            {/* Submit Button */}
+            <Button 
+                type="submit" 
+                className="w-full bg-green-700 text-white border-none rounded-xl px-4 py-2 my-2"
+                disabled={formik.isSubmitting}>
+                    Signup
+                </Button>
         {/* Link to Login Page */}
         <p className="text-center text-gray-600">
           Already have an account?{" "}
