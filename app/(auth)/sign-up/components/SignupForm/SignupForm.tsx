@@ -1,11 +1,15 @@
 "use client";
+
+import { roleOptions } from "./constant";
 import { Button } from "@/components/ui/button";
 import { FormikProvider, Form } from "formik";
+import useSignup from "./hooks/useSignup";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import TextField from "@/components/text-field";
 import useSignin from "@/app/(auth)/sign-in/hooks/useSignin";
 
-const SigninForm = () => {
+const SignupForm = () => {
     const { formik } = useSignin();
     return (
         <FormikProvider value={formik}>
@@ -30,12 +34,50 @@ const SigninForm = () => {
                     onBlur={formik.handleBlur}
                 />
 
+                {/* Confirm Password */}
+                <TextField
+                    label="Confirm Password"
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="******"
+                    value={formik.values.confirmPassword}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                />
+
+                {/* Location */}
+                <TextField
+                    label="Location"
+                    type="text"
+                    name="location"
+                    placeholder="Your location (Latitude, Longitude)"
+                    value={`Lat: ${location.lat}, Lng: ${location.lng}`}
+                    onChange={(e) => {
+                        formik.setFieldValue("location", {
+                            lat: location.lat,
+                            lng: location.lng,
+                        });
+                    }}
+                    readOnly
+                />
+
+                {/* Role Selection */}
+                <SelectField
+                    label="Role"
+                    name="role"
+                    options={roleOptions}
+                    placeholder="Select Role"
+                    onValueChange={(value) => formik.setFieldValue("role", value)}
+                    defaultValue={formik.values.role}
+                />
+
+                {/* Submit Button */}
+        
                 <Button 
-                    type="submit" 
-                    className="w-full bg-green-700 text-white border-none rounded-xl px-4 py-2 my-2"
-                    disabled={formik.isSubmitting}
-                >
-                    Log In
+                type="submit" 
+                className="w-full bg-green-700 text-white border-transparent rounded-xl px-4 py-2 my-2 transition-all duration-300 ease-in-out hover:bg-white hover:border-2 hover:border-green-700 hover:text-green-700 cursor-pointer"
+                disabled={formik.isSubmitting}>
+                    Signup
                 </Button>
 
                 <p className="text-center text-gray-600">
@@ -49,4 +91,4 @@ const SigninForm = () => {
     );
 };
 
-export default SigninForm;
+export default SignupForm;
