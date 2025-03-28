@@ -1,9 +1,8 @@
-
 "use client";
-import React from 'react';
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Icons } from "../../../components/ui/icons";
-import SigninForm from './components/SigninForm';
+import SigninForm from "./components/SigninForm";
 const Signin: React.FC = () => {
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
@@ -13,52 +12,62 @@ const Signin: React.FC = () => {
             <h1 className="text-3xl xl:text-4xl 2xl:text-5xl font-bold text-green-800 leading-tight">
               Transform Surplus <br /> into Community Support
             </h1>
-            
+
             <p className="text-xl xl:text-2xl text-green-700 font-medium">
               Food Rescue Hub: Bridging Food Abundance and Community Needs
             </p>
           </div>
-          
+
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
               <div className="bg-green-600 text-white rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-lg font-bold">
                 1
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-green-800">Connect & Redistribute</h3>
+                <h3 className="text-xl font-semibold text-green-800">
+                  Connect & Redistribute
+                </h3>
                 <p className="text-green-700">
-                  Link food donors directly with local communities, ensuring surplus food reaches those who need it most.
+                  Link food donors directly with local communities, ensuring
+                  surplus food reaches those who need it most.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-4">
               <div className="bg-green-600 text-white rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-lg font-bold">
                 2
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-green-800">Reduce Food Waste</h3>
+                <h3 className="text-xl font-semibold text-green-800">
+                  Reduce Food Waste
+                </h3>
                 <p className="text-green-700">
-                  Implement smart redistribution strategies to minimize food waste and support sustainable practices.
+                  Implement smart redistribution strategies to minimize food
+                  waste and support sustainable practices.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-4">
               <div className="bg-green-600 text-white rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-lg font-bold">
                 3
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-green-800">Empower Communities</h3>
+                <h3 className="text-xl font-semibold text-green-800">
+                  Empower Communities
+                </h3>
                 <p className="text-green-700">
-                  Create lasting social impact by connecting resources and building stronger, more resilient neighborhoods.
+                  Create lasting social impact by connecting resources and
+                  building stronger, more resilient neighborhoods.
                 </p>
               </div>
             </div>
           </div>
-          
+
           <blockquote className="border-l-4 border-green-600 pl-4 py-2 italic text-xl text-green-700">
-            &quot;Every meal shared is a step towards ending hunger and building a more compassionate world.&quot;
+            &quot;Every meal shared is a step towards ending hunger and building
+            a more compassionate world.&quot;
           </blockquote>
         </div>
       </div>
@@ -72,7 +81,7 @@ const Signin: React.FC = () => {
               Sign in to continue to Food Rescue Hub and make a difference
             </p>
           </div>
-      <SigninForm/>
+          <SigninForm />
           <div className="text-center">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
