@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
-:root {
+/* Light Mode Variables */
+@custom-variant light (&:is(.light *));
+:root,
+.light {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -38,6 +39,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Dark Mode Variables */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -115,6 +117,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-  }
+    @apply text-foreground;
+    background-color:#ffff;
+}
 }
