@@ -1,10 +1,11 @@
 "use client";
+
 import React from "react";
 import { FormikProvider, Form } from "formik";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import TextField from "@/components/text-field";
-import useSignin from "../../hooks/useSignin";
+import useSignin from "./hooks/useSignin";
 import Icons from "@/components/ui/icons";
 
 const Signin: React.FC = () => {
@@ -14,12 +15,10 @@ const Signin: React.FC = () => {
     <FormikProvider value={formik}>
       <Form
         onSubmit={formik.handleSubmit}
-        className="space-y-8 bg-white shadow-xl rounded-2xl p-10 border border-gray-100"
       >
-        <div className="space-y-6">
           <TextField
             name="email"
-            label="Email address"
+            label="Email"
             type="email"
             placeholder="Enter your email"
           />
@@ -30,35 +29,17 @@ const Signin: React.FC = () => {
             type="password"
             placeholder="Enter your password"
           />
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-            />
-            <label
-              htmlFor="remember-me"
-              className="ml-3 block text-base text-gray-900"
-            >
-              Remember me
-            </label>
-          </div>
-          <div className="text-base">
+
             <Link
               href="/forgot-password"
-              className="font-medium text-green-600 hover:text-green-500"
+              className="text-xs text-gray-600 font-bold "
             >
-              Forgot password?
+              Forgot password
             </Link>
-          </div>
-        </div>
-        <div>
+
           <Button
             type="submit"
-            className="w-full h-14 text-lg"
+            className="w-full bg-green-700 text-white border-transparent rounded-xl px-4 py-2 my-5 transition-all duration-300 ease-in-out hover:bg-white hover:border-2 hover:border-green-700 hover:text-green-700 cursor-pointer"
             disabled={formik.isSubmitting}
           >
             {formik.isSubmitting ? (
@@ -66,7 +47,7 @@ const Signin: React.FC = () => {
             ) : null}
             Sign in
           </Button>
-        </div>
+
         <div className="text-center">
           <p className="text-base text-gray-600">
             Don&apos;t have an account?{" "}
@@ -78,6 +59,7 @@ const Signin: React.FC = () => {
             </Link>
           </p>
         </div>
+        
       </Form>
     </FormikProvider>
   );
