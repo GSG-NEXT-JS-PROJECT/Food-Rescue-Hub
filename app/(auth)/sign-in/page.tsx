@@ -74,7 +74,7 @@ const Signin: React.FC = () => {
       <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-white">
         <div className="w-full max-w-xl space-y-10">
           <div className="text-center">
-            <h2 className="text-4xl xl:text-5xl font-extrabold text-gray-900 mb-4">
+            <h2 className="text-4xl xl:text-5xl font-bold text-gray-900 mb-4">
               Welcome Back
             </h2>
             <p className="text-lg text-gray-600 max-w-md mx-auto">
