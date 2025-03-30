@@ -17,6 +17,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "food-rescue-hub": "file:",
+    "firebase": "^11.5.0",
     "formik": "^2.4.6",
     "lucide-react": "^0.483.0",
     "mongoose": "^8.13.0",
