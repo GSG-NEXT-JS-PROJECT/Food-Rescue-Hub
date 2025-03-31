@@ -1,7 +1,6 @@
 import "server-only";
 import { SignJWT, jwtVerify } from "jose";
-import { JwtPayload } from "jsonwebtoken";
-import { Role } from "../@types/index";
+import { TokenPayload } from "@/@types";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
