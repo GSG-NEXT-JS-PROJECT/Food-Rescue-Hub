@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 
 export interface LocationType {
@@ -40,7 +41,7 @@ export interface IUser {
 
 export interface IDonation {
   donorId: Types.ObjectId;
-  recipientId: Types.ObjectId;
+  recipientId?: Types.ObjectId;
   title: string;
   description?: string;
   quantity: number;
@@ -50,4 +51,16 @@ export interface IDonation {
   status: DonationStatus;
   imageUrl?: string;
   pickupInstruction?: string;
+}
+
+export enum RequestMethod {
+  Get = "GET",
+  Post = "POST",
+  Patch = "PATCH",
+  Delete = "DELETE",
+}
+
+export interface TokenPayload extends JwtPayload {
+    userId: string;
+    userRole: Role;
 }

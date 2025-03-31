@@ -55,6 +55,6 @@ userSchema.methods.getVerificationToken = function (): string {
   return verificationToken;
 };
 
-const User = models.User || model<UserDocument>("User", userSchema);
+const User = models?.User || model<UserDocument>("User", userSchema);
 
 export default User;

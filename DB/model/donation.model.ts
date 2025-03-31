@@ -6,7 +6,7 @@ export interface DonationDocument extends Document, IDonation {}
 const donationSchema: Schema<DonationDocument> = new Schema(
   {
     donorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    recipientId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    recipientId: { type: Schema.Types.ObjectId, ref: "User" },
     title: { type: String, required: true },
     description: { type: String },
     quantity: { type: Number, required: true },
@@ -36,6 +36,6 @@ const donationSchema: Schema<DonationDocument> = new Schema(
   }
 );
 
-const Donation = models.Donation || model<DonationDocument>("Donation", donationSchema);
+const Donation = models?.Donation || model<DonationDocument>("Donation", donationSchema);
 
 export default Donation;

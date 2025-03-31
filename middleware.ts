@@ -1,33 +1,44 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { Role } from "./@types";
 import { getSession } from "./lib/StoreGetDeleteSession";
-import { PageAccessName, protectedRoutes } from "./route/types";
+import { PageAccessName } from "./route/types";
 import pageAccessRights from "./route/pageAccessRights";
+import { apiMiddleware } from "./middlewares/apiMiddleware";
+import { clientMiddleware } from "./middlewares/clientMiddleware";
 
 export async function middleware(req: NextRequest) {
-    const { pathname } = req.nextUrl;
-    const session = await getSession();
-    const pageAccessRight = pageAccessRights.get(pathname as PageAccessName) || { roles: [] };
+  const { pathname } = req.nextUrl;
+  const session = await getSession();
 
-    if (pathname === "/sign-in" || pathname === "/sign-up") {
-        const hasToken = Boolean(session);
-        if (hasToken) {
-            return NextResponse.redirect(new URL("/already-signed-in", req.nextUrl));
-        }
-    }
+  const pageAccessRight = pageAccessRights.get(pathname as PageAccessName) || {
+    roles: [],
+    methods: [],
+  };
 
-    if (protectedRoutes.includes(pathname as PageAccessName)) {
-        if (!session) {
-            return NextResponse.redirect(new URL("/forbidden", req.nextUrl));
-        } else if (!pageAccessRight.roles.includes(session.userRole as Role)) {
-            return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
-        }
-    }
-
+  // Skip public routes like authentication endpoints
+  if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
+  }
+
+  // Handle API routes
+  if (pathname.startsWith("/api")) {
+    const apiResponse = apiMiddleware(req, session, pageAccessRight);
+    if (apiResponse) return apiResponse;
+    return NextResponse.next();
+  }
+
+  // Handle client-side routes
+  const clientResponse = clientMiddleware(req, session, pageAccessRight);
+  if (clientResponse) return clientResponse;
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/sign-in/:path*", "/sign-up/:path*", "/recipient/:path*", "/donor/:path*"],
+  matcher: [
+    "/sign-in/:path*",
+    "/sign-up/:path*",
+    "/recipient/:path*",
+    "/donor/:path*",
+    "/api/:path*",
+  ],
 };

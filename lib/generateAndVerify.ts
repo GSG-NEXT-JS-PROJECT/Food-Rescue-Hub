@@ -6,11 +6,6 @@ import { Role } from "../@types/index";
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
-export interface TokenPayload extends JwtPayload {
-    userId: string;
-    userRole?: Role;
-}
-
 export async function generateToken(
     payload: TokenPayload,
     expirationTime: string | Date = "1d"
