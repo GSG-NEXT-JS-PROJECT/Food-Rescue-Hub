@@ -1,49 +1,53 @@
 import React from "react";
 
 export const Icons = {
-  google: (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" {...props}>
-    <path
-      fill="#FFC107"
-      d="M90.628 41.628H85v-0.167H50v16.667h23.465c-3.435 9.702-12.667 16.666-23.465 16.666-13.808 0-25-11.193-25-25s11.192-25 25-25c6.369 0 12.17 2.404 16.586 6.331l11.786-11.786C71.346 12.607 60.977 8.333 50 8.333C25.24 8.333 5 28.573 5 53.333s20.24 45 45 45 45-20.24 45-45c0-2.815-0.29-5.542-0.814-8.205z"
-    />
-    <path
-      fill="#FF3D00"
-      d="M13.13 30.56l13.688 10.039C28.864 31.475 39.419 25 50 25c6.369 0 12.17 2.404 16.586 6.331l11.786-11.786C71.346 12.607 60.977 8.333 50 8.333c-15.335 0-28.48 8.944-36.87 22.227z"
-    />
-    <path
-      fill="#4CAF50"
-      d="M50 91.667c10.77 0 20.543-4.119 27.936-10.817l-12.896-10.913A24.854 24.854 0 0 1 50 75c-10.835 0-20.042-6.91-23.505-15.188l-13.594 10.469C18.27 82.45 33.81 91.667 50 91.667z"
-    />
-    <path
-      fill="#1976D2"
-      d="M90.628 41.628H85v-0.167H50v16.667h23.465a25.084 25.084 0 0 1-8.514 11.606l0.006-.004 12.896 10.913C79.025 81.69 91.667 70.833 91.667 50c0-2.815-0.29-5.542-0.814-8.205z"
-    />
-  </svg>
-  ),
-
-  facebook: (props: React.SVGProps<SVGSVGElement>) => (
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" {...props}>
-  <path
-    fill="#3F51B5"
-    d="M50 0C22.386 0 0 22.386 0 50s22.386 50 50 50 50-22.386 50-50S77.614 0 50 0z"
-  />
-  <path
-    fill="#FFF"
-    d="M61.56 25.5H52.5c-2.762 0-5 2.238-5 5v6.25h-6.25c-1.38 0-2.5 1.12-2.5 2.5v6.25c0 1.38 1.12 2.5 2.5 2.5H47.5V74.5h10v-25.5h6.25c1.105 0 2-.895 2-2v-6.25c0-1.105-.895-2-2-2H57.5v-5c0-.552.448-1 1-1h3.06V25.5z"
-  />
-</svg>
-  ),
-
-  github: (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" {...props}>
-      <path
-        fill="#424242"
-        d="M49.998 0C22.387 0 0 22.387 0 49.998c0 22.06 14.312 40.773 34.176 47.344 2.5.461 3.416-1.086 3.416-2.406v-9.297c-13.889 3.02-16.817-5.973-16.817-5.973-2.266-5.766-5.531-7.297-5.531-7.297-4.52-3.094.34-3.031.34-3.031 5 .352 7.625 5.133 7.625 5.133 4.441 7.613 11.652 5.414 14.48 4.133.449-3.215 1.738-5.414 3.164-6.656-11.055-1.258-22.676-5.531-22.676-24.617 0-5.438 1.938-9.879 5.117-13.363-.512-1.258-2.211-6.316.484-13.164 0 0 4.168-1.336 13.66 5.094a47.547 47.547 0 0 1 12.422-1.672c4.211.028 8.453.57 12.422 1.672 9.492-6.43 13.656-5.094 13.656-5.094 2.695 6.848 1 11.906.488 13.164 3.18 3.484 5.113 7.925 5.113 13.363 0 19.152-11.625 23.344-22.715 24.57 1.781 1.539 3.426 4.57 3.426 9.227v14.703c0 1.336.926 2.898 3.445 2.414C85.684 90.77 100 72.058 100 49.998 100 22.387 77.613 0 49.998 0z"
-      />
+  IconList: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-6 h-6"
+      {...props}
+    >
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+      <path d="M12 11h4"></path>
+      <path d="M12 16h4"></path>
+      <path d="M8 11h.01"></path>
+      <path d="M8 16h.01"></path>
     </svg>
   ),
-
+  IconPerson: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-6 h-6"
+      {...props}
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  ),
+  IconLogo: (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      className="w-5 h-5 text-green-700"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
+    </svg>
+  ),
   spinner: (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" {...props}>
       <path

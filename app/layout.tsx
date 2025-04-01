@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Signin from "./(auth)/sign-in/page";
+import Signin from "./(front-end)/(auth)/sign-in/page";
+import Home from "./(front-end)/(auth)/Signup/page";
+
 
 // import { Toaster } from "sonner";
 
@@ -32,6 +34,7 @@ export default function RootLayout({
       >
         {/* {children} */}
         <Signin />
+        {/* <Home /> */}
         {/* <Toaster richColors/> */}
       </body>
     </html>

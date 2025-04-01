@@ -1,4 +1,4 @@
-import { ILogin } from "@/@types";
+import { ILogin } from "./type";
 
 export const INITIAL_VALUES: ILogin = {
     email: "",

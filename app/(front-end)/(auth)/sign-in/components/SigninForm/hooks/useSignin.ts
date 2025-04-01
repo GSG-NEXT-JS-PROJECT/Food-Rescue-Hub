@@ -1,9 +1,9 @@
 "use client";
 
 import { useFormik } from "formik";
-import { INITIAL_VALUES } from "../constantSignin";
+import { INITIAL_VALUES } from "../constant";
 import { validationSchemaSignin } from "../ValidationSchemaSignin";
-import { ILogin } from "@/@types";
+import { ILogin } from "../type";
 
 const useSignin = () => {
     const handleSignin = (values: ILogin) => {

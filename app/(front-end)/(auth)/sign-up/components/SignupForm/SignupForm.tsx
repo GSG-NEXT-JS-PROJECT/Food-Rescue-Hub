@@ -1,12 +1,14 @@
 "use client";
+
+import { roleOptions } from "./constant";
+import { Button } from "@/components/ui/button";
 import { FormikProvider, Form } from "formik";
+import useSignup from "./hooks/useSignup";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
-import { roleOptions } from "./constant";
-import useSignup from "./hooks/useSignup";
-import { Button } from "@/components/ui/button";
+import Icons from "@/components/ui/icons";
 
 const SignupForm = () => {
   const { formik } = useSignup();
@@ -37,10 +39,7 @@ const SignupForm = () => {
 
   useEffect(() => {
     if (location.lat !== 0 && location.lng !== 0) {
-      formik.setFieldValue("location", {
-        lat: location.lat,
-        lng: location.lng,
-      });
+      formik.setFieldValue("location", { lat: location.lat, lng: location.lng });
     }
   }, [location]);
 
@@ -78,6 +77,18 @@ const SignupForm = () => {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
+
+        {/* Confirm Password */}
+        <TextField
+          label="Confirm Password"
+          type="password"
+          name="confirmPassword"
+          placeholder="******"
+          value={formik.values.confirmPassword}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+
         {/* Location */}
         <TextField
           label="Location"
@@ -93,6 +104,7 @@ const SignupForm = () => {
           }}
           readOnly
         />
+
         {/* Role Selection */}
         <SelectField
           label="Role"
@@ -102,13 +114,19 @@ const SignupForm = () => {
           onValueChange={(value) => formik.setFieldValue("role", value)}
           defaultValue={formik.values.role}
         />
-            {/* Submit Button */}
-            <Button 
-                type="submit" 
-                className="w-full bg-green-700 text-white border-none rounded-xl px-4 py-2 my-2"
-                disabled={formik.isSubmitting}>
-                    Signup
-                </Button>
+
+        {/* Submit Button */}
+
+        <Button
+          type="submit"
+          className="w-full bg-green-700 text-white border-transparent rounded-xl px-4 py-2 my-2 transition-all duration-300 ease-in-out hover:bg-white hover:border-2 hover:border-green-700 hover:text-green-700 cursor-pointer"
+          disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? (
+            <Icons.spinner className="mr-3 h-6 w-6 animate-spin" />
+          ) : null}
+          Signup
+        </Button>
+
         {/* Link to Login Page */}
         <p className="text-center text-gray-600">
           Already have an account?{" "}
@@ -118,7 +136,7 @@ const SignupForm = () => {
         </p>
       </Form>
     </FormikProvider>
-  );
-};
+  )
+}
 
 export default SignupForm;
