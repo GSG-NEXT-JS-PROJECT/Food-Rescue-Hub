@@ -3,7 +3,7 @@ import { RequestMethod, Role, TokenPayload } from "../@types";
 import { PageAccessRight } from "../route/types";
 
 // Handle API route authorization
-export function apiMiddleware(req: NextRequest, session: TokenPayload, pageAccessRight: PageAccessRight) {
+export function apiMiddleware(req: NextRequest, session: TokenPayload | null | undefined, pageAccessRight: PageAccessRight) {
   if (!session) {
     return NextResponse.json(
       { error: "Not authenticated or invalid token" },

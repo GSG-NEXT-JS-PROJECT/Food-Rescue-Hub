@@ -1,15 +1,10 @@
-
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
 import { PageAccessName, PageAccessRight, protectedRoutes } from "../route/types";
 
 // Handle client-side route authorization
-export function clientMiddleware(req: NextRequest, session: TokenPayload, pageAccessRight: PageAccessRight) {
+export function clientMiddleware(req: NextRequest, session: TokenPayload | null | undefined, pageAccessRight: PageAccessRight) {
   const { pathname } = req.nextUrl;
-
-  if (!session) {
-    return NextResponse.redirect(new URL("/forbidden", req.nextUrl));
-  }
 
   // Redirect signed-in users away from sign-in/sign-up pages
   if (pathname === "/sign-in" || pathname === "/sign-up") {
