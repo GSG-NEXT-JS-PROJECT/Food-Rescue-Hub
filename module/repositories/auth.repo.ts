@@ -1,8 +1,10 @@
 import userModel, { UserDocument } from "@/DB/model/user.model";
 import { IUser } from "@/@types/index";
+import dbConnect from "@/DB/connection";
 
 export class UserRepository {
     async findUserByEmail(email: string): Promise<UserDocument | null> {
+        await dbConnect();
         return await userModel.findOne({ email });
     }
 
