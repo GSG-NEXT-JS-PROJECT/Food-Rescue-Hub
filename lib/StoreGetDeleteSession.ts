@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
-import {  Role } from "../@types/index";
-import { generateToken, TokenPayload, verifyToken } from "./generateAndVerify";
+import {  Role, TokenPayload } from "../@types/index";
+import { generateToken, verifyToken } from "./generateAndVerify";
 
 export async function createSession(userId: string, userRole: Role):Promise<string> {
     const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);

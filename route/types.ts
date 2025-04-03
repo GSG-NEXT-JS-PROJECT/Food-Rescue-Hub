@@ -1,24 +1,25 @@
-import { Role } from "@/@types";
+import { RequestMethod, Role } from "@/@types";
 import routeAccess from "./pageAccessRights";
 
 export type PageAccessName =
-    | "/"
-    | "/sign-in"
-    | "/sign-up"
-    | "/donor/profile"
-    | "/recipient/profile"
-    | "/already-signed-in"
-    | "/forbidden"
-    | "/unauthorized"
-    | "/already-signed-in"
-    ;
-    
+  | "/"
+  | "/sign-in"
+  | "/sign-up"
+  | "/donor/profile"
+  | "/recipient/profile"
+  | "/already-signed-in"
+  | "/forbidden"
+  | "/unauthorized"
+  | "/already-signed-in"
+  | "/api/donation";
+
 export const protectedRoutes: PageAccessName[] = Array.from(routeAccess.keys());
 
 export interface PageAccessRight {
-    roles: Role[];
+  roles: Role[];
+  methods: RequestMethod[];
 }
 
 export interface RouteConfigs {
-    pageAccessName: PageAccessName;
+  pageAccessName: PageAccessName;
 }
