@@ -19,14 +19,11 @@ export async function middleware(req: NextRequest) {
 
   // Handle API routes
   if (pathname.startsWith("/api")) {
-    const apiResponse = apiMiddleware(req, session, pageAccessRight);
-    if (apiResponse) return apiResponse;
+    return apiMiddleware(req, session, pageAccessRight);
   }
 
-  // Handle client-side routes
-  const clientResponse = clientMiddleware(req, session, pageAccessRight);
-  if (clientResponse) return clientResponse;
-  return NextResponse.next();
+  // // Handle client-side routes
+  return clientMiddleware(req, session, pageAccessRight);
 }
 
 export const config = {
