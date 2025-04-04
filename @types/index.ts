@@ -66,7 +66,7 @@ export interface IDonation {
   description?: string;
   quantity: number;
   foodType: FoodType;
-  pickupDeadline: Date;
+  pickupDeadline: string;
   location: LocationType;
   status: DonationStatus;
   imageUrl?: string;

@@ -11,7 +11,8 @@ export type PageAccessName =
   | "/forbidden"
   | "/unauthorized"
   | "/already-signed-in"
-  | "/api/donation";
+  | "/api/donation"
+  | "/donations/new"
 
 export const protectedRoutes: PageAccessName[] = Array.from(routeAccess.keys());
 

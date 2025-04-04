@@ -2,8 +2,11 @@ import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
 import { PageAccessRight } from "../route/types";
 
-// Handle API route authorization
-export function apiMiddleware(req: NextRequest, session: TokenPayload | null | undefined, pageAccessRight: PageAccessRight) {
+export function apiMiddleware(
+  req: NextRequest,
+  session: TokenPayload | null | undefined,
+  pageAccessRight: PageAccessRight | undefined
+) {
   if (!session) {
     return NextResponse.json(
       { error: "Not authenticated or invalid token" },
@@ -22,9 +25,13 @@ export function apiMiddleware(req: NextRequest, session: TokenPayload | null | u
     );
   }
 
-  // Add user details to headers
-  const modifiedReq = req.clone();
-  modifiedReq.headers.set("x-user-id", session.userId);
-  modifiedReq.headers.set("x-user-role", session.userRole);
-  return null; // Null means "proceed"
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-user-id", session.userId);
+  requestHeaders.set("x-user-role", session.userRole);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
