@@ -32,17 +32,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      {/* <header className="flex justify-between items-center p-4 bg-white border-b">
-        <h1 className="text-xl font-semibold text-green-600">
-          Food Rescue Hub
-        </h1>
-        <div className="flex items-center gap-4">
-          <Bell className="w-5 h-5 text-gray-600" />
-          <Settings className="w-5 h-5 text-gray-600" />
-          <LogOut className="w-5 h-5 text-gray-600" />
-        </div>
-      </header> */}
       <div>
         <Button variant="outline" onClick={toggleUserType} className="mr-4">
           Switch to {userType === "donor" ? "Recipient" : "Donor"} View
