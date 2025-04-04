@@ -7,15 +7,35 @@ export interface LocationType {
 }
 
 export enum FoodType {
-  GrainsCereals = "Grains & Cereals",
-  Vegetables = "Vegetables",
+  Bakery = "Bakery",
+  Dairy = "Dairy",
   Fruits = "Fruits",
-  ProteinSources = "Protein Sources",
-  DairyAlternatives = "Dairy & Dairy Alternatives",
-  FatsOils = "Fats & Oils",
-  SweetsDesserts = "Sweets & Desserts",
+  Vegetables = "Vegetables",
+  Grains = "Grains",
+  Meat = "Meat",
+  Poultry = "Poultry",
+  Fish = "Fish",
+  Seafood = "Seafood",
+  Legumes = "Legumes",
+  Nuts = "Nuts",
+  Seeds = "Seeds",
+  Eggs = "Eggs",
   Beverages = "Beverages",
-  ProcessedFastFoods = "Processed & Fast Foods",
+  Sweets = "Sweets",
+  Snacks = "Snacks",
+  PreparedMeals = "Prepared Meals",
+  CannedGoods = "Canned Goods",
+  FrozenFoods = "Frozen Foods",
+  Spices = "Spices",
+  Condiments = "Condiments",
+  Pasta = "Pasta",
+  Rice = "Rice",
+  Bread = "Bread",
+  Cereals = "Cereals",
+  Oils = "Oils",
+  Soups = "Soups",
+  Sauces = "Sauces",
+  Desserts = "Desserts"
 }
 
 export enum DonationStatus {
