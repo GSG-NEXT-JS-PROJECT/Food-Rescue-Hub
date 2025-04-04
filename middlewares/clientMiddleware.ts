@@ -1,9 +1,12 @@
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
-import { PageAccessName, PageAccessRight, protectedRoutes } from "../route/types";
+import { PageAccessRight } from "../route/types";
 
-// Handle client-side route authorization
-export function clientMiddleware(req: NextRequest, session: TokenPayload | null | undefined, pageAccessRight: PageAccessRight) {
+export function clientMiddleware(
+  req: NextRequest,
+  session: TokenPayload | null | undefined,
+  pageAccessRight: PageAccessRight | null | undefined
+) {
   const { pathname } = req.nextUrl;
 
   // Redirect signed-in users away from sign-in/sign-up pages
@@ -13,17 +16,17 @@ export function clientMiddleware(req: NextRequest, session: TokenPayload | null 
     }
   }
 
-  // Protect specific routes
-  if (protectedRoutes.includes(pathname as PageAccessName)) {
-    if (!session) {
-      return NextResponse.redirect(new URL("/forbidden", req.nextUrl));
-    } else if (
-      !pageAccessRight.roles.includes(session.userRole as Role) ||
-      !pageAccessRight.methods.includes(req.method as RequestMethod)
-    ) {
-      return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
-    }
+  if (!session) {
+    return NextResponse.redirect(new URL("/forbidden", req.nextUrl));
   }
 
-  return null; // Null means "proceed"
+  if (
+    pageAccessRight &&
+    (!pageAccessRight.roles.includes(session.userRole as Role) ||
+      !pageAccessRight.methods.includes(req.method as RequestMethod))
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
+  }
+
+  return null;
 }

@@ -23,6 +23,13 @@ const routeAccess = new Map<PageAccessName, PageAccessRight>([
             methods: [RequestMethod.Post]
         },
     ],
+    [
+        "/donations/new",
+        {
+            roles: [Role.Donor],
+            methods: [RequestMethod.Get]
+        },
+    ],
 ]);
 
 export default routeAccess;

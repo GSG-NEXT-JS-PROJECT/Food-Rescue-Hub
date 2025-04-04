@@ -10,10 +10,7 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const session = await getSession();
 
-  const pageAccessRight = pageAccessRights.get(pathname as PageAccessName) || {
-    roles: [],
-    methods: [],
-  };
+  const pageAccessRight = pageAccessRights.get(pathname as PageAccessName);
 
   // Skip public routes like authentication endpoints
   if (pathname.startsWith("/api/auth")) {
@@ -24,7 +21,6 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api")) {
     const apiResponse = apiMiddleware(req, session, pageAccessRight);
     if (apiResponse) return apiResponse;
-    return NextResponse.next();
   }
 
   // Handle client-side routes
@@ -40,5 +36,6 @@ export const config = {
     "/recipient/:path*",
     "/donor/:path*",
     "/api/:path*",
+    "/donations/:path*"
   ],
 };
