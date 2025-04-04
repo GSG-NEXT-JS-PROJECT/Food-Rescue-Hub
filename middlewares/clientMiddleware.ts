@@ -14,6 +14,7 @@ export function clientMiddleware(
     if (session) {
       return NextResponse.redirect(new URL("/already-signed-in", req.nextUrl));
     }
+    return NextResponse.next();
   }
 
   if (!session) {
@@ -28,5 +29,5 @@ export function clientMiddleware(
     return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
   }
 
-  return null;
+  return NextResponse.next();
 }
