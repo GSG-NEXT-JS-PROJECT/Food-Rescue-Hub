@@ -1,13 +1,14 @@
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
-import { PageAccessRight } from "../route/types";
+import { RouteAccessRight } from "../route/types";
 
 export function clientMiddleware(
   req: NextRequest,
   session: TokenPayload | null | undefined,
-  pageAccessRight: PageAccessRight | null | undefined
+  pageAccessRight: RouteAccessRight | null | undefined
 ) {
   const { pathname } = req.nextUrl;
+  const method = req.method as RequestMethod;
 
   // Redirect signed-in users away from sign-in/sign-up pages
   if (pathname === "/sign-in" || pathname === "/sign-up") {
@@ -23,8 +24,7 @@ export function clientMiddleware(
 
   if (
     pageAccessRight &&
-    (!pageAccessRight.roles.includes(session.userRole as Role) ||
-      !pageAccessRight.methods.includes(req.method as RequestMethod))
+    !pageAccessRight[method]?.includes(session.userRole as Role)
   ) {
     return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
   }
