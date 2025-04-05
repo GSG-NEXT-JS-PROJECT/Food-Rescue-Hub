@@ -14,12 +14,12 @@ const TextField: React.FC<TextFieldProps> = ({ name, label, ...rest }) => {
 
     return (
         <div>
-            <Label className="my-2">{label}</Label>
+            <Label className="my-2" htmlFor={name}>{label}</Label>
             <Input
                 id={name}
                 {...field}
                 {...rest}
-                className="bg-gray-100 border-none rounded-xl"
+                className="bg-gray-100 border-none rounded-md"
             />
             {meta.touched && meta.error && <p className="text-sm text-red-500 mt-1">{meta.error}</p>}
         </div>

@@ -11,7 +11,7 @@ const donationSchema: Schema<DonationDocument> = new Schema(
     description: { type: String },
     quantity: { type: Number, required: true },
     foodType: { type: String, required: true, enum: Object.values(FoodType) },
-    pickupDeadline: { type: Date, required: true },
+    pickupDeadline: { type: String, required: true },
     location: {
       lat: {
         type: Number,

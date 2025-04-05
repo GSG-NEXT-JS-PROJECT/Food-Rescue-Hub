@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { IUser } from "@/@types/index";
 import { sendEmail } from "@/lib/sendEmail";
 import { comparePassword, hashPassword } from "@/lib/hashAndCompare";
-import UserRepository from "../repositories/auth.repo";
+import UserRepository from "../repositories/user.repo";
 import { verificationEmailTemplate } from "@/lib/verificationEmailTemplate";
 
 class AuthService {
