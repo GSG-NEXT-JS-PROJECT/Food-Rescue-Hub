@@ -27,7 +27,6 @@ export const GET = async (request: NextRequest) => {
       minAmount: searchParams.get("minAmount") || undefined,
       maxAmount: searchParams.get("maxAmount") || undefined,
       foodType: searchParams.get("foodType") || undefined,
-      location: searchParams.get("location") || undefined,
       sortBy: searchParams.get("sortBy") || "createdAt",
       sortOrder: (searchParams.get("sortOrder") as "asc" | "desc") || "desc",
       keyword: searchParams.get("keyword") || undefined,
