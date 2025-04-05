@@ -18,7 +18,7 @@ interface FilterParams {
   foodType?: string;
   lat?: number;
   lng?: number;
-  radius: number;
+  radius?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   keyword?: string;
