@@ -1,12 +1,22 @@
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
-import { PageAccessRight } from "../route/types";
+import { RouteAccessRight } from "../route/types";
 
 export function apiMiddleware(
   req: NextRequest,
   session: TokenPayload | null | undefined,
-  pageAccessRight: PageAccessRight | undefined
+  pageAccessRight: RouteAccessRight | undefined
 ) {
+  const { pathname } = req.nextUrl;
+  const scope = req.nextUrl.searchParams.get("scope");
+  const method = req.method as RequestMethod;
+  if (
+    pathname.startsWith("/api/auth") ||
+    (pathname === "/api/donations" && scope === "total")
+  ) {
+    return NextResponse.next();
+  }
+
   if (!session) {
     return NextResponse.json(
       { error: "Not authenticated or invalid token" },
@@ -16,11 +26,12 @@ export function apiMiddleware(
 
   if (
     pageAccessRight &&
-    (!pageAccessRight.roles.includes(session.userRole as Role) ||
-      !pageAccessRight.methods.includes(req.method as RequestMethod))
+    !pageAccessRight[method]?.includes(session.userRole as Role)
   ) {
     return NextResponse.json(
-      { error: `Unauthorized: ${JSON.stringify(pageAccessRight.roles)} only` },
+      {
+        error: `Unauthorized: ${JSON.stringify(pageAccessRight[method])} only`,
+      },
       { status: 403 }
     );
   }
