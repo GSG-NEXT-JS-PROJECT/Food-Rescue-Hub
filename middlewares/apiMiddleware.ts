@@ -1,9 +1,22 @@
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
-import { PageAccessRight } from "../route/types";
+import { RouteAccessRight } from "../route/types";
 
-// Handle API route authorization
-export function apiMiddleware(req: NextRequest, session: TokenPayload | null | undefined, pageAccessRight: PageAccessRight) {
+export function apiMiddleware(
+  req: NextRequest,
+  session: TokenPayload | null | undefined,
+  pageAccessRight: RouteAccessRight | undefined
+) {
+  const { pathname } = req.nextUrl;
+  const scope = req.nextUrl.searchParams.get("scope");
+  const method = req.method as RequestMethod;
+  if (
+    pathname.startsWith("/api/auth") ||
+    (pathname === "/api/donations" && scope === "total")
+  ) {
+    return NextResponse.next();
+  }
+
   if (!session) {
     return NextResponse.json(
       { error: "Not authenticated or invalid token" },
@@ -13,18 +26,23 @@ export function apiMiddleware(req: NextRequest, session: TokenPayload | null | u
 
   if (
     pageAccessRight &&
-    (!pageAccessRight.roles.includes(session.userRole as Role) ||
-      !pageAccessRight.methods.includes(req.method as RequestMethod))
+    !pageAccessRight[method]?.includes(session.userRole as Role)
   ) {
     return NextResponse.json(
-      { error: `Unauthorized: ${JSON.stringify(pageAccessRight.roles)} only` },
+      {
+        error: `Unauthorized: ${JSON.stringify(pageAccessRight[method])} only`,
+      },
       { status: 403 }
     );
   }
 
-  // Add user details to headers
-  const modifiedReq = req.clone();
-  modifiedReq.headers.set("x-user-id", session.userId);
-  modifiedReq.headers.set("x-user-role", session.userRole);
-  return null; // Null means "proceed"
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-user-id", session.userId);
+  requestHeaders.set("x-user-role", session.userRole);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
