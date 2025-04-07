@@ -1,5 +1,6 @@
 import { IDonation } from "@/@types";
 import dbConnect from "@/DB/connection";
+import Donation from "@/DB/model/donation.model";
 import donationService from "@/module/services/donation.service";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -98,3 +99,44 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const PATCH = async (request: NextRequest) => {
+  try {
+    const userId = request.headers.get("x-user-id");
+    if (!userId) {
+      return new NextResponse(
+        JSON.stringify({ message: "ID are not found" }),
+        { status: 400 }
+      );
+    }
+
+    if (!Types.ObjectId.isValid(userId)) {
+      return new NextResponse(JSON.stringify({ message: "invalid userId" }), {
+        status: 400,
+      });
+    }
+
+    await dbConnect();
+    const updatedUser = await Donation.findOneAndUpdate(
+      { _id: new Types.ObjectId(userId) },
+      { recipientId: userId },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return new NextResponse(
+        JSON.stringify({ message: "user is not found" }),
+        { status: 400 }
+      );
+    }
+
+    return new NextResponse(
+      JSON.stringify({ message: "User is updated", user: updatedUser }),
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return new NextResponse(`Error in updating user ${error.message}`, {
+      status: 500,
+    });
+  }
+};

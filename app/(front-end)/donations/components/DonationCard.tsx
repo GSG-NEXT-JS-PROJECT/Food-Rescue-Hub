@@ -2,7 +2,10 @@
 import { MapPin, Clock, Tag } from "lucide-react";
 import Image from "next/image";
 import food from "../assets/OIP.jpeg";
-import { IDonation, LocationType } from "@/@types";
+import { IDonation, IUser, LocationType } from "@/@types";
+import { reverseGeocode } from "@/lib/location";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface DonationWithUIDetails extends IDonation {
   donorName: string;
@@ -12,11 +15,13 @@ interface DonationWithUIDetails extends IDonation {
 
 const DonationCard = ({
   donation,
-  onClaim,
-}: {
-  donation: DonationWithUIDetails;
-  onClaim: (id: string) => void;
+}: // onClaim,
+{
+  donation: IDonation;
+  // onClaim: (id: string) => void;
 }) => {
+  const [location, setLocation] = useState("");
+  const [donorName, setDonorName] = useState("");
   const formatDate = (date: Date): string => {
     return date.toLocaleString("en-US", {
       month: "short",
@@ -25,6 +30,27 @@ const DonationCard = ({
       minute: "2-digit",
     });
   };
+
+  useEffect(() => {
+    const calculateDistance = async () => {
+      const location = await reverseGeocode(
+        donation.location.lat,
+        donation.location.lat
+      );
+      setLocation(location);
+    };
+    calculateDistance();
+  }, [donation.location]);
+
+  useEffect(() => {
+    const fetchDonorName = async () => {
+      const res = await fetch(`api/user?userId=${"67ea3f0c27f9a64c26b16f4b"}`);
+      if (!res.ok) throw new Error("Failed to fetch donations");
+      const user: IUser = await res.json();
+      setDonorName(user.name);
+    };
+    fetchDonorName();
+  });
 
   const getTimeRemaining = (deadline: Date): string => {
     const now = new Date();
@@ -44,8 +70,14 @@ const DonationCard = ({
     const diffDays = Math.floor(diffHrs / 24);
     return `${diffDays} days left`;
   };
-  const calculateDistance = (location: LocationType): number => {
-    return Math.random() * 5;
+
+  const handleClaimDonation = async () => {
+    const res = await fetch("api/donations", {
+      method: "PATCH",
+    });
+    if (res.ok) {
+      console.log("done");
+    }
   };
 
   return (
@@ -53,14 +85,14 @@ const DonationCard = ({
       {/* Image */}
       <div className="bg-gray-200 h-48 relative">
         <Image
-          src={donation.imageUrl ? food : food}
+          src={donation.imageUrl ? donation.imageUrl : food}
           alt={donation.title}
           className="w-full h-full object-cover"
           width={300}
           height={200}
         />
         <div className="absolute bottom-0 right-0 bg-green-600 text-white px-3 py-1 text-sm">
-          {getTimeRemaining(donation.pickupDeadline)}
+          {getTimeRemaining(new Date(donation.pickupDeadline))}
         </div>
       </div>
 
@@ -83,26 +115,27 @@ const DonationCard = ({
 
         {/* Donor and location */}
         <div className="flex items-center text-sm text-gray-600 mb-2">
-          <span className="font-medium">{donation.donorName}</span>
+          <span className="font-medium">{donorName}</span>
           <span className="mx-2">•</span>
           <span className="flex items-center">
             <MapPin size={14} className="mr-1" />
-            {Math.round(calculateDistance(donation.location) * 10) / 10} mi away
+            {location}
           </span>
         </div>
 
         <div className="flex items-center text-xs text-gray-500 mb-4">
           <Clock size={14} className="mr-1" />
-          Pickup by {formatDate(donation.pickupDeadline)}
+          Pickup by {formatDate(new Date(donation.pickupDeadline))}
         </div>
 
         {/* Action button */}
-        <button
-          onClick={() => onClaim(donation.id)}
+        <Button
+          disabled={Boolean(donation.recipientId)}
+          onClick={handleClaimDonation}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
         >
           Claim Donation
-        </button>
+        </Button>
       </div>
     </div>
   );

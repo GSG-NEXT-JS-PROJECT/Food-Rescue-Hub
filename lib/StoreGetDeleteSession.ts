@@ -7,7 +7,7 @@ export async function createSession(userId: string, userRole: Role):Promise<stri
     const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
     const token = await generateToken({ userId, userRole });
 
-    (await cookies()).set("Session", token, {
+    (await cookies()).set("session", token, {
         httpOnly: true,
         secure: true,
         expires: expiresAt,
@@ -16,7 +16,7 @@ export async function createSession(userId: string, userRole: Role):Promise<stri
 }
 
 export async function getSession(): Promise<TokenPayload | undefined | null > {
-    const token = (await cookies()).get("Session")?.value;
+    const token = (await cookies()).get("session")?.value;
 
     if(!token) return undefined;
     const payload =await verifyToken(token);
