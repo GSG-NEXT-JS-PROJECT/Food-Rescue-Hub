@@ -84,3 +84,11 @@ export interface TokenPayload extends JwtPayload {
     userId: string;
     userRole: Role;
 }
+
+export interface EmailTemplateProps {
+  link?: string;
+  title: string;
+  description: string;
+  secondary: string;
+  button?: string;
+}
