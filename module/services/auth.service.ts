@@ -3,7 +3,8 @@ import { IUser } from "@/@types/index";
 import { sendEmail } from "@/lib/sendEmail";
 import { comparePassword, hashPassword } from "@/lib/hashAndCompare";
 import UserRepository from "../repositories/user.repo";
-import { verificationEmailTemplate } from "@/lib/verificationEmailTemplate";
+import { EmailTemplate } from "@/lib/EmailTemplate";
+import authRepository from "../repositories/auth.repo";
 
 class AuthService {
   async signUp(data: IUser) {
@@ -12,11 +13,11 @@ class AuthService {
       throw new Error("Email is already in use");
     }
     const hashedPassword: string = await hashPassword(data.password);
-    const newUser = await UserRepository.createUser(data, hashedPassword);
+    const newUser = await authRepository.createUser(data, hashedPassword);
     const verificationToken = newUser.getVerificationToken();
     await newUser.save();
     const verificationLink = `${process.env.NEXT_PUBLIC_URL}/verify-email?verifyToken=${verificationToken}&id=${newUser?._id}`;
-    const message = verificationEmailTemplate(verificationLink);
+    const message = EmailTemplate({link:verificationLink, title: "Verify Your Email Address", description: "Thank you for signing up! To complete your registration, please click the button below to verify your email address.", secondary: "This link will expire in 30 minutes.", button: "Verify Email" });;
 
     await sendEmail(newUser?.email, "Email Verification", message);
     return { user: newUser };
@@ -54,9 +55,40 @@ class AuthService {
     if (!user) {
       throw new Error("user not found, token not found, or token expired");
     }
-    await UserRepository.verifyUser(user);
+    await authRepository.verifyUser(user);
     return { message: "success" };
   }
+
+  async ForgetPassword(email: string) {
+    console.log(email);
+    const user = await UserRepository.findUserByEmail(email);
+    if (!user) {
+        throw new Error("User not found");
+    }
+    const resetToken = user.getVerificationToken();
+    await user.save();
+    const ResetLink = `${process.env.NEXT_PUBLIC_URL}/reset-password?resetToken=${resetToken}&id=${user?._id}`;
+    const message = EmailTemplate({link:ResetLink, title: "", description: "", secondary: "", button: "Reset Password" });
+    await sendEmail(user?.email, "Reset Password", message);
+}
+
+async ResetPassword(password: string, resetToken: string, userId: string) {
+    const verifyToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+
+    const user = await UserRepository.findUserByVerificationToken(userId, verifyToken);
+    if (!user) {
+        throw new Error("user not found, token not found, or token expired")
+    }
+    const hashedPassword: string = await hashPassword(password);
+    try{
+        await authRepository.resetPassword(user, hashedPassword);
+    }catch(error){
+        
+    }
+}
 }
 
 export default new AuthService();
