@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import TextField from "@/components/text-field";
 import useSignin from "./hooks/useSignin";
 import Icons from "@/components/ui/icons";
+import Link from "next/link.js";
 
 const SigninForm: React.FC = () => {
   const { formik } = useSignin();
@@ -25,6 +26,13 @@ const SigninForm: React.FC = () => {
           type="password"
           placeholder="Enter your password"
         />
+        
+              <Link
+                href="/forget-password"
+                className="text-green-600 hover:text-green-800 font-medium mb-4"
+              >
+                Forget Password?
+              </Link>
           
         <Button
           type="submit"
