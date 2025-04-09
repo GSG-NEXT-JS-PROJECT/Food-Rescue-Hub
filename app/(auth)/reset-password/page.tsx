@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ResetPasswordForm from "./component/reset-password-form/resetPasswordForm";
+import ResetPasswordForm from "./components/reset-password-form/resetPasswordForm";
 import { useSearchParams } from "next/navigation";
 
 const page = () => {

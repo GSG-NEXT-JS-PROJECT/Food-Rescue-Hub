@@ -8,6 +8,7 @@ const routeAccess: RouteAccess = {
   "/api/donations": {
     GET: [Role.Donor, Role.Recipient],
     POST: [Role.Donor],
+    PATCH: [Role.Recipient, Role.Donor]
   },
 };
 

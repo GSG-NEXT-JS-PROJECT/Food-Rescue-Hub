@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ForgetPasswordForm from "./component/forget-password-form";
+import ForgetPasswordForm from "./components/forget-password-form";
 
 const page = () => {
     return (

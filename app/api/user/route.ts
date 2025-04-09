@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import userService from "@/module/services/user.service";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export const GET = async (request: NextRequest) => {
   try {
-    const userId = req.headers.get('x-user-id')!;
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId")!;
     const user = await userService.getUserData(userId);
     
     return NextResponse.json(user, { status: 200 });
@@ -16,4 +17,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+};

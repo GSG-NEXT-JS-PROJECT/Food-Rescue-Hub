@@ -98,3 +98,54 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const PATCH = async (request: NextRequest) => {
+  try {
+    await dbConnect();
+
+    const recipientId = request.headers.get("x-user-id");
+    if (!recipientId) {
+      return new NextResponse(
+        JSON.stringify({ message: "Recipient ID is required" }),
+        { status: 400 }
+      );
+    }
+
+    const { donationId } = await request.json(); 
+    if (!donationId) {
+      return new NextResponse(
+        JSON.stringify({ message: "Donation ID is required" }),
+        { status: 400 }
+      );
+    }
+
+    const updatedDonation = await donationService.updateDonation(
+      donationId,
+      recipientId
+    );
+
+    return new NextResponse(
+      JSON.stringify({
+        message: "Donation updated successfully",
+        donation: updatedDonation,
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      const status =
+        error.message.includes("required") ||
+        error.message.includes("Invalid") ||
+        error.message === "Donation not found"
+          ? 400
+          : 500;
+      return new NextResponse(JSON.stringify({ message: error.message }), {
+        status,
+      });
+    }
+    return new NextResponse(
+      JSON.stringify({ message: "Internal server error" }),
+      { status: 500 }
+    );
+  }
+};

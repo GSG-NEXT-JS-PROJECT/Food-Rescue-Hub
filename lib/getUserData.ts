@@ -6,7 +6,6 @@ export async function fetchUser() : Promise<UserProfile | undefined> {
   const host = (await headersList).get("host"); // e.g., 'localhost:3000'
   const protocol = (await headersList).get("x-forwarded-proto") || "http";
   const url = `${protocol}://${host}/api/user/profile`;
-  console.log(url)
   try {
     const cookieStore = cookies();
     const token = (await cookieStore).get("Session")?.value;
@@ -16,7 +15,6 @@ export async function fetchUser() : Promise<UserProfile | undefined> {
         Authorization: `Bearer ${token}`, // Pass the token to the API
       },
     });
-    console.log(response.status)
     if (!response.ok) throw new Error("Failed to fetch user profile data");
     return response.json();
   } catch (error) {

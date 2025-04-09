@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DonationStatus, IDonation, LocationType, Role } from "@/@types";
+import { DonationStatus, IDonation, Role } from "@/@types";
 import { Types } from "mongoose";
 import donationRepo from "../repositories/donation.repo";
 import { DonationRequestBody } from "@/app/api/donations/route";
-import { validationSchemaNewDonation } from "@/app/(front-end)/donations/new/components/NewDonationForm/ValidationSchemaNewDonation";
+import { validationSchemaNewDonation } from "@/app/(front-end)/post-donation/components/NewDonationForm/ValidationSchemaNewDonation";
 import * as yup from "yup";
 
 interface FilterParams {
@@ -175,6 +175,44 @@ class DonationService {
       default:
         throw new Error("Invalid scope");
     }
+  }
+
+  async updateDonation(donationId: string, recipientId: string) {
+    if (!donationId) {
+      throw new Error("Donation ID is required");
+    }
+    if (!Types.ObjectId.isValid(donationId)) {
+      throw new Error("Invalid donation ID");
+    }
+    if (!recipientId) {
+      throw new Error("Recipient ID is required");
+    }
+    if (!Types.ObjectId.isValid(recipientId)) {
+      throw new Error("Invalid recipient ID");
+    }
+
+    // Update donation with recipientId
+    const updatedDonation = await donationRepo.updateDonationById(
+      donationId,
+      { recipientId: new Types.ObjectId(recipientId) }
+    );
+
+    if (!updatedDonation) {
+      throw new Error("Donation not found");
+    }
+
+    return {
+      id: updatedDonation._id,
+      donorId: updatedDonation.donorId,
+      recipientId: updatedDonation.recipientId,
+      title: updatedDonation.title,
+      description: updatedDonation.description,
+      quantity: updatedDonation.quantity,
+      foodType: updatedDonation.foodType,
+      pickupDeadline: updatedDonation.pickupDeadline,
+      location: updatedDonation.location,
+      status: updatedDonation.status,
+    };
   }
 }
 
