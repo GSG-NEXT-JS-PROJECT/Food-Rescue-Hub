@@ -10,7 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 // Clean URL params by excluding empty values
 
-export const useDonationFilters = (
+export const useDonations = (
   initialData: ApiResponse,
   initialFilters: SearchParamsType
 ) => {

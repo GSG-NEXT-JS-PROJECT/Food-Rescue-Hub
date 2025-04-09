@@ -1,12 +1,11 @@
 import { Search } from "lucide-react";
 import React, { FC } from "react";
-import DonationCard from "./DonationCard";
-import Pagination from "./pagination";
-import { useDonationFilters } from "../hooks/useDonationFilters";
+import DonationCard from "../DonationCard";
+import Pagination from "../Pagination";
+import { DonationsReturnType } from "../Donations/typeDonation";
 
-type donationFilterType = ReturnType<typeof useDonationFilters>;
 interface DonationsListProps {
-  donationFilter: donationFilterType;
+  donationFilter: DonationsReturnType;
 }
 
 const DonationsList: FC<DonationsListProps> = ({ donationFilter }) => {

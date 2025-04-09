@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
     return apiMiddleware(req, session, pageAccessRight);
   }
 
-  // // Handle client-side routes
+  // Handle client-side routes
   return clientMiddleware(req, session, pageAccessRight);
 }
 

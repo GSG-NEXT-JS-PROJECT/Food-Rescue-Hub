@@ -1,7 +1,10 @@
-import { cookies } from "next/headers";
-import Donations from "./components/Donations";
+import { cookies, headers } from "next/headers";
 import { FC } from "react";
-import { ApiResponse, SearchParamsType } from "./typeDonation";
+import {
+  ApiResponse,
+  SearchParamsType,
+} from "./components/Donations/typeDonation";
+import Donations from "./components/Donations";
 
 interface DonationsPageProps {
   searchParams: Promise<SearchParamsType>;
@@ -10,12 +13,15 @@ interface DonationsPageProps {
 async function fetchDonations(
   searchParams: SearchParamsType
 ): Promise<ApiResponse> {
-  const url = `http://localhost:3000/api/donations?${new URLSearchParams(
+  const headersList = headers();
+  const host = (await headersList).get("host"); // e.g., 'localhost:3000'
+  const protocol = (await headersList).get("x-forwarded-proto") || "http";
+  const url = `${protocol}://${host}/api/donations?${new URLSearchParams(
     searchParams as Record<string, string>
   ).toString()}`;
   try {
     const cookieStore = cookies();
-    const token = (await cookieStore).get("session")?.value;
+    const token = (await cookieStore).get("Session")?.value;
     const response = await fetch(url, {
       method: "GET",
       cache: "no-store",
@@ -23,6 +29,7 @@ async function fetchDonations(
         Authorization: `Bearer ${token}`, // Pass the token to the API
       },
     });
+    console.log(response.status);
     if (!response.ok) throw new Error("Failed to fetch donations");
     return response.json();
   } catch (error) {

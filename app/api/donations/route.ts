@@ -1,6 +1,5 @@
 import { IDonation } from "@/@types";
 import dbConnect from "@/DB/connection";
-import Donation from "@/DB/model/donation.model";
 import donationService from "@/module/services/donation.service";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -102,41 +101,51 @@ export async function POST(req: NextRequest) {
 
 export const PATCH = async (request: NextRequest) => {
   try {
-    const userId = request.headers.get("x-user-id");
-    if (!userId) {
-      return new NextResponse(
-        JSON.stringify({ message: "ID are not found" }),
-        { status: 400 }
-      );
-    }
-
-    if (!Types.ObjectId.isValid(userId)) {
-      return new NextResponse(JSON.stringify({ message: "invalid userId" }), {
-        status: 400,
-      });
-    }
-
     await dbConnect();
-    const updatedUser = await Donation.findOneAndUpdate(
-      { _id: new Types.ObjectId(userId) },
-      { recipientId: userId },
-      { new: true }
-    );
 
-    if (!updatedUser) {
+    const recipientId = request.headers.get("x-user-id");
+    if (!recipientId) {
       return new NextResponse(
-        JSON.stringify({ message: "user is not found" }),
+        JSON.stringify({ message: "Recipient ID is required" }),
         { status: 400 }
       );
     }
+
+    const { donationId } = await request.json(); 
+    if (!donationId) {
+      return new NextResponse(
+        JSON.stringify({ message: "Donation ID is required" }),
+        { status: 400 }
+      );
+    }
+
+    const updatedDonation = await donationService.updateDonation(
+      donationId,
+      recipientId
+    );
 
     return new NextResponse(
-      JSON.stringify({ message: "User is updated", user: updatedUser }),
+      JSON.stringify({
+        message: "Donation updated successfully",
+        donation: updatedDonation,
+      }),
       { status: 200 }
     );
-  } catch (error: any) {
-    return new NextResponse(`Error in updating user ${error.message}`, {
-      status: 500,
-    });
+  } catch (error) {
+    if (error instanceof Error) {
+      const status =
+        error.message.includes("required") ||
+        error.message.includes("Invalid") ||
+        error.message === "Donation not found"
+          ? 400
+          : 500;
+      return new NextResponse(JSON.stringify({ message: error.message }), {
+        status,
+      });
+    }
+    return new NextResponse(
+      JSON.stringify({ message: "Internal server error" }),
+      { status: 500 }
+    );
   }
 };

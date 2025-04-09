@@ -3,7 +3,7 @@ import userService from "@/module/services/user.service";
 
 export async function GET(req: NextRequest) {
   try {
-    const userId = req.headers.get('x-user-id') || '';
+    const userId = req.headers.get('x-user-id')!;
     const user = await userService.getUserData(userId);
     
     return NextResponse.json(user, { status: 200 });

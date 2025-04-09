@@ -1,84 +1,25 @@
 "use client";
+
 import { MapPin, Clock, Tag } from "lucide-react";
 import Image from "next/image";
-import food from "../assets/OIP.jpeg";
-import { IDonation, IUser, LocationType } from "@/@types";
-import { reverseGeocode } from "@/lib/location";
-import { useEffect, useState } from "react";
+import food from "./assets/OIP.jpeg";
 import { Button } from "@/components/ui/button";
+import { useDonationCard } from "./hooks/useDonationCard";
+import { FC } from "react";
+import { DonationResponse } from "../Donations/typeDonation";
 
-interface DonationWithUIDetails extends IDonation {
-  donorName: string;
-  id: string;
-  createdAt: Date;
+interface DonationCardProps {
+  donation: DonationResponse;
 }
 
-const DonationCard = ({
-  donation,
-}: // onClaim,
-{
-  donation: IDonation;
-  // onClaim: (id: string) => void;
-}) => {
-  const [location, setLocation] = useState("");
-  const [donorName, setDonorName] = useState("");
-  const formatDate = (date: Date): string => {
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  };
-
-  useEffect(() => {
-    const calculateDistance = async () => {
-      const location = await reverseGeocode(
-        donation.location.lat,
-        donation.location.lat
-      );
-      setLocation(location);
-    };
-    calculateDistance();
-  }, [donation.location]);
-
-  useEffect(() => {
-    const fetchDonorName = async () => {
-      const res = await fetch(`api/user?userId=${"67ea3f0c27f9a64c26b16f4b"}`);
-      if (!res.ok) throw new Error("Failed to fetch donations");
-      const user: IUser = await res.json();
-      setDonorName(user.name);
-    };
-    fetchDonorName();
-  });
-
-  const getTimeRemaining = (deadline: Date): string => {
-    const now = new Date();
-    const diffMs = deadline.getTime() - now.getTime();
-
-    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-
-    if (diffHrs < 1) {
-      const diffMins = Math.floor(diffMs / (1000 * 60));
-      return `${diffMins} minutes left`;
-    }
-
-    if (diffHrs < 24) {
-      return `${diffHrs} hours left`;
-    }
-
-    const diffDays = Math.floor(diffHrs / 24);
-    return `${diffDays} days left`;
-  };
-
-  const handleClaimDonation = async () => {
-    const res = await fetch("api/donations", {
-      method: "PATCH",
-    });
-    if (res.ok) {
-      console.log("done");
-    }
-  };
+const DonationCard: FC<DonationCardProps> = ({ donation }) => {
+  const {
+    location,
+    donorName,
+    formatDate,
+    getTimeRemaining,
+    handleClaimDonation,
+  } = useDonationCard(donation);
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100">

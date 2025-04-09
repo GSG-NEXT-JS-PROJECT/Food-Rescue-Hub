@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { DonationStatus, FoodType } from "@/@types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,57 +13,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Select, Separator } from "@radix-ui/react-select";
-import {
-  Badge,
-  Filter,
-  List,
-  MapIcon,
-  Search,
-} from "lucide-react";
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
-import { useDonationFilters } from "../hooks/useDonationFilters";
-
-type donationFilterType = ReturnType<typeof useDonationFilters>;
+import { Badge, Filter, List, MapIcon, Search } from "lucide-react";
+import React, { Dispatch, FC, SetStateAction } from "react";
+import { useFilters } from "./hooks/useFilters";
+import { DonationsReturnType } from "../Donations/typeDonation";
+import { foodTypeOptions, sortOptions, statusOptions } from "./constant";
 
 interface FiltersProps {
   setViewMode: Dispatch<SetStateAction<"map" | "grid">>;
   viewMode: "map" | "grid";
-  donationFilter: donationFilterType;
+  donationFilter: DonationsReturnType;
 }
-const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) => {
-  const [activeFiltersCount, setActiveFiltersCount] = useState(0);
 
-  const { tempFilters } = donationFilter;
-  const resetFilters = () => {
-    const resetValues = {
-      foodType: "",
-      status: "",
-      startDate: "",
-      endDate: "",
-      minAmount: "",
-      maxAmount: "",
-    };
-
-    donationFilter.setTempFilters(resetValues)
-    setActiveFiltersCount(0);
-  };
-
-  const foodTypeOptions = Object.values(FoodType);
-  const statusOptions = Object.values(DonationStatus);
-  const sortOptions = [
-    { value: "createdAt", label: "Date Created" },
-    { value: "pickupDeadline", label: "Pickup Deadline" },
-    { value: "quantity", label: "Quantity" },
-    { value: "title", label: "Title" },
-  ];
-
-  const handleTempFilterChange = (key: string, value: any) => {
-    donationFilter.setTempFilters({
-      ...tempFilters,
-      [key]: value,
-    });
-  };
-
+const Filters: FC<FiltersProps> = ({
+  setViewMode,
+  donationFilter,
+  viewMode,
+}) => {
+  const { tempFilters, activeFiltersCount, resetFilters, handleTempFilterChange } =
+    useFilters(donationFilter);
   return (
     <section className="bg-white shadow">
       <div className="container mx-auto px-4 py-4">
@@ -98,7 +64,10 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
               <Select
                 value={donationFilter.sortBy as string}
                 onValueChange={(value) =>
-                  donationFilter.updateSort(value, donationFilter.sortOrder as string)
+                  donationFilter.updateSort(
+                    value,
+                    donationFilter.sortOrder as string
+                  )
                 }
                 disabled={donationFilter.isLoading}
               >
@@ -116,7 +85,10 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
               <Select
                 value={donationFilter.sortOrder as string}
                 onValueChange={(value) =>
-                  donationFilter.updateSort(donationFilter.sortBy as string, value)
+                  donationFilter.updateSort(
+                    donationFilter.sortBy as string,
+                    value
+                  )
                 }
               >
                 <SelectTrigger className="w-[140px] bg-gray-50">
@@ -317,33 +289,12 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
                   </div>
 
                   <div className="text-xs text-gray-500 italic pt-1">
-                    Note: Filters will only be applied when you click &quot;Apply
-                    Filters&quot;
+                    Note: Filters will only be applied when you click
+                    &quot;Apply Filters&quot;
                   </div>
                 </div>
               </PopoverContent>
             </Popover>
-
-            {/* Active filter tags */}
-            {/* <div className="flex flex-wrap gap-2">
-              {getActiveFilterTags().map((tag) => (
-                <Badge
-                  key={tag.key}
-                  variant="secondary"
-                  className="px-2 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200"
-                >
-                  {tag.label}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeFilter(tag.key)}
-                    className="h-4 w-4 p-0 ml-1 text-gray-500 hover:text-gray-700"
-                  >
-                    <X size={12} />
-                    <span className="sr-only">Remove</span>
-                  </Button>
-                </Badge>
-              ))} */}
 
             {activeFiltersCount > 0 && (
               <Button

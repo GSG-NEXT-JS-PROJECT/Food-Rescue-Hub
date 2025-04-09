@@ -1,10 +1,14 @@
 import { DonationStatus, FoodType, IDonation } from "@/@types";
+import { useDonations } from "./hooks/useDonations";
 
 export type SearchParamsType = { [key: string]: string | string[] | undefined };
-// export type SearchParamsType = string | URLSearchParams | string[][] | Record<string, string> | undefined
+
+export interface DonationResponse extends IDonation {
+  id: string;
+}
 
 export interface ApiResponse {
-  donations: IDonation[];
+  donations: DonationResponse[];
   total: number;
   page: number;
   limit: number;
@@ -15,7 +19,6 @@ export interface DonationWithUIDetails extends IDonation {
   id: string;
   createdAt: Date;
 }
-
 
 export interface Filters {
   keyword?: string | string[];
@@ -45,3 +48,5 @@ export interface PaginationState {
   itemsPerPage: number;
   totalItems: number;
 }
+
+export type DonationsReturnType = ReturnType<typeof useDonations>;

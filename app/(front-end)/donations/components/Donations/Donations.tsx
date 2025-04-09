@@ -1,10 +1,10 @@
 "use client";
-import { MapIcon } from "lucide-react";
 import { FC, useState } from "react";
-import { ApiResponse, SearchParamsType } from "../typeDonation";
-import { useDonationFilters } from "../hooks/useDonationFilters";
-import Filters from "./Filters";
-import DonationsList from "./DonationsList";
+import Map from "@/components/Map";
+import { ApiResponse, SearchParamsType } from "./typeDonation";
+import { useDonations } from "./hooks/useDonations";
+import Filters from "../Filters";
+import DonationsList from "../DonationsList";
 
 interface DonationsProps {
   initialData: ApiResponse;
@@ -12,11 +12,11 @@ interface DonationsProps {
 }
 
 const Donations: FC<DonationsProps> = ({ initialData, initialFilters }) => {
-  const donationFilter = useDonationFilters(initialData, initialFilters);
+  const donationFilter = useDonations(initialData, initialFilters);
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div className="min-h-screen bg-gray-50">
       <Filters
         setViewMode={setViewMode}
         donationFilter={donationFilter}
@@ -35,19 +35,7 @@ const Donations: FC<DonationsProps> = ({ initialData, initialFilters }) => {
               {initialData.donations ? " matching your filters" : ""}
             </div>
 
-            {viewMode === "map" && (
-              <div className="bg-gray-200 rounded-xl h-96 mb-8 flex items-center justify-center">
-                <div className="text-center">
-                  <MapIcon size={48} className="mx-auto text-gray-400 mb-2" />
-                  <p className="text-gray-500">
-                    Map view would display here with donation locations
-                  </p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    Integration with Google Maps API
-                  </p>
-                </div>
-              </div>
-            )}
+            {viewMode === "map" && <Map donations={initialData.donations} />}
 
             {viewMode === "grid" && (
               <DonationsList donationFilter={donationFilter} />
