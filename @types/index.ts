@@ -81,6 +81,16 @@ export enum RequestMethod {
 }
 
 export interface TokenPayload extends JwtPayload {
-    userId: string;
-    userRole: Role;
+  userId: string;
+  userRole: Role;
 }
+
+export interface EmailTemplateProps {
+  link?: string;
+  title: string;
+  description: string;
+  secondary: string;
+  button?: string;
+}
+
+export type UserProfile = Omit<IUser, "password" | "isVerified">;

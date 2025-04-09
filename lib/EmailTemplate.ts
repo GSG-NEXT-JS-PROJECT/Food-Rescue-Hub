@@ -1,4 +1,6 @@
-export const verificationEmailTemplate = (verificationLink: string) => {
+import { EmailTemplateProps } from "@/@types/index";
+
+export const EmailTemplate = ({ link, title, description, secondary, button }: EmailTemplateProps) => {
     return `
     <html>
     <head>
@@ -61,13 +63,12 @@ export const verificationEmailTemplate = (verificationLink: string) => {
     </head>
     <body>
         <div class="container">
-        <h1>Verify Your Email Address</h1>
+        <h1>${title}</h1>
         <p>
-        Thank you for signing up! To complete your registration, please click
-        the button below to verify your email address.
+        ${description}
         </p>
-        <a href=${verificationLink} class="button">Verify Email</a>
-        <p class="expire-time">This link will expire in 30 minutes.</p>
+        <a href=${link} class="button">${button}</a>
+        <p class="expire-time"> ${secondary}</p>
         </div>
     </body>
     </html>
