@@ -85,4 +85,12 @@ export interface TokenPayload extends JwtPayload {
   userRole: Role;
 }
 
+export interface EmailTemplateProps {
+  link?: string;
+  title: string;
+  description: string;
+  secondary: string;
+  button?: string;
+}
+
 export type UserProfile = Omit<IUser, "password" | "isVerified">;
