@@ -81,6 +81,8 @@ export enum RequestMethod {
 }
 
 export interface TokenPayload extends JwtPayload {
-    userId: string;
-    userRole: Role;
+  userId: string;
+  userRole: Role;
 }
+
+export type UserProfile = Omit<IUser, "password" | "isVerified">;

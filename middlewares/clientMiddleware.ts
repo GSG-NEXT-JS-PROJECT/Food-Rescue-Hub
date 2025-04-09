@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
 import { RouteAccessRight } from "../route/types";
+import { forbidden, unauthorized } from "next/navigation";
 
 export function clientMiddleware(
   req: NextRequest,
@@ -19,14 +20,14 @@ export function clientMiddleware(
   }
 
   if (!session) {
-    return NextResponse.redirect(new URL("/forbidden", req.nextUrl));
+    return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
   }
 
   if (
     pageAccessRight &&
     !pageAccessRight[method]?.includes(session.userRole as Role)
   ) {
-    return NextResponse.redirect(new URL("/unauthorized", req.nextUrl));
+    return NextResponse.redirect(new URL("/forbidden", req.nextUrl));
   }
 
   return NextResponse.next();
