@@ -15,8 +15,8 @@ export async function fetchUser() : Promise<UserProfile | undefined> {
         Authorization: `Bearer ${token}`, // Pass the token to the API
       },
     });
-    if (!response.ok) throw new Error("Failed to fetch user profile data");
-    return response.json();
+    if (!response.ok) return undefined;
+     return response.json();
   } catch (error) {
     console.error("Fetch error:", error);
     return undefined;

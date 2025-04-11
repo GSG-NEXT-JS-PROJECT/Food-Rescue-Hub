@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DonationStatus, IDonation, Role } from "@/@types";
+import { DonationStatus, IDonation } from "@/@types";
 import { Types } from "mongoose";
 import donationRepo from "../repositories/donation.repo";
 import { DonationRequestBody } from "@/app/api/donations/route";
 import { validationSchemaNewDonation } from "@/app/(front-end)/post-donation/components/NewDonationForm/ValidationSchemaNewDonation";
 import * as yup from "yup";
+import notificationService from "./notification.service";
 
 interface FilterParams {
   scope?: string;
@@ -75,7 +76,7 @@ class DonationService {
     };
   }
 
-  async getDonations(userId: string, userRole: string, params: FilterParams) {
+  async getDonations(userRole: string, params: FilterParams) {
     const {
       scope = "all",
       page = 1,
@@ -96,26 +97,6 @@ class DonationService {
 
     // Build the filter object
     const filter: any = {};
-
-    // Apply user-based filtering
-    if (userRole === Role.Donor) {
-      filter.donorId = new Types.ObjectId(userId);
-    } else {
-      filter.recipientId = new Types.ObjectId(userId);
-    }
-
-    // Add geospatial filter if lat/lon are provided
-    // if (lat !== null && lng !== null) {
-    //   filter.location = {
-    //     $near: {
-    //       $geometry: {
-    //         type: "Point",
-    //         coordinates: [lng, lat], // [longitude, latitude]
-    //       },
-    //       $maxDistance: radius * 1000, // Convert km to meters
-    //     },
-    //   };
-    // }
 
     // Apply additional filters
     if (status) filter.status = status;
@@ -153,8 +134,7 @@ class DonationService {
         return { total };
       }
 
-      case "all":
-      case "user": {
+      case "all": {
         const skip = (page - 1) * limit;
         const donations = await donationRepo.findDonations(
           filter,
@@ -177,40 +157,39 @@ class DonationService {
     }
   }
 
-  async updateDonation(donationId: string, recipientId: string) {
-    if (!donationId) {
-      throw new Error("Donation ID is required");
-    }
-    if (!Types.ObjectId.isValid(donationId)) {
+  async claimDonation(donationId: string, recipientId: string) {
+    // Validate inputs
+    if (!donationId) throw new Error("Donation ID is required");
+    if (!Types.ObjectId.isValid(donationId))
       throw new Error("Invalid donation ID");
-    }
-    if (!recipientId) {
-      throw new Error("Recipient ID is required");
-    }
-    if (!Types.ObjectId.isValid(recipientId)) {
+    if (!recipientId) throw new Error("Recipient ID is required");
+    if (!Types.ObjectId.isValid(recipientId))
       throw new Error("Invalid recipient ID");
-    }
 
-    // Update donation with recipientId
-    const updatedDonation = await donationRepo.updateDonationById(
-      donationId,
-      { recipientId: new Types.ObjectId(recipientId) }
-    );
+    // Update donation
+    const updatedDonation = await donationRepo.findByIdAndUpdate(donationId, {
+      status: DonationStatus.Claimed,
+      recipientId: new Types.ObjectId(recipientId),
+    });
 
     if (!updatedDonation) {
       throw new Error("Donation not found");
     }
 
+    // Notify donor
+    const donorId = updatedDonation.donorId._id.toString();
+    const message = `Your donation "${updatedDonation.title}" was claimed by ${recipientId}!`;
+    await notificationService.notifyUser(
+      donorId,
+      message,
+      updatedDonation.donorId.deviceToken
+    );
+
     return {
       id: updatedDonation._id,
-      donorId: updatedDonation.donorId,
+      donorId: updatedDonation.donorId._id,
       recipientId: updatedDonation.recipientId,
       title: updatedDonation.title,
-      description: updatedDonation.description,
-      quantity: updatedDonation.quantity,
-      foodType: updatedDonation.foodType,
-      pickupDeadline: updatedDonation.pickupDeadline,
-      location: updatedDonation.location,
       status: updatedDonation.status,
     };
   }

@@ -4,10 +4,13 @@ import { reverseGeocode } from "@/lib/location";
 import { useEffect, useState } from "react";
 import { DonationResponse } from "../../Donations/typeDonation";
 import { IUser } from "@/@types";
+import { toast } from "sonner";
 
 export const useDonationCard = (donation: DonationResponse) => {
   const [location, setLocation] = useState("");
   const [donorName, setDonorName] = useState("");
+  const [isClaiming, setIsClaiming] = useState(false);
+
   const formatDate = (date: Date): string => {
     return date.toLocaleString("en-US", {
       month: "short",
@@ -74,21 +77,23 @@ export const useDonationCard = (donation: DonationResponse) => {
   };
 
   const handleClaimDonation = async () => {
+    setIsClaiming(true);
     try {
-      const res = await fetch("/api/donations", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await fetch("/api/claim-donation", {
+        method: "POST",
+        body: JSON.stringify({ donationId: donation._id }),
+        headers: { "Content-Type": "application/json" },
       });
-
-      if (!res.ok) {
-        throw new Error(`Failed to claim donation: ${res.status}`);
+      if (res.ok) {
+        toast.success("Donation claimed successfully!");
+      } else {
+        toast.error("something went wrong");
       }
-
-      console.log("Donation claimed successfully");
     } catch (error) {
+      toast.error(`Error claiming donation:, ${error}`);
       console.error("Error claiming donation:", error);
+    } finally {
+      setIsClaiming(false);
     }
   };
 
@@ -98,5 +103,6 @@ export const useDonationCard = (donation: DonationResponse) => {
     formatDate,
     getTimeRemaining,
     handleClaimDonation,
+    isClaiming
   };
 };

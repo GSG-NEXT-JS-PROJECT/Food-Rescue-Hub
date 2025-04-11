@@ -1,11 +1,11 @@
-import { IUser } from "@/@types";
+import { UserProfile } from "@/@types";
 import userRepo from "../repositories/user.repo";
 import { Types } from "mongoose";
 
 class UserService {
   async getUserData(
     userId: string
-  ): Promise<Omit<IUser, "isVerified" | "password">> {
+  ): Promise<UserProfile> {
     if (!userId) {
       throw new Error("ID are not found");
     }
@@ -20,6 +20,7 @@ class UserService {
     }
 
     return {
+      id: user._id,
       name: user.name,
       email: user.email,
       location: user.location,

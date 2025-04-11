@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDonationCard } from "./hooks/useDonationCard";
 import { FC } from "react";
 import { DonationResponse } from "../Donations/typeDonation";
+import Icons from "@/components/ui/icons";
 
 interface DonationCardProps {
   donation: DonationResponse;
@@ -19,6 +20,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
     formatDate,
     getTimeRemaining,
     handleClaimDonation,
+    isClaiming,
   } = useDonationCard(donation);
 
   return (
@@ -71,11 +73,12 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
 
         {/* Action button */}
         <Button
-          disabled={Boolean(donation.recipientId)}
+          disabled={Boolean(donation.recipientId) || isClaiming}
           onClick={handleClaimDonation}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
         >
-          Claim Donation
+          {isClaiming ? <Icons.spinner className="mr-3 h-6 w-6 animate-spin" /> : null}
+          Claim
         </Button>
       </div>
     </div>
