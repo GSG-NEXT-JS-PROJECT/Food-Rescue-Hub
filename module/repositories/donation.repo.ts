@@ -13,7 +13,7 @@ interface SortOptions {
 
 class DonationRepository {
   async createDonation(donationData: IDonation): Promise<DonationDocument> {
-    dbConnect();
+    await dbConnect();
     const newDonation = new Donation({
       ...donationData,
     });
@@ -35,15 +35,21 @@ class DonationRepository {
     return await Donation.find(filter).skip(skip).limit(limit).sort(sort);
   }
 
-  async updateDonationById(
+  async findByIdAndUpdate(
     donationId: string,
-    updateData: Partial<IDonation>
+    updateData: Partial<DonationDocument>
   ) {
-    return await Donation.findOneAndUpdate(
-      { _id: new Types.ObjectId(donationId) },
+    return await Donation.findByIdAndUpdate(
+      new Types.ObjectId(donationId),
       updateData,
-      { new: true } // Return the updated document
-    );
+      { new: true }
+    ).populate("donorId", "name deviceToken");
+  }
+
+  async findById(id: string): Promise<DonationDocument> {
+    await dbConnect();
+    const donation = await Donation.findById(id);
+    return donation;
   }
 }
 

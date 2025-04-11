@@ -1,6 +1,4 @@
 "use client";
-import { useState, useEffect, FC } from "react";
-import Navbar from "./NavBar";
 import HeroSection from "./HeroSection";
 import HowItWorks from "./HowItWorks";
 import Impact from "./Impact";

@@ -1,5 +1,6 @@
 import { fetchUser } from "@/lib/getUserData";
 import Navbar from "./components/NavBar";
+import TokenRegistration from "./TokenRegistration";
 
 export default async function MainLayout({
   children,
@@ -10,6 +11,7 @@ export default async function MainLayout({
   return (
     <section>
       <Navbar user={user} />
+      {user && <TokenRegistration />}
       <main>{children}</main>
     </section>
   );

@@ -4,7 +4,7 @@ import { useDonations } from "./hooks/useDonations";
 export type SearchParamsType = { [key: string]: string | string[] | undefined };
 
 export interface DonationResponse extends IDonation {
-  id: string;
+  _id: string;
 }
 
 export interface ApiResponse {

@@ -6,6 +6,7 @@ export interface UserDocument extends Document, IUser {
   verifyToken: string;
   verifyTokenExpire: Date;
   getVerificationToken(): string;
+  deviceToken: string
 }
 
 const userSchema: Schema<UserDocument> = new Schema(
@@ -38,6 +39,7 @@ const userSchema: Schema<UserDocument> = new Schema(
     verifyTokenExpire: {
       type: Date,
     },
+    deviceToken: { type: String }, // Store Firebase token
   },
   { timestamps: true }
 );
