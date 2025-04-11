@@ -1,4 +1,4 @@
-import { DonationStatus, IDonation } from "@/@types";
+import { IDonation } from "@/@types";
 import dbConnect from "@/DB/connection";
 import Donation, { DonationDocument } from "@/DB/model/donation.model";
 import { Types } from "mongoose";
@@ -46,32 +46,11 @@ class DonationRepository {
     ).populate("donorId", "name deviceToken");
   }
 
-  // async updateDonationById(donationId: string, updateData: Partial<IDonation>) {
-  //   return await Donation.findOneAndUpdate(
-  //     { _id: new Types.ObjectId(donationId) },
-  //     updateData,
-  //     { new: true } // Return the updated document
-  //   );
-  // }
-
-  // async findById(id: string) {
-  //   await dbConnect();
-  //   return Donation.findById(id).populate("donorId", "deviceToken").exec();
-  // }
-
-  // async claimDonation(
-  //   id: string,
-  //   recipientId: string
-  // ): Promise<DonationDocument | null> {
-  //   await dbConnect();
-  //   return Donation.findByIdAndUpdate(
-  //     id,
-  //     { recipientId, status: DonationStatus.Claimed, updatedAt: new Date() },
-  //     { new: true }
-  //   )
-  //     .populate("donorId", "deviceToken")
-  //     .exec();
-  // }
+  async findById(id: string): Promise<DonationDocument> {
+    await dbConnect();
+    const donation = await Donation.findById(id);
+    return donation;
+  }
 }
 
 const donationRepo = new DonationRepository();

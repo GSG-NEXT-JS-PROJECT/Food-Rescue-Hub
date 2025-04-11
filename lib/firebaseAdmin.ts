@@ -1,12 +1,5 @@
 import admin from 'firebase-admin';
 
-// if (!admin.apps.length) {
-//   admin.initializeApp({
-//     credential: admin.credential.cert({
-//       // Your Firebase service account JSON
-//     }),
-//   });
-// }
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports

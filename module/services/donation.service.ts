@@ -166,15 +166,21 @@ class DonationService {
     if (!Types.ObjectId.isValid(recipientId))
       throw new Error("Invalid recipient ID");
 
+    const donation = await donationRepo.findById(donationId);
+
+    if (!donation) {
+      throw new Error("Donation not found");
+    }
+
+    if (donation.status == DonationStatus.Claimed || donation.recipientId) {
+      throw new Error("Donation is claimed");
+    }
+
     // Update donation
     const updatedDonation = await donationRepo.findByIdAndUpdate(donationId, {
       status: DonationStatus.Claimed,
       recipientId: new Types.ObjectId(recipientId),
     });
-
-    if (!updatedDonation) {
-      throw new Error("Donation not found");
-    }
 
     // Notify donor
     const donorId = updatedDonation.donorId._id.toString();

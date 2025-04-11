@@ -3,7 +3,7 @@ import { getMessaging, getToken, isSupported } from "firebase/messaging";
 
 // Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCNk7hIK6mpe2QbWcPT8ob5m6W4cDbZF1g",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "food-rescue-hub.firebaseapp.com",
   projectId: "food-rescue-hub",
   storageBucket: "food-rescue-hub.firebasestorage.app",
