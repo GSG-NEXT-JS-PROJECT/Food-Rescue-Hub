@@ -5,6 +5,7 @@ import { ApiResponse, SearchParamsType } from "./typeDonation";
 import { useDonations } from "./hooks/useDonations";
 import Filters from "../Filters";
 import DonationsList from "../DonationsList";
+import { Spinner } from "@/components/ui/spinner";
 
 interface DonationsProps {
   initialData: ApiResponse;
@@ -24,9 +25,7 @@ const Donations: FC<DonationsProps> = ({ initialData, initialFilters }) => {
       />
       <main className="container mx-auto px-4 py-8">
         {donationFilter.isLoading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
-          </div>
+          <Spinner type="circle" size="xl" />
         ) : (
           <>
             <div className="mb-4 text-gray-600">

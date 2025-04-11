@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import LandingNavbarLink from "./LandingNavbarLink";
 import NavbarLink from "./NavbarLink";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,8 +51,8 @@ export default function Navbar({ user }: NavbarProps) {
           />
           {user?.role == Role.Donor && (
             <NavbarLink
-              href="/donations/new"
-              isActive={pathname === "/donations/new"}
+              href="/post-donation"
+              isActive={pathname === "/post-donation"}
               label="Post Donation"
               type={type}
             />
@@ -67,9 +67,9 @@ export default function Navbar({ user }: NavbarProps) {
           )}
           {user?.role == Role.Admin && (
             <NavbarLink
-              href="/dashboard"
-              isActive={pathname === "/dashboard"}
-              label="Dashboard"
+              href="/analytics"
+              isActive={pathname === "/analytics"}
+              label="Analytics"
               type={type}
             />
           )}
@@ -95,7 +95,7 @@ export default function Navbar({ user }: NavbarProps) {
                   href="/sign-in"
                   className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Log in
+                  sign in
                 </Link>
                 <Link
                   href="/sign-up"
@@ -112,7 +112,7 @@ export default function Navbar({ user }: NavbarProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8 border border-gray-200">
-                        <AvatarImage src={user?.image || ""} alt={user?.name || "User"} />
+                        {/* <AvatarImage src={user?.image || ""} alt={user?.name || "User"} /> */}
                         <AvatarFallback className="bg-green-100 text-green-600">
                           {user?.name ? user?.name.charAt(0).toUpperCase() : "U"}
                         </AvatarFallback>

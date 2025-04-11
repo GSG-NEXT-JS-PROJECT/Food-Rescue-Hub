@@ -25,7 +25,7 @@ const GooglePlacesAutocomplete: FC<GooglePlacesAutocompleteProps> = ({
       <LoadScript
         googleMapsApiKey={GOOGLE_API_KEY}
         libraries={googleMapsLibraries}
-        loadingElement={<Spinner type="handshake" size="xl" fullPage />}
+        loadingElement={<Spinner type="circle" size="xl" />}
       >
         <label className="block text-sm font-medium text-gray-700">
           Location
