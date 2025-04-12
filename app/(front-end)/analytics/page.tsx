@@ -16,13 +16,13 @@ import DonationStatusChart from './components/DonationStatusChart';
 import TimeToClaimChart from './components/TimeToClaimChart';
 import UserGrowthChart from './components/UserGrowthChart';
 import UserTypeDistributionChart from './components/UserTypeDistributionChart';
-import { useToast } from '@/components/ui/use-toast';
+// import { useToast } from '@/components/ui/use-toast';
 import { AnalyticsData } from './analyticsType';
 import { unauthorized } from 'next/navigation';
 
 
 const AnalyticsPage = () => {
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -37,13 +37,13 @@ const AnalyticsPage = () => {
         const userRole = localStorage.getItem('userRole') || '';
         if (userRole !== Role.Admin) {
           setIsAdmin(false);
-          unauthorized()
+          // unauthorized()
 
         }
 
         setIsAdmin(true);
         const response = await fetch(`/api/analytics?timeRange=${timeRange}&searchTerm=${searchTerm}`);
-
+        
         if (!response.ok) {
           throw new Error('Failed to fetch analytics data');
         }
@@ -51,18 +51,18 @@ const AnalyticsPage = () => {
         setAnalyticsData(data);
       } catch (error) {
         console.error('Error fetching analytics data:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load analytics data. Please try again.",
-          variant: "destructive"
-        });
+        // toast({
+        //   title: "Error",
+        //   description: "Failed to load analytics data. Please try again.",
+        //   variant: "destructive"
+        // });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [timeRange, searchTerm, toast]);
+  }, [timeRange, searchTerm]);
 
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
@@ -87,17 +87,17 @@ const AnalyticsPage = () => {
 
       exportAnalyticsToPDF(data);
 
-      toast({
-        title: "Success",
-        description: "Analytics data exported to PDF",
-      });
+      // toast({
+      //   title: "Success",
+      //   description: "Analytics data exported to PDF",
+      // });
     } catch (error) {
       console.error('Error exporting analytics data:', error);
-      toast({
-        title: "Error",
-        description: "Failed to export analytics data",
-        variant: "destructive"
-      });
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to export analytics data",
+      //   variant: "destructive"
+      // });
     } finally {
       setIsLoading(false);
     }
