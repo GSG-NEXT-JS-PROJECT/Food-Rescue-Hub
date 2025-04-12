@@ -89,6 +89,7 @@ const NewDonationForm = () => {
                     formik.setFieldValue("foodType", value)
                   }
                   defaultValue={formik.values.foodType}
+                  value={formik.values.foodType}
                   className="space-y-2"
                 />
               </div>

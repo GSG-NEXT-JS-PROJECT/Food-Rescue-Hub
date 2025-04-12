@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const TokenRegistration = () => {
   useEffect(() => {
-    fetchToken().then(token => console.log(token))
+    fetchToken()
   });
   return null;
 };

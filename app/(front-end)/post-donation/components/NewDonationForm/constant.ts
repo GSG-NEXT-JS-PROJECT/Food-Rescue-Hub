@@ -11,4 +11,5 @@ export const generateInitialValues = (
   pickupDeadline: new Date().toISOString().slice(0, 16),
   location: userLocation,
   imageUrl: undefined,
+  pickupInstruction: "",
 });

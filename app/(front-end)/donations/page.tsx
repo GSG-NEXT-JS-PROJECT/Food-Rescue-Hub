@@ -6,6 +6,12 @@ import {
 } from "./components/Donations/typeDonation";
 import Donations from "./components/Donations";
 
+export const metadata = {
+  title: 'My Donations | Food Rescue Hub',
+  description: 'View your past and current food donations.',
+  keywords: ['my donations', 'history', 'food tracker'],
+};
+
 interface DonationsPageProps {
   searchParams: Promise<SearchParamsType>;
 }

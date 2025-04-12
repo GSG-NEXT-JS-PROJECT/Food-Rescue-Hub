@@ -8,6 +8,7 @@ import {
   StandaloneSearchBox,
 } from "@react-google-maps/api";
 import { DonationResponse } from "@/app/(front-end)/donations/components/Donations/typeDonation";
+import { Spinner } from "../ui/spinner";
 
 // Props for the Map component
 interface MapProps {
@@ -157,7 +158,7 @@ export default function Map({ donations = [], singleDonation }: MapProps) {
   }, []);
 
   if (loadError) {
-    return <div>Error loading map. Please try again later.</div>;
+    return <Spinner type="circle" size="xl" />;
   }
 
   if (!isLoaded) {

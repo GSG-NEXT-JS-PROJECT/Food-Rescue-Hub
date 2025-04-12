@@ -6,7 +6,6 @@ import { validationSchemaNewDonation } from "../ValidationSchemaNewDonation";
 import { INewDonation } from "../type";
 import { useEffect, useState } from "react";
 import { IUser, LocationType } from "@/@types";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { reverseGeocode } from "@/lib/location";
 
@@ -16,7 +15,6 @@ const useNewDonation = () => {
     lng: 0,
   });
   const [defaultAddress, setDefaultAddress] = useState<string>("");
-  const router = useRouter();
 
   const formik = useFormik<INewDonation>({
     initialValues: generateInitialValues(userLocation),
@@ -25,7 +23,7 @@ const useNewDonation = () => {
     },
     validationSchema: validationSchemaNewDonation,
     validateOnMount: true,
-    enableReinitialize: true,
+    // enableReinitialize: true,
   });
 
   useEffect(() => {
@@ -65,7 +63,7 @@ const useNewDonation = () => {
 
       if (response.ok) {
         toast.success("Donation created successfully!");
-        setTimeout(() => router.push("/donations"), 1000);
+        resetForm();
       } else {
         const errorData = await response.json();
         console.log(errorData);
