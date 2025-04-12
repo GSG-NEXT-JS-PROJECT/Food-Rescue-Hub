@@ -25,7 +25,7 @@ const SignupForm = () => {
           });
         },
         (error) => {
-          console.error("Error getting location: ", error);
+          // console.error("Error getting location: ", error);
           setLocation({
             lat: 0,
             lng: 0,

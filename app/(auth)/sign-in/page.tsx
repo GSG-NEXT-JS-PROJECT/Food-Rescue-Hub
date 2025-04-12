@@ -3,6 +3,12 @@ import SigninForm from "./components/SigninForm";
 import Icons from "@/components/ui/icons";
 import Link from "next/link";
 
+export const metadata = {
+  title: 'Sign In | Food Rescue Hub',
+  description: 'Access your Food Rescue Hub account to donate or receive food.',
+  keywords: ['sign in', 'login', 'account', 'food donation'],
+};
+
 const Signin: React.FC = () => {
   return (
     <div className="h-screen grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
