@@ -5,6 +5,7 @@ export type SearchParamsType = { [key: string]: string | string[] | undefined };
 
 export interface DonationResponse extends IDonation {
   _id: string;
+  createdAt: string
 }
 
 export interface ApiResponse {

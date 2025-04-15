@@ -7,17 +7,21 @@ export class UserRepository {
     return await userModel.findOne({ email });
   }
 
-  async findUserById(userId: string) {
+  async findUserById(userId: string): Promise<UserDocument> {
     await dbConnect();
-    return await userModel.findById(userId);
+    const user = await userModel.findById(userId);
+    return user;
   }
 
-  async findUserByVerificationToken(userId: string, verifyToken: string): Promise<UserDocument | null> {
+  async findUserByVerificationToken(
+    userId: string,
+    verifyToken: string
+  ): Promise<UserDocument | null> {
     return await userModel.findOne({
-        _id: userId,
-        verifyToken,
-        verifyTokenExpire: { $gt: new Date() },
+      _id: userId,
+      verifyToken,
+      verifyTokenExpire: { $gt: new Date() },
     });
-}
+  }
 }
 export default new UserRepository();

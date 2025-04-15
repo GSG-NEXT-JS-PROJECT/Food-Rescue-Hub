@@ -6,6 +6,7 @@ import { DonationRequestBody } from "@/app/api/donations/route";
 import { validationSchemaNewDonation } from "@/app/(front-end)/post-donation/components/NewDonationForm/ValidationSchemaNewDonation";
 import * as yup from "yup";
 import notificationService from "./notification.service";
+import userRepo from "../repositories/user.repo";
 
 interface FilterParams {
   scope?: string;
@@ -61,6 +62,23 @@ class DonationService {
 
     // Delegate to repository
     const savedDonation = await donationRepo.createDonation(donationData);
+
+    // Emit donation update
+    const socketRes = await fetch(
+      "http://localhost:4000/emit-donation-update",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donation: savedDonation }),
+      }
+    );
+    console.log(socketRes.status);
+    const socketData = await socketRes.json();
+    console.log("Socket.IO donation update response:", socketData);
+
+    if (!socketRes.ok) {
+      console.error("Socket.IO donation update failed:", socketData);
+    }
 
     return {
       id: savedDonation._id,
@@ -183,13 +201,32 @@ class DonationService {
     });
 
     // Notify donor
+    const { name: recipientName } = await userRepo.findUserById(recipientId);
     const donorId = updatedDonation.donorId._id.toString();
-    const message = `Your donation "${updatedDonation.title}" was claimed by ${recipientId}!`;
+    const message = `Your donation "${updatedDonation.title}" was claimed by ${recipientName}!`;
     await notificationService.notifyUser(
       donorId,
       message,
       updatedDonation.donorId.deviceToken
     );
+
+    // Emit donation update
+    const socketDonationRes = await fetch(
+      "http://localhost:4000/emit-donation-update",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donation: updatedDonation }),
+      }
+    );
+    const socketDonationData = await socketDonationRes.json();
+    console.log("Socket.IO donation update response:", socketDonationData);
+
+    if (!socketDonationRes.ok) {
+      throw new Error(
+        `Socket.IO donation update failed: ${socketDonationData}`
+      );
+    }
 
     return {
       id: updatedDonation._id,
