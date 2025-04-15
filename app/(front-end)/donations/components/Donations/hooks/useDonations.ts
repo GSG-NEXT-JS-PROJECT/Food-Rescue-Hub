@@ -145,7 +145,7 @@ export const useDonations = (
   }, [search]);
 
   // Apply filters with batch update
-  const applyFilters = () => {
+  const applyFilters = (sortBy: string, sortOrder: string) => {
     setIsLoading(true);
     startTransition(() => {
       const params = createCleanParams({
@@ -195,9 +195,9 @@ export const useDonations = (
 
   // Update sort and trigger apply
   const updateSort = (newSortBy: string, newSortOrder: string) => {
-    setSortBy(newSortBy);
+     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
-    applyFilters();
+    applyFilters(newSortBy, newSortOrder);
   };
 
   function createCleanParams(filters: Filters) {
