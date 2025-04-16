@@ -2,7 +2,7 @@
 
 import { MapPin, Clock, Tag } from "lucide-react";
 import Image from "next/image";
-import food from "./assets/OIP.jpeg";
+import noImage from "./assets/no-image.png";
 import { Button } from "@/components/ui/button";
 import { useDonationCard } from "./hooks/useDonationCard";
 import { FC } from "react";
@@ -28,7 +28,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
       {/* Image */}
       <div className="bg-gray-200 h-48 relative">
         <Image
-          src={donation.imageUrl ? donation.imageUrl : food}
+          src={donation.imageUrl ? donation.imageUrl : noImage}
           alt={donation.title}
           className="w-full h-full object-cover"
           width={300}
