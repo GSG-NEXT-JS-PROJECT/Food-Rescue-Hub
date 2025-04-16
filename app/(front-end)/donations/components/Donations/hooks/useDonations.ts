@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { ApiResponse, DonationResponse, Filters, SearchParamsType } from "../typeDonation";
+import {
+  ApiResponse,
+  DonationResponse,
+  Filters,
+  SearchParamsType,
+} from "../typeDonation";
 import { usePathname, useRouter } from "next/navigation";
 import socket from "@/lib/socketClient";
 
@@ -21,7 +26,7 @@ export const useDonations = (
     maxAmount: initialFilters?.maxAmount || "",
     status: initialFilters?.status || "",
   });
-  const [sortBy, setSortBy] = useState(initialFilters.sortBy || "date");
+  const [sortBy, setSortBy] = useState(initialFilters.sortBy || "createdAt");
   const [sortOrder, setSortOrder] = useState(
     initialFilters.sortOrder || "desc"
   );
@@ -41,7 +46,7 @@ export const useDonations = (
     dateTo: "",
     amountMin: "",
     amountMax: "",
-    sortBy: "date",
+    sortBy: "createdAt",
     sortOrder: "desc",
     page: "1",
     limit: limit.toString(),
@@ -49,16 +54,20 @@ export const useDonations = (
 
   // Socket.IO integration for real-time updates
   useEffect(() => {
-    socket.emit('join-donations');
-    console.log('Joined donations room');
+    socket.emit("join-donations");
+    console.log("Joined donations room");
 
-    socket.on('connect', () => console.log('Socket.IO connected'));
-    socket.on('connect_error', (err) => console.error('Socket.IO connect error:', err));
-    socket.on('donation-update', (updatedDonation: DonationResponse) => {
-      console.log('Received donation update:', updatedDonation);
+    socket.on("connect", () => console.log("Socket.IO connected"));
+    socket.on("connect_error", (err) =>
+      console.error("Socket.IO connect error:", err)
+    );
+    socket.on("donation-update", (updatedDonation: DonationResponse) => {
+      console.log("Received donation update:", updatedDonation);
       setData((prev) => {
         // Check if donation already exists
-        const index = prev.donations.findIndex((d) => d._id === updatedDonation._id);
+        const index = prev.donations.findIndex(
+          (d) => d._id === updatedDonation._id
+        );
         if (index >= 0) {
           // Update existing donation
           const updatedDonations = [...prev.donations];
@@ -74,10 +83,10 @@ export const useDonations = (
           keyword: search,
           foodType: tempFilters.foodType,
           status: tempFilters.status,
-          startDate: tempFilters.startDate,
-          endDate: tempFilters.endDate,
-          minAmount: tempFilters.minAmount,
-          maxAmount: tempFilters.maxAmount,
+          dateFrom: tempFilters.startDate,
+          dateTo: tempFilters.endDate,
+          amountMin: tempFilters.minAmount,
+          amountMax: tempFilters.maxAmount,
           sortBy,
           sortOrder,
         });
@@ -107,10 +116,10 @@ export const useDonations = (
     });
 
     return () => {
-      socket.off('connect');
-      socket.off('connect_error');
-      socket.off('donation-update');
-      socket.emit('leave-donations');
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("donation-update");
+      socket.emit("leave-donations");
     };
   }, [search, tempFilters, sortBy, sortOrder, limit]);
 
@@ -144,8 +153,12 @@ export const useDonations = (
     return () => clearTimeout(timer);
   }, [search]);
 
+  useEffect(() => {
+    applyFilters();
+  }, [sortBy, sortOrder]);
+
   // Apply filters with batch update
-  const applyFilters = (sortBy: string, sortOrder: string) => {
+  const applyFilters = () => {
     setIsLoading(true);
     startTransition(() => {
       const params = createCleanParams({
@@ -195,9 +208,8 @@ export const useDonations = (
 
   // Update sort and trigger apply
   const updateSort = (newSortBy: string, newSortOrder: string) => {
-     setSortBy(newSortBy);
+    setSortBy(newSortBy);
     setSortOrder(newSortOrder);
-    applyFilters(newSortBy, newSortOrder);
   };
 
   function createCleanParams(filters: Filters) {
@@ -214,7 +226,10 @@ export const useDonations = (
     return params;
   }
 
-  function checkDonationMatchesFilters(donation: DonationResponse, filters: Filters) {
+  function checkDonationMatchesFilters(
+    donation: DonationResponse,
+    filters: Filters
+  ) {
     const {
       keyword = "",
       foodType = "",
@@ -226,7 +241,10 @@ export const useDonations = (
 
     } = filters;
 
-    if (keyword && !donation.title.toLowerCase().includes(keyword.toLowerCase())) {
+    if (
+      keyword &&
+      !donation.title.toLowerCase().includes(keyword.toLowerCase())
+    ) {
       return false;
     }
     if (foodType && donation.foodType !== foodType) {
