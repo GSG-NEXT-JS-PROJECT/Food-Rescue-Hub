@@ -16,7 +16,6 @@ interface DonationCardProps {
 const DonationCard: FC<DonationCardProps> = ({ donation }) => {
   const {
     location,
-    donorName,
     formatDate,
     getTimeRemaining,
     handleClaimDonation,
@@ -58,7 +57,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
 
         {/* Donor and location */}
         <div className="flex items-center text-sm text-gray-600 mb-2">
-          <span className="font-medium">{donorName}</span>
+          <span className="font-medium">{donation.donorId.name}</span>
           <span className="mx-2">•</span>
           <span className="flex items-center">
             <MapPin size={14} className="mr-1" />
@@ -77,7 +76,9 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
           onClick={handleClaimDonation}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
         >
-          {isClaiming ? <Icons.spinner className="mr-3 h-6 w-6 animate-spin" /> : null}
+          {isClaiming ? (
+            <Icons.spinner className="mr-3 h-6 w-6 animate-spin" />
+          ) : null}
           Claim
         </Button>
       </div>

@@ -30,9 +30,9 @@ const DonationsList: FC<DonationsListProps> = ({ donationFilter }) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.donations.map((donation, index) => (
+        {data.donations.map((donation) => (
           <DonationCard
-            key={index}
+            key={donation._id}
             donation={donation}
           />
         ))}

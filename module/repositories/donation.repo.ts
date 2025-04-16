@@ -32,7 +32,16 @@ class DonationRepository {
     limit: number,
     sort: SortOptions
   ) {
-    return await Donation.find(filter).skip(skip).limit(limit).sort(sort);
+    const donations = await Donation.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .populate({
+        path: "donorId",
+        select: "-password", // exclude password
+      });
+    console.log(donations[0]);
+    return donations;
   }
 
   async findByIdAndUpdate(

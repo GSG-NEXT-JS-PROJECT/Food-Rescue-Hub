@@ -3,12 +3,10 @@
 import { reverseGeocode } from "@/lib/location";
 import { useEffect, useState } from "react";
 import { DonationResponse } from "../../Donations/typeDonation";
-import { IUser } from "@/@types";
 import { toast } from "sonner";
 
 export const useDonationCard = (donation: DonationResponse) => {
   const [location, setLocation] = useState("");
-  const [donorName, setDonorName] = useState("");
   const [isClaiming, setIsClaiming] = useState(false);
 
   const formatDate = (date: Date): string => {
@@ -30,32 +28,6 @@ export const useDonationCard = (donation: DonationResponse) => {
     };
     calculateDistance();
   }, [donation.location]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchDonorName = async () => {
-      try {
-        const res = await fetch(`/api/user?userId=${donation.donorId}`);
-        if (!res.ok) throw new Error("Failed to fetch donor info");
-
-        const user: IUser = await res.json();
-        if (isMounted) {
-          setDonorName(user.name);
-        }
-      } catch (error) {
-        console.error("Error fetching donor name:", error);
-      }
-    };
-
-    if (donation?.donorId) {
-      fetchDonorName();
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [donation?.donorId]);
 
   const getTimeRemaining = (deadline: Date): string => {
     const now = new Date();
@@ -99,7 +71,6 @@ export const useDonationCard = (donation: DonationResponse) => {
 
   return {
     location,
-    donorName,
     formatDate,
     getTimeRemaining,
     handleClaimDonation,
