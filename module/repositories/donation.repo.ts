@@ -40,7 +40,6 @@ class DonationRepository {
         path: "donorId",
         select: "-password", // exclude password
       });
-    console.log(donations[0]);
     return donations;
   }
 

@@ -32,6 +32,7 @@ export const validationSchema = Yup.object().shape({
             .min(-180, "Longitude must be between -180 and 180")
             .max(180, "Longitude must be between -180 and 180")
             .required("Longitude is required"),
+        address: Yup.string().required('Address is required')
     }),
 
     role: Yup.mixed<Role>()

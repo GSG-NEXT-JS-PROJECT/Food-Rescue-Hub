@@ -18,6 +18,7 @@ export const validationSchemaNewDonation = Yup.object({
   location: Yup.object({
     lat: Yup.number().required("Latitude is required"),
     lng: Yup.number().required("Longitude is required"),
+    address: Yup.string().required("address is required"),
   }).required("Location is required"),
 
   pickupInstruction: Yup.string(),

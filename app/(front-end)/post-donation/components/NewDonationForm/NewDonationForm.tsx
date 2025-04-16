@@ -6,7 +6,7 @@ import { FoodType } from "@/@types";
 import useNewDonation from "./hooks/useNewDonation";
 import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
-import GooglePlacesAutocomplete from "../GooglePlacesAutocomplete";
+import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
 import ImageUpload from "../ImageUpload";
 import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import TextAreaField from "@/components/text-area";
 
 const NewDonationForm = () => {
-  const { formik, defaultAddress } = useNewDonation();
+  const { formik, userLocation } = useNewDonation();
 
   return (
     <div>
@@ -107,7 +107,7 @@ const NewDonationForm = () => {
                 />
 
                 {/* Google Places Autocomplete */}
-                <GooglePlacesAutocomplete defaultAddress={defaultAddress} />
+                <GooglePlacesAutocomplete defaultAddress={userLocation.address} />
               </div>
 
               {/* pickup instruction */}

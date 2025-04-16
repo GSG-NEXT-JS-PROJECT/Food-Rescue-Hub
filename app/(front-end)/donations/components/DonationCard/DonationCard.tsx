@@ -15,7 +15,6 @@ interface DonationCardProps {
 
 const DonationCard: FC<DonationCardProps> = ({ donation }) => {
   const {
-    location,
     formatDate,
     getTimeRemaining,
     handleClaimDonation,
@@ -61,7 +60,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
           <span className="mx-2">•</span>
           <span className="flex items-center">
             <MapPin size={14} className="mr-1" />
-            {location}
+            {donation.location.address}
           </span>
         </div>
 

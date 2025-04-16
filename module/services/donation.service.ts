@@ -144,7 +144,7 @@ class DonationService {
     const sort: { [key: string]: 1 | -1 } = {
       [sortBy]: sortOrder === "asc" ? 1 : -1,
     };
-    console.log("filer: ", filter)
+    
     // Handle scope
     switch (scope) {
       case "total": {

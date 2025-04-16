@@ -1,12 +1,10 @@
 "use client";
 
-import { reverseGeocode } from "@/lib/location";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DonationResponse } from "../../Donations/typeDonation";
 import { toast } from "sonner";
 
 export const useDonationCard = (donation: DonationResponse) => {
-  const [location, setLocation] = useState("");
   const [isClaiming, setIsClaiming] = useState(false);
 
   const formatDate = (date: Date): string => {
@@ -17,17 +15,6 @@ export const useDonationCard = (donation: DonationResponse) => {
       minute: "2-digit",
     });
   };
-
-  useEffect(() => {
-    const calculateDistance = async () => {
-      const location = await reverseGeocode(
-        donation.location.lat,
-        donation.location.lat
-      );
-      setLocation(location);
-    };
-    calculateDistance();
-  }, [donation.location]);
 
   const getTimeRemaining = (deadline: Date): string => {
     const now = new Date();

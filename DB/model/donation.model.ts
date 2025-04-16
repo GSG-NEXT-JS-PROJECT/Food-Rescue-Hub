@@ -21,6 +21,7 @@ const donationSchema: Schema<DonationDocument> = new Schema(
         type: Number,
         required: true,
       },
+      address: { type: String, required: true },
     },
     status: {
       type: String,
@@ -36,6 +37,7 @@ const donationSchema: Schema<DonationDocument> = new Schema(
   }
 );
 
-const Donation = models?.Donation || model<DonationDocument>("Donation", donationSchema);
+const Donation =
+  models?.Donation || model<DonationDocument>("Donation", donationSchema);
 
 export default Donation;

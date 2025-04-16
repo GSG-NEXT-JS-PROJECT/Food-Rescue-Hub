@@ -9,7 +9,7 @@ import { LoadScript } from "@react-google-maps/api";
 import useGooglePlacesAutocomplete from "./hooks/useGooglePlacesAutocomplete";
 
 interface GooglePlacesAutocompleteProps {
-  defaultAddress: string;
+  defaultAddress?: string;
 }
 
 const googleMapsLibraries: "places"[] = ["places"];

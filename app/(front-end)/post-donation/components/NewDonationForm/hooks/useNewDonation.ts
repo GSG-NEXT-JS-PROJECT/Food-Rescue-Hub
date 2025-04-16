@@ -7,14 +7,13 @@ import { INewDonation } from "../type";
 import { useEffect, useState } from "react";
 import { IUser, LocationType } from "@/@types";
 import { toast } from "sonner";
-import { reverseGeocode } from "@/lib/location";
 
 const useNewDonation = () => {
   const [userLocation, setUserLocation] = useState<LocationType>({
     lat: 0,
     lng: 0,
+    address: ''
   });
-  const [defaultAddress, setDefaultAddress] = useState<string>("");
 
   const formik = useFormik<INewDonation>({
     initialValues: generateInitialValues(userLocation),
@@ -23,15 +22,13 @@ const useNewDonation = () => {
     },
     validationSchema: validationSchemaNewDonation,
     validateOnMount: true,
-    // enableReinitialize: true,
+    enableReinitialize: true,
   });
 
   useEffect(() => {
     fetchUserProfile().then(async (location) => {
       if (location) {
         setUserLocation(location);
-        const address = await reverseGeocode(location.lat, location.lng);
-        setDefaultAddress(address);
       }
     });
   }, []);
@@ -88,7 +85,7 @@ const useNewDonation = () => {
     }
   }
 
-  return { formik, defaultAddress };
+  return { formik, userLocation};
 };
 
 export default useNewDonation;

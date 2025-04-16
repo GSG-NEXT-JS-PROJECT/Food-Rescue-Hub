@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 export interface LocationType {
   lat: number;
   lng: number;
+  address: string
 }
 
 export enum FoodType {
