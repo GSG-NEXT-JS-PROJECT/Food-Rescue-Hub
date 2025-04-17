@@ -19,6 +19,7 @@ import { LogOut, User } from "lucide-react";
 import { useNavBar } from "./hooks/useNavBar";
 import { LandingLinks } from "./constant";
 import Notifications from "../Notifications";
+import { useState } from "react";
 
 type NavbarProps = {
   user: UserProfile | undefined;
@@ -27,6 +28,11 @@ type NavbarProps = {
 export default function Navbar({ user }: NavbarProps) {
   const { activeSection, setActiveSection, handleLogout } = useNavBar();
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const createNavLinks = (type: "mobile" | "desktop") => {
     if (pathname === "/") {
@@ -104,50 +110,64 @@ export default function Navbar({ user }: NavbarProps) {
                   Sign up
                 </Link>
               </>
-            ) : ( <div className="flex items-center space-x-4">
+            ) : (
+              <div className="flex items-center space-x-4">
                 {/* Notification Icon with Dropdown */}
-                <Notifications userId={user?.id || ''}/>
+                <Notifications userId={user?.id || ""} />
                 {/* User Profile Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
                       <Avatar className="h-8 w-8 border border-gray-200">
                         {/* <AvatarImage src={user?.image || ""} alt={user?.name || "User"} /> */}
                         <AvatarFallback className="bg-green-100 text-green-600">
-                          {user?.name ? user?.name.charAt(0).toUpperCase() : "U"}
+                          {user?.name
+                            ? user?.name.charAt(0).toUpperCase()
+                            : "U"}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex flex-col space-y-1 p-2">
-                      <p className="text-sm font-medium leading-none">{user?.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/profile" className="cursor-pointer flex w-full items-center">
+                      <Link
+                        href="/profile"
+                        className="cursor-pointer flex w-full items-center"
+                      >
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600" onClick={handleLogout}>
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-600 focus:text-red-600"
+                      onClick={handleLogout}
+                    >
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>)}
+              </div>
+            )}
             <div className="lg:hidden flex items-center">
               <button
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none"
                 aria-label="Main menu"
-                aria-expanded="false"
-                onClick={() => {
-                  const mobileMenu = document.getElementById("mobile-menu");
-                  mobileMenu?.classList.toggle("hidden");
-                }}
+                aria-expanded={isMobileMenuOpen}
+                onClick={toggleMobileMenu}
               >
                 <Icons.IconListNavBar />
               </button>
@@ -155,7 +175,10 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
         </div>
       </div>
-      <div className="lg:hidden" id="mobile-menu">
+      <div
+        className={`lg:hidden ${isMobileMenuOpen ? "" : "hidden"}`}
+        id="mobile-menu"
+      >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           {createNavLinks("mobile")}
         </div>
