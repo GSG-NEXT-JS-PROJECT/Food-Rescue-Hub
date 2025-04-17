@@ -3,7 +3,7 @@
 import React from "react";
 import { Form, FormikProvider } from "formik";
 import { FoodType } from "@/@types";
-import useNewDonation from "./hooks/useNewDonation";
+import usePostDonation from "./hooks/usePostDonation";
 import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
@@ -21,8 +21,8 @@ import {
 import { cn } from "@/lib/utils";
 import TextAreaField from "@/components/text-area";
 
-const NewDonationForm = () => {
-  const { formik, userLocation } = useNewDonation();
+const PostDonationForm = () => {
+  const { formik, userLocation } = usePostDonation();
 
   return (
     <div>
@@ -107,7 +107,9 @@ const NewDonationForm = () => {
                 />
 
                 {/* Google Places Autocomplete */}
-                <GooglePlacesAutocomplete defaultAddress={userLocation.address} />
+                <GooglePlacesAutocomplete
+                  defaultAddress={userLocation.address}
+                />
               </div>
 
               {/* pickup instruction */}
@@ -154,4 +156,4 @@ const NewDonationForm = () => {
   );
 };
 
-export default NewDonationForm;
+export default PostDonationForm;

@@ -3,7 +3,7 @@ import { DonationStatus, IDonation } from "@/@types";
 import { Types } from "mongoose";
 import donationRepo from "../repositories/donation.repo";
 import { DonationRequestBody } from "@/app/api/donations/route";
-import { validationSchemaNewDonation } from "@/app/(front-end)/post-donation/components/NewDonationForm/ValidationSchemaNewDonation";
+import { validationSchemaPostDonation } from "@/app/(front-end)/post-donation/components/PostDonationForm/ValidationSchemaNewDonation";
 import * as yup from "yup";
 import notificationService from "./notification.service";
 import userRepo from "../repositories/user.repo";
@@ -30,7 +30,7 @@ interface FilterParams {
 class DonationService {
   async createDonation(donorId: string, data: DonationRequestBody) {
     try {
-      await validationSchemaNewDonation.validate(data, { abortEarly: false });
+      await validationSchemaPostDonation.validate(data, { abortEarly: false });
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         throw new Error(error.errors.join(", "));
@@ -269,7 +269,7 @@ class DonationService {
       console.error("Error emitting donation update:", error);
     }
   }
-  
+
   async expireDonations() {
     const now = new Date();
     const expiredDonations = await donationRepo.findExpiredDonations(now);

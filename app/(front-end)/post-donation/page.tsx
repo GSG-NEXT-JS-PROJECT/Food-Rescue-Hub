@@ -1,4 +1,4 @@
-import PostDonationForm from "./components/NewDonationForm";
+import PostDonationForm from "./components/PostDonationForm";
 
 export const metadata = {
   title: "Post Donation | Food Rescue Hub",

@@ -5,10 +5,10 @@ import { CldImage, CldUploadButton } from "next-cloudinary";
 import React from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { INewDonation } from "../NewDonationForm/type";
+import { IPostDonation } from "../PostDonationForm/type";
 
 const ImageUpload = () => {
-  const formik = useFormikContext<INewDonation>();
+  const formik = useFormikContext<IPostDonation>();
 
   return (
     <div className="grid grid-cols-1 gap-4 space-y-2">
@@ -16,7 +16,7 @@ const ImageUpload = () => {
         <CldUploadButton
           uploadPreset="food-rescue-hub"
           onSuccess={(result) => {
-            if (typeof result.info !== 'string' && result.info?.secure_url) {
+            if (typeof result.info !== "string" && result.info?.secure_url) {
               formik.setFieldValue("imageUrl", result.info.secure_url);
             }
           }}
@@ -31,7 +31,7 @@ const ImageUpload = () => {
           className="text-red-500 text-sm"
         />
       </div>
-      
+
       {/* Image Preview */}
       {formik.values.imageUrl && (
         <div className="relative mt-2 rounded-md overflow-hidden flex flex-col items-center">

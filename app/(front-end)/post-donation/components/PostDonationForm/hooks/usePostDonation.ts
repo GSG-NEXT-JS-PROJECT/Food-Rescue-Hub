@@ -2,25 +2,25 @@
 
 import { useFormik } from "formik";
 import { generateInitialValues } from "../constant";
-import { validationSchemaNewDonation } from "../ValidationSchemaNewDonation";
-import { INewDonation } from "../type";
+import { validationSchemaPostDonation } from "../ValidationSchemaNewDonation";
+import { IPostDonation } from "../type";
 import { useEffect, useState } from "react";
 import { IUser, LocationType } from "@/@types";
 import { toast } from "sonner";
 
-const useNewDonation = () => {
+const usePostDonation = () => {
   const [userLocation, setUserLocation] = useState<LocationType>({
     lat: 0,
     lng: 0,
-    address: ''
+    address: "",
   });
 
-  const formik = useFormik<INewDonation>({
+  const formik = useFormik<IPostDonation>({
     initialValues: generateInitialValues(userLocation),
     onSubmit: (values, { resetForm, setSubmitting }) => {
       handlePostDonation(values, resetForm, setSubmitting);
     },
-    validationSchema: validationSchemaNewDonation,
+    validationSchema: validationSchemaPostDonation,
     validateOnMount: true,
     enableReinitialize: true,
   });
@@ -34,14 +34,14 @@ const useNewDonation = () => {
   }, []);
 
   async function handlePostDonation(
-    values: INewDonation,
+    values: IPostDonation,
     resetForm: () => void,
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     setSubmitting(true);
 
     try {
-      const donationData: INewDonation = {
+      const donationData: IPostDonation = {
         title: values.title,
         description: values.description,
         quantity: values.quantity,
@@ -85,7 +85,7 @@ const useNewDonation = () => {
     }
   }
 
-  return { formik, userLocation};
+  return { formik, userLocation };
 };
 
-export default useNewDonation;
+export default usePostDonation;

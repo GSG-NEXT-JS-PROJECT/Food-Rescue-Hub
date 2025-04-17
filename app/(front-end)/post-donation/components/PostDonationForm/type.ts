@@ -1,6 +1,6 @@
 import { FoodType, LocationType } from "@/@types";
 
-export interface INewDonation {
+export interface IPostDonation {
   title: string;
   description?: string;
   quantity: number;
