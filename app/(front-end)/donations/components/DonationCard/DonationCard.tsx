@@ -8,6 +8,7 @@ import { useDonationCard } from "./hooks/useDonationCard";
 import { FC } from "react";
 import { DonationResponse } from "../Donations/typeDonation";
 import Icons from "@/components/ui/icons";
+import { DonationStatus } from "@/@types";
 
 interface DonationCardProps {
   donation: DonationResponse;
@@ -71,7 +72,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
 
         {/* Action button */}
         <Button
-          disabled={Boolean(donation.recipientId) || isClaiming}
+          disabled={donation.status != DonationStatus.Available || isClaiming}
           onClick={handleClaimDonation}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
         >

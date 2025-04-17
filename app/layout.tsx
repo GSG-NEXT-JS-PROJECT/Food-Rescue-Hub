@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { initServer } from "@/lib/cron/coreServer";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
@@ -23,6 +24,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  if (process.env.NODE_ENV !== "test") {
+    initServer().catch((error) => {
+      console.error("Failed to initialize server:", error);
+    });
+  }
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>

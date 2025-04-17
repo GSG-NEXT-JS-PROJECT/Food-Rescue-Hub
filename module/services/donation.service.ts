@@ -7,6 +7,8 @@ import { validationSchemaNewDonation } from "@/app/(front-end)/post-donation/com
 import * as yup from "yup";
 import notificationService from "./notification.service";
 import userRepo from "../repositories/user.repo";
+import Donation, { DonationDocument } from "@/DB/model/donation.model";
+import { convertLocalToISO } from "@/lib/dateUtils";
 
 interface FilterParams {
   scope?: string;
@@ -54,7 +56,7 @@ class DonationService {
       description,
       quantity,
       foodType,
-      pickupDeadline,
+      pickupDeadline: convertLocalToISO(pickupDeadline),
       location,
       imageUrl,
       status: DonationStatus.Available,
@@ -113,6 +115,16 @@ class DonationService {
       keyword,
     } = params;
 
+    const now = new Date();
+    // Mark expired donations
+    await Donation.updateMany(
+      {
+        status: DonationStatus.Available,
+        pickupDeadline: { $lte: now.toISOString() },
+      },
+      { status: DonationStatus.Expired, updatedAt: new Date() }
+    );
+
     // Build the filter object
     const filter: any = {};
 
@@ -144,7 +156,7 @@ class DonationService {
     const sort: { [key: string]: 1 | -1 } = {
       [sortBy]: sortOrder === "asc" ? 1 : -1,
     };
-    
+
     // Handle scope
     switch (scope) {
       case "total": {
@@ -190,8 +202,8 @@ class DonationService {
       throw new Error("Donation not found");
     }
 
-    if (donation.status == DonationStatus.Claimed || donation.recipientId) {
-      throw new Error("Donation is claimed");
+    if (donation.status !== DonationStatus.Available || donation.recipientId) {
+      throw new Error("Donation is claimed or expired");
     }
 
     // Update donation
@@ -235,6 +247,58 @@ class DonationService {
       title: updatedDonation.title,
       status: updatedDonation.status,
     };
+  }
+
+  async emitDonationUpdate(donation: DonationDocument) {
+    try {
+      const socketRes = await fetch(
+        "http://localhost:4000/emit-donation-update",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ donation }),
+        }
+      );
+      if (!socketRes.ok) {
+        console.error(
+          "Socket.IO donation update failed:",
+          await socketRes.json()
+        );
+      }
+    } catch (error) {
+      console.error("Error emitting donation update:", error);
+    }
+  }
+  
+  async expireDonations() {
+    const now = new Date();
+    const expiredDonations = await donationRepo.findExpiredDonations(now);
+    let updatedCount = 0;
+
+    for (const donation of expiredDonations) {
+      const updatedDonation = await donationRepo.findByIdAndUpdate(
+        donation._id.toString(),
+        {
+          status: DonationStatus.Expired,
+        }
+      );
+
+      if (updatedDonation) {
+        updatedCount++;
+        // Notify donor
+        const donorId = updatedDonation.donorId._id.toString();
+        const message = `Your donation "${updatedDonation.title}" has expired.`;
+        await notificationService.notifyUser(
+          donorId,
+          message,
+          updatedDonation.donorId.deviceToken
+        );
+        // Emit donation update
+        await this.emitDonationUpdate(updatedDonation);
+      }
+    }
+
+    return updatedCount;
   }
 }
 

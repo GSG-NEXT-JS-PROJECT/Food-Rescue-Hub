@@ -5,11 +5,12 @@ import {
   SearchParamsType,
 } from "./components/Donations/typeDonation";
 import Donations from "./components/Donations";
+import { DonationStatus } from "@/@types";
 
 export const metadata = {
-  title: 'My Donations | Food Rescue Hub',
-  description: 'View your past and current food donations.',
-  keywords: ['my donations', 'history', 'food tracker'],
+  title: "My Donations | Food Rescue Hub",
+  description: "View your past and current food donations.",
+  keywords: ["my donations", "history", "food tracker"],
 };
 
 interface DonationsPageProps {
@@ -22,9 +23,13 @@ async function fetchDonations(
   const headersList = headers();
   const host = (await headersList).get("host"); // e.g., 'localhost:3000'
   const protocol = (await headersList).get("x-forwarded-proto") || "http";
-  const url = `${protocol}://${host}/api/donations?${new URLSearchParams(
+  const urlSearchParams = new URLSearchParams(
     searchParams as Record<string, string>
-  ).toString()}`;
+  );
+  if(!urlSearchParams.has('status')) {
+    urlSearchParams.append('status', DonationStatus.Available)
+  }
+  const url = `${protocol}://${host}/api/donations?${urlSearchParams.toString()}`;
   try {
     const cookieStore = cookies();
     const token = (await cookieStore).get("Session")?.value;

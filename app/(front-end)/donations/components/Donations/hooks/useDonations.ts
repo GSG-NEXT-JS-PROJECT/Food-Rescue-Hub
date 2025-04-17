@@ -9,6 +9,7 @@ import {
 } from "../typeDonation";
 import { usePathname, useRouter } from "next/navigation";
 import socket from "@/lib/socketClient";
+import { DonationStatus } from "@/@types";
 
 export const useDonations = (
   initialData: ApiResponse,
@@ -24,7 +25,7 @@ export const useDonations = (
     endDate: initialFilters?.endDate || "",
     minAmount: initialFilters?.minAmount || "",
     maxAmount: initialFilters?.maxAmount || "",
-    status: initialFilters?.status || "",
+    status: initialFilters?.status || DonationStatus.Available,
   });
   const [sortBy, setSortBy] = useState(initialFilters.sortBy || "createdAt");
   const [sortOrder, setSortOrder] = useState(
@@ -52,33 +53,49 @@ export const useDonations = (
     limit: limit.toString(),
   };
 
-  // Socket.IO integration for real-time updates
   useEffect(() => {
+    console.log("Socket.IO setup: Joining donations room");
     socket.emit("join-donations");
-    console.log("Joined donations room");
 
     socket.on("connect", () => console.log("Socket.IO connected"));
     socket.on("connect_error", (err) =>
       console.error("Socket.IO connect error:", err)
     );
     socket.on("donation-update", (updatedDonation: DonationResponse) => {
-      console.log("Received donation update:", updatedDonation);
       setData((prev) => {
-        // Check if donation already exists
         const index = prev.donations.findIndex(
           (d) => d._id === updatedDonation._id
         );
+        let newDonations = [...prev.donations];
+
         if (index >= 0) {
-          // Update existing donation
-          const updatedDonations = [...prev.donations];
-          updatedDonations[index] = updatedDonation;
+          if (
+            updatedDonation.status === DonationStatus.Expired ||
+            updatedDonation.status === DonationStatus.Claimed
+          ) {
+            // Remove if status filter is set and not Expired
+            if (tempFilters.status !== updatedDonation.status) {
+              newDonations.splice(index, 1);
+              // Force API refresh to ensure sync
+              return {
+                ...prev,
+                donations: [...newDonations],
+                total: prev.total - 1,
+              };
+            }
+            newDonations[index] = { ...updatedDonation };
+            return {
+              ...prev,
+              donations: newDonations,
+            };
+          }
+          newDonations[index] = updatedDonation;
           return {
             ...prev,
-            donations: updatedDonations,
+            donations: newDonations,
           };
         }
 
-        // Handle new donation
         const matchesFilters = checkDonationMatchesFilters(updatedDonation, {
           keyword: search,
           foodType: tempFilters.foodType,
@@ -91,20 +108,17 @@ export const useDonations = (
           sortOrder,
         });
 
-        if (!matchesFilters) {
-          // Donation doesn’t match filters, increment total only
-          return {
-            ...prev,
-            total: prev.total + 1,
-          };
+        if (
+          !matchesFilters ||
+          updatedDonation.status === DonationStatus.Expired ||
+          updatedDonation.status === DonationStatus.Claimed
+        ) {
+          return prev;
         }
 
-        // Add new donation to the start
-        const newDonations = [updatedDonation, ...prev.donations];
-
-        // Trim to respect limit (simulate pagination)
+        newDonations = [updatedDonation, ...newDonations];
         if (newDonations.length > limit) {
-          newDonations.pop(); // Remove oldest to stay within limit
+          newDonations.pop();
         }
 
         return {
@@ -116,6 +130,7 @@ export const useDonations = (
     });
 
     return () => {
+      console.log("Cleaning up Socket.IO listeners");
       socket.off("connect");
       socket.off("connect_error");
       socket.off("donation-update");
@@ -125,11 +140,10 @@ export const useDonations = (
 
   // Debounced search
   useEffect(() => {
+    if (initialRender.current) {
+      return;
+    }
     const timer = setTimeout(() => {
-      if(initialRender.current) {
-        initialRender.current = false;
-        return;
-      }
       setIsLoading(true);
       startTransition(() => {
         const params = createCleanParams({
@@ -154,6 +168,10 @@ export const useDonations = (
   }, [search]);
 
   useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
     applyFilters();
   }, [sortBy, sortOrder]);
 

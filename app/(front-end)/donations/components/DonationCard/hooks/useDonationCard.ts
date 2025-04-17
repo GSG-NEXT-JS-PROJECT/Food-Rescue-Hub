@@ -57,7 +57,6 @@ export const useDonationCard = (donation: DonationResponse) => {
   };
 
   return {
-    location,
     formatDate,
     getTimeRemaining,
     handleClaimDonation,
