@@ -39,7 +39,6 @@ async function fetchDonations(
         Authorization: `Bearer ${token}`, // Pass the token to the API
       },
     });
-    console.log(response.status);
     if (!response.ok) throw new Error("Failed to fetch donations");
     return response.json();
   } catch (error) {

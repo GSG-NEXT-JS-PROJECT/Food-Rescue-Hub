@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { FC } from "react";
 import { Form, FormikProvider } from "formik";
-import { FoodType } from "@/@types";
+import { FoodType, LocationType } from "@/@types";
 import usePostDonation from "./hooks/usePostDonation";
 import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
@@ -21,8 +21,12 @@ import {
 import { cn } from "@/lib/utils";
 import TextAreaField from "@/components/text-area";
 
-const PostDonationForm = () => {
-  const { formik, userLocation } = usePostDonation();
+interface PostDonationFormProps {
+  userLocation: LocationType;
+}
+
+const PostDonationForm: FC<PostDonationFormProps> = ({ userLocation }) => {
+  const { formik } = usePostDonation(userLocation);
 
   return (
     <div>
@@ -108,7 +112,7 @@ const PostDonationForm = () => {
 
                 {/* Google Places Autocomplete */}
                 <GooglePlacesAutocomplete
-                  defaultAddress={userLocation.address}
+                  defaultAddress={userLocation?.address}
                 />
               </div>
 

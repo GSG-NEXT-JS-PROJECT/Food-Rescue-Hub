@@ -4,17 +4,10 @@ import { useFormik } from "formik";
 import { generateInitialValues } from "../constant";
 import { validationSchemaPostDonation } from "../ValidationSchemaNewDonation";
 import { IPostDonation } from "../type";
-import { useEffect, useState } from "react";
-import { IUser, LocationType } from "@/@types";
+import { LocationType } from "@/@types";
 import { toast } from "sonner";
 
-const usePostDonation = () => {
-  const [userLocation, setUserLocation] = useState<LocationType>({
-    lat: 0,
-    lng: 0,
-    address: "",
-  });
-
+const usePostDonation = (userLocation: LocationType) => {
   const formik = useFormik<IPostDonation>({
     initialValues: generateInitialValues(userLocation),
     onSubmit: (values, { resetForm, setSubmitting }) => {
@@ -22,16 +15,8 @@ const usePostDonation = () => {
     },
     validationSchema: validationSchemaPostDonation,
     validateOnMount: true,
-    enableReinitialize: true,
+    // enableReinitialize: true,
   });
-
-  useEffect(() => {
-    fetchUserProfile().then(async (location) => {
-      if (location) {
-        setUserLocation(location);
-      }
-    });
-  }, []);
 
   async function handlePostDonation(
     values: IPostDonation,
@@ -74,18 +59,7 @@ const usePostDonation = () => {
     }
   }
 
-  async function fetchUserProfile() {
-    try {
-      const response = await fetch("/api/user/profile");
-      const data: IUser = await response.json();
-      return data.location;
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      return null;
-    }
-  }
-
-  return { formik, userLocation };
+  return { formik };
 };
 
 export default usePostDonation;
