@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SignupForm from "./components/SignupForm";
 
 export const metadata = {
-  title: "Sign Up | Food Rescue Hub",
+  title: "Sign Up",
   description: "Create a new account to start donating or rescuing food.",
   keywords: ["sign up", "register", "create account", "food rescue"],
 };

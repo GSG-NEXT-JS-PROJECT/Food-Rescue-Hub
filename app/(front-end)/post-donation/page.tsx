@@ -4,7 +4,7 @@ import { getServerOrigin } from "@/lib/getServerOrigin";
 import { cookies } from "next/headers";
 
 export const metadata = {
-  title: "Post Donation | Food Rescue Hub",
+  title: "Post Donation",
   description: "Share your surplus food and help reduce waste.",
   keywords: ["food rescue", "donation", "zero waste", "sustainability"],
 };

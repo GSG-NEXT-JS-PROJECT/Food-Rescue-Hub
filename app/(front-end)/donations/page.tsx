@@ -9,10 +9,19 @@ import { DonationStatus } from "@/@types";
 import { getServerOrigin } from "@/lib/getServerOrigin";
 
 export const metadata = {
-  title: "My Donations | Food Rescue Hub",
-  description: "View your past and current food donations.",
-  keywords: ["my donations", "history", "food tracker"],
-};
+  title: 'Donations',
+  description:
+    'Browse all food donations shared by the community. Claim surplus food and help reduce waste today.',
+  keywords: [
+    'available donations',
+    'claim food',
+    'food sharing',
+    'surplus food',
+    'rescue food',
+    'community support',
+    'food rescue hub'
+  ],
+}
 
 interface DonationsPageProps {
   searchParams: Promise<SearchParamsType>;
