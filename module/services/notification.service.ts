@@ -28,7 +28,7 @@ class NotificationService {
     }
 
     // Emit via Socket.IO
-    await fetch(`${this.SOCKET_IO_URL}/emit-donation-update`, {
+    await fetch(`${this.SOCKET_IO_URL}/emit-notification`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
