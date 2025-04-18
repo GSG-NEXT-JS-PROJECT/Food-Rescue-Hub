@@ -20,7 +20,7 @@ class UserService {
     }
 
     return {
-      id: user._id,
+      id: user._id as string,
       name: user.name,
       email: user.email,
       location: user.location,

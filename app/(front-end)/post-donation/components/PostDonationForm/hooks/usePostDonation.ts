@@ -2,49 +2,31 @@
 
 import { useFormik } from "formik";
 import { generateInitialValues } from "../constant";
-import { validationSchemaNewDonation } from "../ValidationSchemaNewDonation";
-import { INewDonation } from "../type";
-import { useEffect, useState } from "react";
-import { IUser, LocationType } from "@/@types";
+import { validationSchemaPostDonation } from "../ValidationSchemaNewDonation";
+import { IPostDonation } from "../type";
+import { LocationType } from "@/@types";
 import { toast } from "sonner";
-import { reverseGeocode } from "@/lib/location";
 
-const useNewDonation = () => {
-  const [userLocation, setUserLocation] = useState<LocationType>({
-    lat: 0,
-    lng: 0,
-  });
-  const [defaultAddress, setDefaultAddress] = useState<string>("");
-
-  const formik = useFormik<INewDonation>({
+const usePostDonation = (userLocation: LocationType) => {
+  const formik = useFormik<IPostDonation>({
     initialValues: generateInitialValues(userLocation),
     onSubmit: (values, { resetForm, setSubmitting }) => {
       handlePostDonation(values, resetForm, setSubmitting);
     },
-    validationSchema: validationSchemaNewDonation,
+    validationSchema: validationSchemaPostDonation,
     validateOnMount: true,
     // enableReinitialize: true,
   });
 
-  useEffect(() => {
-    fetchUserProfile().then(async (location) => {
-      if (location) {
-        setUserLocation(location);
-        const address = await reverseGeocode(location.lat, location.lng);
-        setDefaultAddress(address);
-      }
-    });
-  }, []);
-
   async function handlePostDonation(
-    values: INewDonation,
+    values: IPostDonation,
     resetForm: () => void,
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     setSubmitting(true);
 
     try {
-      const donationData: INewDonation = {
+      const donationData: IPostDonation = {
         title: values.title,
         description: values.description,
         quantity: values.quantity,
@@ -77,18 +59,7 @@ const useNewDonation = () => {
     }
   }
 
-  async function fetchUserProfile() {
-    try {
-      const response = await fetch("/api/user/profile");
-      const data: IUser = await response.json();
-      return data.location;
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      return null;
-    }
-  }
-
-  return { formik, defaultAddress };
+  return { formik };
 };
 
-export default useNewDonation;
+export default usePostDonation;

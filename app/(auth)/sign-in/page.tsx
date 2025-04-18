@@ -4,7 +4,7 @@ import Icons from "@/components/ui/icons";
 import Link from "next/link";
 
 export const metadata = {
-  title: 'Sign In | Food Rescue Hub',
+  title: 'Sign In',
   description: 'Access your Food Rescue Hub account to donate or receive food.',
   keywords: ['sign in', 'login', 'account', 'food donation'],
 };

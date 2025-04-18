@@ -1,16 +1,27 @@
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { FC } from "react";
 import {
   ApiResponse,
   SearchParamsType,
 } from "./components/Donations/typeDonation";
 import Donations from "./components/Donations";
+import { DonationStatus } from "@/@types";
+import { getServerOrigin } from "@/lib/getServerOrigin";
 
 export const metadata = {
-  title: 'My Donations | Food Rescue Hub',
-  description: 'View your past and current food donations.',
-  keywords: ['my donations', 'history', 'food tracker'],
-};
+  title: 'Donations',
+  description:
+    'Browse all food donations shared by the community. Claim surplus food and help reduce waste today.',
+  keywords: [
+    'available donations',
+    'claim food',
+    'food sharing',
+    'surplus food',
+    'rescue food',
+    'community support',
+    'food rescue hub'
+  ],
+}
 
 interface DonationsPageProps {
   searchParams: Promise<SearchParamsType>;
@@ -19,12 +30,14 @@ interface DonationsPageProps {
 async function fetchDonations(
   searchParams: SearchParamsType
 ): Promise<ApiResponse> {
-  const headersList = headers();
-  const host = (await headersList).get("host"); // e.g., 'localhost:3000'
-  const protocol = (await headersList).get("x-forwarded-proto") || "http";
-  const url = `${protocol}://${host}/api/donations?${new URLSearchParams(
+  const serverOrigin = await getServerOrigin(); 
+  const urlSearchParams = new URLSearchParams(
     searchParams as Record<string, string>
-  ).toString()}`;
+  );
+  if(!urlSearchParams.has('status')) {
+    urlSearchParams.append('status', DonationStatus.Available)
+  }
+  const url = `${serverOrigin}/api/donations?${urlSearchParams.toString()}`;
   try {
     const cookieStore = cookies();
     const token = (await cookieStore).get("Session")?.value;
@@ -35,7 +48,6 @@ async function fetchDonations(
         Authorization: `Bearer ${token}`, // Pass the token to the API
       },
     });
-    console.log(response.status);
     if (!response.ok) throw new Error("Failed to fetch donations");
     return response.json();
   } catch (error) {

@@ -18,7 +18,7 @@ export default function Unauthorized() {
         </p>
         <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
           <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
-            <Link href="/sign-in">Log In</Link>
+            <Link href="/sign-in">Sign In</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
             <Link href="/sign-up">Sign Up</Link>

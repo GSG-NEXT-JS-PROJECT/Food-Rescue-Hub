@@ -1,4 +1,4 @@
-import { IDonation } from "@/@types";
+import { DonationStatus, IDonation } from "@/@types";
 import dbConnect from "@/DB/connection";
 import Donation, { DonationDocument } from "@/DB/model/donation.model";
 import { Types } from "mongoose";
@@ -32,13 +32,21 @@ class DonationRepository {
     limit: number,
     sort: SortOptions
   ) {
-    return await Donation.find(filter).skip(skip).limit(limit).sort(sort);
+    const donations = await Donation.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .populate({
+        path: "donorId",
+        select: "-password", // exclude password
+      });
+    return donations;
   }
 
   async findByIdAndUpdate(
     donationId: string,
     updateData: Partial<DonationDocument>
-  ) {
+  ): Promise<DonationDocument> {
     return await Donation.findByIdAndUpdate(
       new Types.ObjectId(donationId),
       updateData,
@@ -50,6 +58,13 @@ class DonationRepository {
     await dbConnect();
     const donation = await Donation.findById(id);
     return donation;
+  }
+
+  async findExpiredDonations(currentTime: Date) {
+    return await Donation.find({
+      status: DonationStatus.Available,
+      pickupDeadline: { $lte: currentTime.toISOString() },
+    }).populate("donorId", "name deviceToken");
   }
 }
 

@@ -6,7 +6,7 @@ const routeAccess: RouteAccess = {
     GET: [Role.Donor],
   },
   "/donations": {
-    GET: [Role.Recipient, Role.Donor],
+    GET: [Role.Recipient, Role.Admin],
   },
   "/analytics": {
     GET: [Role.Admin],

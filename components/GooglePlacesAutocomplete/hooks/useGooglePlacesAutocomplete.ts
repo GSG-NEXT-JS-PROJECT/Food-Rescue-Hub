@@ -1,10 +1,9 @@
 import { LocationType } from "@/@types";
-import { INewDonation } from "../../NewDonationForm/type";
 import { useFormikContext } from "formik";
 import { useState } from "react";
 
 const useGooglePlacesAutocomplete = () => {
-  const formik = useFormikContext<INewDonation>();
+  const formik = useFormikContext();
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
 
@@ -17,6 +16,7 @@ const useGooglePlacesAutocomplete = () => {
         const location: LocationType = {
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng(),
+          address: place.name || "",
         };
         setFieldValue("location", location);
       }
@@ -31,7 +31,7 @@ const useGooglePlacesAutocomplete = () => {
     onPlaceChanged(formik.setFieldValue);
   };
 
-  return {handleLoad, handlePlaceChanged};
+  return { handleLoad, handlePlaceChanged };
 };
 
 export default useGooglePlacesAutocomplete;

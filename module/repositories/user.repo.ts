@@ -8,9 +8,10 @@ export class UserRepository {
     return await userModel.findOne({ email });
   }
 
-  async findUserById(userId: string) {
+  async findUserById(userId: string): Promise<UserDocument> {
     await dbConnect();
-    return await userModel.findById(userId);
+    const user = await userModel.findById(userId);
+    return user;
   }
 
   async findUserByVerificationToken(
