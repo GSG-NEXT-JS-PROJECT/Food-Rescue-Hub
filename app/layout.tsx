@@ -18,7 +18,7 @@ title: {
   description:
     "Application combat food waste by connecting food donors—such as restaurants, grocery stores, and farms—with recipients, including charities and individuals. The platform facilitates the redistribution of surplus food before it expires, offering a practical solution to a pressing real-world problem.",
   icons: {
-    icon: "/logo.jpg", 
+    icon: "/logo.svg", 
   },
 };
 

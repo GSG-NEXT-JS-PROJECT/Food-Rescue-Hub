@@ -20,6 +20,8 @@ import { useNavBar } from "./hooks/useNavBar";
 import { LandingLinks } from "./constant";
 import Notifications from "../Notifications";
 import { useState } from "react";
+import logo from '@/public/logo.svg'
+import Image from "next/image";
 
 type NavbarProps = {
   user: UserProfile | undefined;
@@ -89,7 +91,9 @@ export default function Navbar({ user }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
-            <span className="text-green-600 text-xl font-bold">FRC</span>
+            <span className="text-green-600 text-xl font-bold">
+              <Image src={logo} alt="logo"/>
+            </span>
           </div>
           <div className="hidden lg:flex lg:items-center lg:justify-center">
             {createNavLinks("desktop")}
