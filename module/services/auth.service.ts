@@ -6,9 +6,24 @@ import UserRepository from "../repositories/user.repo";
 import { EmailTemplate } from "@/lib/EmailTemplate";
 import authRepository from "../repositories/auth.repo";
 import { getServerOrigin } from "@/lib/getServerOrigin";
+import { validationSchemaSignin } from "@/app/(auth)/sign-in/components/SigninForm/ValidationSchemaSignin";
+import * as yup from "yup";
+import { validationSchemaSignup } from "@/app/(auth)/sign-up/components/SignupForm/ValidationSchemaSignup";
 
 class AuthService {
   async signUp(data: IUser) {
+    try {
+      await validationSchemaSignup.validate(
+        data,
+        { abortEarly: false }
+      );
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        throw new Error(error.errors.join(", "));
+      }
+      throw error;
+    }
+
     const existingUser = await UserRepository.findUserByEmail(data.email);
     if (existingUser) {
       throw new Error("Email is already in use");
@@ -33,6 +48,18 @@ class AuthService {
   }
 
   async signIn({ email, password }: { email: string; password: string }) {
+    try {
+      await validationSchemaSignin.validate(
+        { email, password },
+        { abortEarly: false }
+      );
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        throw new Error(error.errors.join(", "));
+      }
+      throw error;
+    }
+
     const user = await UserRepository.findUserByEmail(email);
 
     if (!user) {

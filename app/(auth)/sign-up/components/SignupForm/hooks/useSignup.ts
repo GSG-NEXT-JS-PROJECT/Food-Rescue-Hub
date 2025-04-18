@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { FormValues } from "../type";
 import { INITIAL_VALUES } from "../constant";
 import { toast } from "sonner";
-import { validationSchema } from "../ValidationSchema";
+import { validationSchemaSignup } from "../ValidationSchemaSignup";
 
 const useSignup = () => {
   const handleSignup = async (
@@ -40,7 +40,7 @@ const useSignup = () => {
     onSubmit: (values, { resetForm, setSubmitting }) => {
       handleSignup(values, resetForm, setSubmitting);
     },
-    validationSchema,
+    validationSchema: validationSchemaSignup,
     validateOnMount: true,
   });
 
