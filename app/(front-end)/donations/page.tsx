@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { FC } from "react";
 import {
   ApiResponse,
@@ -6,6 +6,7 @@ import {
 } from "./components/Donations/typeDonation";
 import Donations from "./components/Donations";
 import { DonationStatus } from "@/@types";
+import { getServerOrigin } from "@/lib/getServerOrigin";
 
 export const metadata = {
   title: "My Donations | Food Rescue Hub",
@@ -20,16 +21,14 @@ interface DonationsPageProps {
 async function fetchDonations(
   searchParams: SearchParamsType
 ): Promise<ApiResponse> {
-  const headersList = headers();
-  const host = (await headersList).get("host"); // e.g., 'localhost:3000'
-  const protocol = (await headersList).get("x-forwarded-proto") || "http";
+  const serverOrigin = await getServerOrigin(); 
   const urlSearchParams = new URLSearchParams(
     searchParams as Record<string, string>
   );
   if(!urlSearchParams.has('status')) {
     urlSearchParams.append('status', DonationStatus.Available)
   }
-  const url = `${protocol}://${host}/api/donations?${urlSearchParams.toString()}`;
+  const url = `${serverOrigin}/api/donations?${urlSearchParams.toString()}`;
   try {
     const cookieStore = cookies();
     const token = (await cookieStore).get("Session")?.value;

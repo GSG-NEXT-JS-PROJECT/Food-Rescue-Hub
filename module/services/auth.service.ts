@@ -5,7 +5,7 @@ import { comparePassword, hashPassword } from "@/lib/hashAndCompare";
 import UserRepository from "../repositories/user.repo";
 import { EmailTemplate } from "@/lib/EmailTemplate";
 import authRepository from "../repositories/auth.repo";
-import { headers } from "next/headers";
+import { getServerOrigin } from "@/lib/getServerOrigin";
 
 class AuthService {
   async signUp(data: IUser) {
@@ -17,10 +17,8 @@ class AuthService {
     const newUser = await authRepository.createUser(data, hashedPassword);
     const verificationToken = newUser.getVerificationToken();
     await newUser.save();
-    const headersList = headers();
-    const host = (await headersList).get("host"); // e.g., 'localhost:3000'
-    const protocol = (await headersList).get("x-forwarded-proto") || "http";
-    const verificationLink = `${protocol}://${host}/verify-email?verifyToken=${verificationToken}&id=${newUser?._id}`;
+    const serverOrigin = await getServerOrigin();
+    const verificationLink = `${serverOrigin}/verify-email?verifyToken=${verificationToken}&id=${newUser?._id}`;
     const message = EmailTemplate({
       link: verificationLink,
       title: "Verify Your Email Address",
@@ -77,10 +75,8 @@ class AuthService {
     }
     const resetToken = user.getVerificationToken();
     await user.save();
-    const headersList = headers();
-    const host = (await headersList).get("host"); // e.g., 'localhost:3000'
-    const protocol = (await headersList).get("x-forwarded-proto") || "http";
-    const ResetLink = `${protocol}://${host}/reset-password?resetToken=${resetToken}&id=${user?._id}`;
+    const serverOrigin = await getServerOrigin();
+    const ResetLink = `${serverOrigin}/reset-password?resetToken=${resetToken}&id=${user?._id}`;
     const message = EmailTemplate({
       link: ResetLink,
       title: "",
