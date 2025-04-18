@@ -1,8 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { RequestMethod, Role, TokenPayload } from "../@types";
 import { RouteAccessRight } from "../route/types";
+import { verifyToken } from "@/lib/generateAndVerify";
 
-export function apiMiddleware(
+export async function apiMiddleware(
   req: NextRequest,
   session: TokenPayload | null | undefined,
   pageAccessRight: RouteAccessRight | undefined
@@ -15,6 +16,14 @@ export function apiMiddleware(
     (pathname === "/api/donations" && scope === "total")
   ) {
     return NextResponse.next();
+  }
+
+  if (!session) {
+    const authHeader = req.headers.get("authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1]; // Extract token from "Bearer <token>"
+      session = await verifyToken(token);
+    }
   }
 
   if (!session) {

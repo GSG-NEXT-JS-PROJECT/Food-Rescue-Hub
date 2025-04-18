@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DonationStatus, IDonation, LocationType, Role } from "@/@types";
+import { DonationStatus, IDonation } from "@/@types";
 import { Types } from "mongoose";
 import donationRepo from "../repositories/donation.repo";
 import { DonationRequestBody } from "@/app/api/donations/route";
-import { validationSchemaNewDonation } from "@/app/(front-end)/donations/new/components/NewDonationForm/ValidationSchemaNewDonation";
+import { validationSchemaPostDonation } from "@/app/(front-end)/post-donation/components/PostDonationForm/ValidationSchemaNewDonation";
 import * as yup from "yup";
+import notificationService from "./notification.service";
+import userRepo from "../repositories/user.repo";
+import Donation, { DonationDocument } from "@/DB/model/donation.model";
+import { convertLocalToISO } from "@/lib/dateUtils";
 
 interface FilterParams {
   scope?: string;
@@ -24,9 +28,21 @@ interface FilterParams {
   keyword?: string;
 }
 class DonationService {
+  private SOCKET_IO_URL: string;
+
+  constructor() {
+    const SOCKET_IO_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL;
+
+    if (!SOCKET_IO_URL) {
+      throw new Error("SOCKET_IO_URL is not defined in environment variables");
+    }
+
+    this.SOCKET_IO_URL = SOCKET_IO_URL;
+  }
+
   async createDonation(donorId: string, data: DonationRequestBody) {
     try {
-      await validationSchemaNewDonation.validate(data, { abortEarly: false });
+      await validationSchemaPostDonation.validate(data, { abortEarly: false });
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         throw new Error(error.errors.join(", "));
@@ -52,7 +68,7 @@ class DonationService {
       description,
       quantity,
       foodType,
-      pickupDeadline,
+      pickupDeadline: convertLocalToISO(pickupDeadline),
       location,
       imageUrl,
       status: DonationStatus.Available,
@@ -60,6 +76,9 @@ class DonationService {
 
     // Delegate to repository
     const savedDonation = await donationRepo.createDonation(donationData);
+
+    // Emit donation update
+    await this.emitDonationUpdate(savedDonation);
 
     return {
       id: savedDonation._id,
@@ -75,7 +94,7 @@ class DonationService {
     };
   }
 
-  async getDonations(userId: string, userRole: string, params: FilterParams) {
+  async getDonations(userRole: string, params: FilterParams) {
     const {
       scope = "all",
       page = 1,
@@ -94,28 +113,18 @@ class DonationService {
       keyword,
     } = params;
 
+    const now = new Date();
+    // Mark expired donations
+    await Donation.updateMany(
+      {
+        status: DonationStatus.Available,
+        pickupDeadline: { $lte: now.toISOString() },
+      },
+      { status: DonationStatus.Expired, updatedAt: new Date() }
+    );
+
     // Build the filter object
     const filter: any = {};
-
-    // Apply user-based filtering
-    if (userRole === Role.Donor) {
-      filter.donorId = new Types.ObjectId(userId);
-    } else {
-      filter.recipientId = new Types.ObjectId(userId);
-    }
-
-    // Add geospatial filter if lat/lon are provided
-    // if (lat !== null && lng !== null) {
-    //   filter.location = {
-    //     $near: {
-    //       $geometry: {
-    //         type: "Point",
-    //         coordinates: [lng, lat], // [longitude, latitude]
-    //       },
-    //       $maxDistance: radius * 1000, // Convert km to meters
-    //     },
-    //   };
-    // }
 
     // Apply additional filters
     if (status) filter.status = status;
@@ -153,8 +162,7 @@ class DonationService {
         return { total };
       }
 
-      case "all":
-      case "user": {
+      case "all": {
         const skip = (page - 1) * limit;
         const donations = await donationRepo.findDonations(
           filter,
@@ -175,6 +183,105 @@ class DonationService {
       default:
         throw new Error("Invalid scope");
     }
+  }
+
+  async claimDonation(donationId: string, recipientId: string) {
+    // Validate inputs
+    if (!donationId) throw new Error("Donation ID is required");
+    if (!Types.ObjectId.isValid(donationId))
+      throw new Error("Invalid donation ID");
+    if (!recipientId) throw new Error("Recipient ID is required");
+    if (!Types.ObjectId.isValid(recipientId))
+      throw new Error("Invalid recipient ID");
+
+    const donation = await donationRepo.findById(donationId);
+
+    if (!donation) {
+      throw new Error("Donation not found");
+    }
+
+    if (donation.status !== DonationStatus.Available || donation.recipientId) {
+      throw new Error("Donation is claimed or expired");
+    }
+
+    // Update donation
+    const updatedDonation = await donationRepo.findByIdAndUpdate(donationId, {
+      status: DonationStatus.Claimed,
+      recipientId: new Types.ObjectId(recipientId),
+    });
+
+    // Notify donor
+    const { name: recipientName } = await userRepo.findUserById(recipientId);
+    const donorId = updatedDonation.donorId._id.toString();
+    const message = `Your donation "${updatedDonation.title}" was claimed by ${recipientName}!`;
+    await notificationService.notifyUser(
+      donorId,
+      message,
+      updatedDonation.donorId.deviceToken
+    );
+
+    // Emit donation update
+    await this.emitDonationUpdate(updatedDonation);
+
+    return {
+      id: updatedDonation._id,
+      donorId: updatedDonation.donorId._id,
+      recipientId: updatedDonation.recipientId,
+      title: updatedDonation.title,
+      status: updatedDonation.status,
+    };
+  }
+
+  async emitDonationUpdate(donation: DonationDocument) {
+    try {
+      const socketRes = await fetch(
+        `${this.SOCKET_IO_URL}/emit-donation-update`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ donation }),
+        }
+      );
+      if (!socketRes.ok) {
+        console.error(
+          "Socket.IO donation update failed:",
+          await socketRes.json()
+        );
+      }
+    } catch (error) {
+      console.error("Error emitting donation update:", error);
+    }
+  }
+
+  async expireDonations() {
+    const now = new Date();
+    const expiredDonations = await donationRepo.findExpiredDonations(now);
+    let updatedCount = 0;
+
+    for (const donation of expiredDonations) {
+      const updatedDonation = await donationRepo.findByIdAndUpdate(
+        donation._id.toString(),
+        {
+          status: DonationStatus.Expired,
+        }
+      );
+
+      if (updatedDonation) {
+        updatedCount++;
+        // Notify donor
+        const donorId = updatedDonation.donorId._id.toString();
+        const message = `Your donation "${updatedDonation.title}" has expired.`;
+        await notificationService.notifyUser(
+          donorId,
+          message,
+          updatedDonation.donorId.deviceToken
+        );
+        // Emit donation update
+        await this.emitDonationUpdate(updatedDonation);
+      }
+    }
+
+    return updatedCount;
   }
 }
 

@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 export interface LocationType {
   lat: number;
   lng: number;
+  address: string
 }
 
 export enum FoodType {
@@ -81,8 +82,8 @@ export enum RequestMethod {
 }
 
 export interface TokenPayload extends JwtPayload {
-    userId: string;
-    userRole: Role;
+  userId: string;
+  userRole: Role;
 }
 
 export interface EmailTemplateProps {
@@ -91,4 +92,15 @@ export interface EmailTemplateProps {
   description: string;
   secondary: string;
   button?: string;
+}
+
+export type UserProfile = Omit<IUser, "password" | "isVerified"> & {
+  id: string;
+  donations: IDonation;
+};
+
+export interface INotification {
+  userId: Types.ObjectId;
+  message: string;
+  read: boolean;
 }

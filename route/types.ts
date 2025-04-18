@@ -11,7 +11,10 @@ export type RouteAccessName =
   | "/unauthorized"
   | "/already-signed-in"
   | "/api/donations"
-  | "/donations/new";
+  | "/post-donation"
+  | "/donations"
+  | "/api/claim-donation"
+  | "/analytics";
 
 export type RouteAccessRight = {
   [method in RequestMethod]?: Role[];
