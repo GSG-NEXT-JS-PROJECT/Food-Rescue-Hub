@@ -28,6 +28,18 @@ interface FilterParams {
   keyword?: string;
 }
 class DonationService {
+  private SOCKET_IO_URL: string;
+
+  constructor() {
+    const SOCKET_IO_URL = process.env.NEXT_PUBLIC_SOCKET_IO_URL;
+
+    if (!SOCKET_IO_URL) {
+      throw new Error("SOCKET_IO_URL is not defined in environment variables");
+    }
+
+    this.SOCKET_IO_URL = SOCKET_IO_URL;
+  }
+
   async createDonation(donorId: string, data: DonationRequestBody) {
     try {
       await validationSchemaPostDonation.validate(data, { abortEarly: false });
@@ -66,14 +78,11 @@ class DonationService {
     const savedDonation = await donationRepo.createDonation(donationData);
 
     // Emit donation update
-    const socketRes = await fetch(
-      "http://localhost:4000/emit-donation-update",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ donation: savedDonation }),
-      }
-    );
+    const socketRes = await fetch(`${this.SOCKET_IO_URL}/emit-donation-update`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ donation: savedDonation }),
+    });
     console.log(socketRes.status);
     const socketData = await socketRes.json();
     console.log("Socket.IO donation update response:", socketData);
@@ -223,14 +232,11 @@ class DonationService {
     );
 
     // Emit donation update
-    const socketDonationRes = await fetch(
-      "http://localhost:4000/emit-donation-update",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ donation: updatedDonation }),
-      }
-    );
+    const socketDonationRes = await fetch(`${this.SOCKET_IO_URL}/emit-donation-update`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ donation: updatedDonation }),
+    });
     const socketDonationData = await socketDonationRes.json();
     console.log("Socket.IO donation update response:", socketDonationData);
 
@@ -251,14 +257,11 @@ class DonationService {
 
   async emitDonationUpdate(donation: DonationDocument) {
     try {
-      const socketRes = await fetch(
-        "http://localhost:4000/emit-donation-update",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ donation }),
-        }
-      );
+      const socketRes = await fetch(SOCKET_IO_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donation }),
+      });
       if (!socketRes.ok) {
         console.error(
           "Socket.IO donation update failed:",
