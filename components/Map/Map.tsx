@@ -158,11 +158,11 @@ export default function Map({ donations = [], singleDonation }: MapProps) {
   }, []);
 
   if (loadError) {
-    return <Spinner type="circle" size="xl" />;
+    return <div>Error loading map. Please try again later.</div>;
   }
 
   if (!isLoaded) {
-    return <div>Loading map...</div>;
+    return <Spinner type="circle" size="xl" />;
   }
 
   return (
@@ -176,7 +176,7 @@ export default function Map({ donations = [], singleDonation }: MapProps) {
       >
         {markersData.map((donation) => (
           <MarkerF
-            key={donation.id}
+            key={donation._id}
             position={{
               lat: donation.location.lat,
               lng: donation.location.lng,
