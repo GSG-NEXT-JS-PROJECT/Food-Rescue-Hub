@@ -13,7 +13,7 @@ export default function Forbidden() {
           Access Forbidden
         </h1>
         <p className="max-w-[500px] text-muted-foreground">
-          Sorry, you don't have permission to access this page. If you believe
+          Sorry, you don&apos;t have permission to access this page. If you believe
           this is an error, please contact support.
         </p>
         <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
