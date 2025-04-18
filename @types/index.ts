@@ -94,7 +94,10 @@ export interface EmailTemplateProps {
   button?: string;
 }
 
-export type UserProfile = Omit<IUser, "password" | "isVerified"> & {id: string};
+export type UserProfile = Omit<IUser, "password" | "isVerified"> & {
+  id: string;
+  donations: IDonation;
+};
 
 export interface INotification {
   userId: Types.ObjectId;
