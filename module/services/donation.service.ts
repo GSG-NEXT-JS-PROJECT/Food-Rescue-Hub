@@ -78,18 +78,7 @@ class DonationService {
     const savedDonation = await donationRepo.createDonation(donationData);
 
     // Emit donation update
-    const socketRes = await fetch(`${this.SOCKET_IO_URL}/emit-donation-update`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ donation: savedDonation }),
-    });
-    console.log(socketRes.status);
-    const socketData = await socketRes.json();
-    console.log("Socket.IO donation update response:", socketData);
-
-    if (!socketRes.ok) {
-      console.error("Socket.IO donation update failed:", socketData);
-    }
+    await this.emitDonationUpdate(savedDonation);
 
     return {
       id: savedDonation._id,
@@ -232,19 +221,7 @@ class DonationService {
     );
 
     // Emit donation update
-    const socketDonationRes = await fetch(`${this.SOCKET_IO_URL}/emit-donation-update`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ donation: updatedDonation }),
-    });
-    const socketDonationData = await socketDonationRes.json();
-    console.log("Socket.IO donation update response:", socketDonationData);
-
-    if (!socketDonationRes.ok) {
-      throw new Error(
-        `Socket.IO donation update failed: ${socketDonationData}`
-      );
-    }
+    await this.emitDonationUpdate(updatedDonation);
 
     return {
       id: updatedDonation._id,
@@ -257,11 +234,14 @@ class DonationService {
 
   async emitDonationUpdate(donation: DonationDocument) {
     try {
-      const socketRes = await fetch(SOCKET_IO_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ donation }),
-      });
+      const socketRes = await fetch(
+        `${this.SOCKET_IO_URL}/emit-donation-update`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ donation }),
+        }
+      );
       if (!socketRes.ok) {
         console.error(
           "Socket.IO donation update failed:",
