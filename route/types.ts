@@ -1,7 +1,6 @@
 import { RequestMethod, Role } from "@/@types";
-import routeAccess from "./pageAccessRights";
 
-export type PageAccessName =
+export type RouteAccessName =
   | "/"
   | "/sign-in"
   | "/sign-up"
@@ -11,15 +10,16 @@ export type PageAccessName =
   | "/forbidden"
   | "/unauthorized"
   | "/already-signed-in"
-  | "/api/donation";
+  | "/api/donations"
+  | "/post-donation"
+  | "/donations"
+  | "/api/claim-donation"
+  | "/analytics";
 
-export const protectedRoutes: PageAccessName[] = Array.from(routeAccess.keys());
+export type RouteAccessRight = {
+  [method in RequestMethod]?: Role[];
+};
 
-export interface PageAccessRight {
-  roles: Role[];
-  methods: RequestMethod[];
-}
-
-export interface RouteConfigs {
-  pageAccessName: PageAccessName;
-}
+export type RouteAccess = {
+  [path in RouteAccessName]?: RouteAccessRight;
+};

@@ -4,18 +4,39 @@ import { Types } from "mongoose";
 export interface LocationType {
   lat: number;
   lng: number;
+  address: string
 }
 
 export enum FoodType {
-  GrainsCereals = "Grains & Cereals",
-  Vegetables = "Vegetables",
+  Bakery = "Bakery",
+  Dairy = "Dairy",
   Fruits = "Fruits",
-  ProteinSources = "Protein Sources",
-  DairyAlternatives = "Dairy & Dairy Alternatives",
-  FatsOils = "Fats & Oils",
-  SweetsDesserts = "Sweets & Desserts",
+  Vegetables = "Vegetables",
+  Grains = "Grains",
+  Meat = "Meat",
+  Poultry = "Poultry",
+  Fish = "Fish",
+  Seafood = "Seafood",
+  Legumes = "Legumes",
+  Nuts = "Nuts",
+  Seeds = "Seeds",
+  Eggs = "Eggs",
   Beverages = "Beverages",
-  ProcessedFastFoods = "Processed & Fast Foods",
+  Sweets = "Sweets",
+  Snacks = "Snacks",
+  PreparedMeals = "Prepared Meals",
+  CannedGoods = "Canned Goods",
+  FrozenFoods = "Frozen Foods",
+  Spices = "Spices",
+  Condiments = "Condiments",
+  Pasta = "Pasta",
+  Rice = "Rice",
+  Bread = "Bread",
+  Cereals = "Cereals",
+  Oils = "Oils",
+  Soups = "Soups",
+  Sauces = "Sauces",
+  Desserts = "Desserts"
 }
 
 export enum DonationStatus {
@@ -46,7 +67,7 @@ export interface IDonation {
   description?: string;
   quantity: number;
   foodType: FoodType;
-  pickupDeadline: Date;
+  pickupDeadline: string;
   location: LocationType;
   status: DonationStatus;
   imageUrl?: string;
@@ -61,6 +82,25 @@ export enum RequestMethod {
 }
 
 export interface TokenPayload extends JwtPayload {
-    userId: string;
-    userRole: Role;
+  userId: string;
+  userRole: Role;
+}
+
+export interface EmailTemplateProps {
+  link?: string;
+  title: string;
+  description: string;
+  secondary: string;
+  button?: string;
+}
+
+export type UserProfile = Omit<IUser, "password" | "isVerified"> & {
+  id: string;
+  donations: IDonation;
+};
+
+export interface INotification {
+  userId: Types.ObjectId;
+  message: string;
+  read: boolean;
 }

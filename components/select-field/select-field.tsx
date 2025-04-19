@@ -27,7 +27,7 @@ const SelectField: React.FC<SelectFieldProps> = ({ name, label, options, placeho
                 }}
                 defaultValue={defaultValue || field.value}
             >
-                <SelectTrigger className="bg-gray-100 border-none rounded-xl w-full">
+                <SelectTrigger className="bg-gray-100 border-none rounded-md w-full">
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent>

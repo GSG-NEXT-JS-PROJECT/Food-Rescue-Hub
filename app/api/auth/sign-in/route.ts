@@ -23,12 +23,16 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 401 });
+      return NextResponse.json(
+        { error: error.message },
+        {
+          status:
+            error.message.includes("required") ||
+            error.message.includes("Invalid")
+              ? 400
+              : 500,
+        }
+      );
     }
-
-    return NextResponse.json(
-      { error: "An unknown error occurred" },
-      { status: 500 }
-    );
   }
 }
