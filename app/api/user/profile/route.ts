@@ -3,7 +3,7 @@ import userService from "@/module/services/user.service";
 import { Types } from "mongoose";
 import * as yup from "yup";
 import { IUser } from "@/@types";
-import { validationSchemaUpdateUser } from "./validationSchemaUpdateUser";
+import { validationSchemaUpdateUser } from "@/app/(front-end)/profile/components/ProfileSidebar/ValidationSchemaUpdateUser";
 
 export type UserRequestBody = Omit<IUser, "isVerified" | "password">;
 

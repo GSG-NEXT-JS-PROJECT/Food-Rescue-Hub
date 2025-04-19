@@ -3,6 +3,7 @@ import userRepo from "../repositories/user.repo";
 import { Types } from "mongoose";
 import Donation from "@/DB/model/donation.model";
 import { UserRequestBody } from "@/app/api/user/profile/route";
+import { convertISOToLocal } from "@/lib/dateUtils";
 
 class UserService {
   async getUserData(userId: string): Promise<Omit<UserProfile, "donations">> {
@@ -25,6 +26,7 @@ class UserService {
       email: user.email,
       location: user.location,
       role: user.role,
+      createdAt: convertISOToLocal(user.createdAt.toISOString()),
     };
   }
 

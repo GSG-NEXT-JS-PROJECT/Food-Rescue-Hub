@@ -97,6 +97,7 @@ export interface EmailTemplateProps {
 export type UserProfile = Omit<IUser, "password" | "isVerified"> & {
   id: string;
   donations: IDonation;
+  createdAt: string
 };
 
 export interface INotification {
