@@ -14,7 +14,8 @@ export type RouteAccessName =
   | "/post-donation"
   | "/donations"
   | "/api/claim-donation"
-  | "/analytics";
+  | "/analytics"
+  | "/profile";
 
 export type RouteAccessRight = {
   [method in RequestMethod]?: Role[];
