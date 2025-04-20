@@ -43,6 +43,7 @@ export enum DonationStatus {
   Available = "available",
   Claimed = "claimed",
   Expired = "expired",
+  Completed = "completed",
 }
 
 export enum Role {
