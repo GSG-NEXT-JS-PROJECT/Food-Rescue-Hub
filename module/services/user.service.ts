@@ -1,8 +1,8 @@
-import { UserProfile } from "@/@types";
+import { Role, UserProfile } from "@/@types";
 import userRepo from "../repositories/user.repo";
 import { Types } from "mongoose";
-import Donation from "@/DB/model/donation.model";
 import { UserRequestBody } from "@/app/api/user/profile/route";
+import { convertISOToLocal } from "@/lib/dateUtils";
 
 class UserService {
   async getUserData(userId: string): Promise<Omit<UserProfile, "donations">> {
@@ -25,10 +25,11 @@ class UserService {
       email: user.email,
       location: user.location,
       role: user.role,
+      createdAt: convertISOToLocal(user.createdAt.toISOString()),
     };
   }
 
-  async getUserDonations(userId: string) {
+  async getUserDonations(userId: string, role: Role) {
     if (!userId) {
       throw new Error("ID are not found");
     }
@@ -37,9 +38,7 @@ class UserService {
       throw new Error("invalid userId");
     }
 
-    const donations = await Donation.find({
-      $or: [{ donorId: userId }, { recipientId: userId }],
-    });
+    const donations = await userRepo.findUserDonations(userId, role);
     return donations;
   }
 

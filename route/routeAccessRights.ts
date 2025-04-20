@@ -11,6 +11,9 @@ const routeAccess: RouteAccess = {
   "/analytics": {
     GET: [Role.Admin],
   },
+  "/profile": {
+    GET: [Role.Donor, Role.Recipient],
+  },
   "/api/donations": {
     GET: [Role.Recipient, Role.Donor],
     POST: [Role.Donor],

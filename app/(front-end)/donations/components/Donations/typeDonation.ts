@@ -1,18 +1,15 @@
-import { DonationStatus, FoodType, IDonation, IUser } from "@/@types";
+import {
+  DonationWithDonor,
+  DonationStatus,
+  FoodType,
+  IDonation,
+} from "@/@types";
 import { useDonations } from "./hooks/useDonations";
 
 export type SearchParamsType = { [key: string]: string | undefined };
 
-export interface DonationResponse extends Omit<IDonation, "donorId"> {
-  _id: string;
-  createdAt: string;
-  donorId: IUser & {
-    _id: string;
-  };
-}
-
 export interface ApiResponse {
-  donations: DonationResponse[];
+  donations: DonationWithDonor[];
   total: number;
   page: number;
   limit: number;
