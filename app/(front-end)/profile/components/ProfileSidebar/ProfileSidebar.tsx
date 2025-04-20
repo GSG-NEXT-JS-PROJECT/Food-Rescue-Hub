@@ -175,42 +175,6 @@ const ProfileSidebar: FC<ProfileSidebarProps> = ({ userData }) => {
               </div>
             </dl>
           </div>
-
-          {/* Stats */}
-          {/* <div className="border-t border-gray-200">
-        <div className="grid grid-cols-3 divide-x divide-gray-200">
-          <div className="px-4 py-4 text-center bg-white transition-colors hover:bg-emerald-50">
-            <dt className="text-sm font-medium text-gray-500">
-              {userData.role == Role.Donor ? "Donations" : "Claims"}
-            </dt>
-            <dd className="mt-2 text-2xl font-bold text-emerald-600">
-              {userData.role == Role.Donor
-                ? userData.stats.donationsCount
-                : userData.stats.claimsCount}
-            </dd>
-          </div>
-          <div className="px-4 py-4 text-center bg-white transition-colors hover:bg-emerald-50">
-            <dt className="text-sm font-medium text-gray-500">
-              {userData.role == Role.Donor ? " Food Saved" : "Food Rescued"}
-            </dt>
-            <dd className="mt-2 text-2xl font-bold text-emerald-600">
-              {userData.role == Role.Donor
-                ? userData.stats.foodSaved
-                : userData.stats.foodRescued}
-            </dd>
-          </div>
-          <div className="px-4 py-4 text-center bg-white transition-colors hover:bg-emerald-50">
-            <dt className="text-sm font-medium text-gray-500">
-              {userData.role == Role.Donor ? "Impact" : "People Served"}
-            </dt>
-            <dd className="mt-2 text-2xl font-bold text-emerald-600">
-              {userData.role == Role.Donor
-                ? userData.stats.impactPoints
-                : userData.stats.peopleServed}
-            </dd>
-          </div>
-        </div>
-      </div> */}
         </Form>
       </FormikProvider>
     </div>
