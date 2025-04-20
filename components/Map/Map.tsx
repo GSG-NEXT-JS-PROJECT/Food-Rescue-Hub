@@ -7,13 +7,13 @@ import {
   MarkerF,
   StandaloneSearchBox,
 } from "@react-google-maps/api";
-import { DonationResponse } from "@/app/(front-end)/donations/components/Donations/typeDonation";
 import { Spinner } from "../ui/spinner";
+import { DonationWithDonor } from "@/@types";
 
 // Props for the Map component
 interface MapProps {
-  donations?: DonationResponse[];
-  singleDonation?: DonationResponse;
+  donations?: DonationWithDonor[];
+  singleDonation?: DonationWithDonor;
 }
 
 // Map container styling

@@ -1,20 +1,11 @@
 "use client";
 
+import { DonationWithDonor } from "@/@types";
 import { useState } from "react";
-import { DonationResponse } from "../../Donations/typeDonation";
 import { toast } from "sonner";
 
-export const useDonationCard = (donation: DonationResponse) => {
+export const useDonationCard = (donation: DonationWithDonor) => {
   const [isClaiming, setIsClaiming] = useState(false);
-
-  const formatDate = (date: Date): string => {
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  };
 
   const getTimeRemaining = (deadline: Date): string => {
     const now = new Date();
@@ -57,9 +48,8 @@ export const useDonationCard = (donation: DonationResponse) => {
   };
 
   return {
-    formatDate,
     getTimeRemaining,
     handleClaimDonation,
-    isClaiming
+    isClaiming,
   };
 };

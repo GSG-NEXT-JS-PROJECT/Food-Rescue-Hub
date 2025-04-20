@@ -30,17 +30,21 @@ class DonationRepository {
     filter: FilterOptions,
     skip: number,
     limit: number,
-    sort: SortOptions
+    sort: SortOptions,
+    populateFields: string[] = ["donorId"]
   ) {
-    const donations = await Donation.find(filter)
-      .skip(skip)
-      .limit(limit)
-      .sort(sort)
-      .populate({
-        path: "donorId",
-        select: "-password", // exclude password
-      });
-    return donations;
+    const query = Donation.find(filter).skip(skip).limit(limit).sort(sort);
+
+    if (populateFields.length > 0) {
+      query.populate(
+        populateFields.map((field) => ({
+          path: field,
+          select: "-password", // Exclude password
+        }))
+      );
+    }
+
+    return await query.exec();
   }
 
   async findByIdAndUpdate(

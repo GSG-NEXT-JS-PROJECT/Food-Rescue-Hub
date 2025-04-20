@@ -2,25 +2,21 @@
 
 import { MapPin, Clock, Tag } from "lucide-react";
 import Image from "next/image";
-import noImage from "./assets/no-image.png";
+import noImage from "@/public/no-image.png";
 import { Button } from "@/components/ui/button";
 import { useDonationCard } from "./hooks/useDonationCard";
 import { FC } from "react";
-import { DonationResponse } from "../Donations/typeDonation";
 import Icons from "@/components/ui/icons";
-import { DonationStatus } from "@/@types";
+import { DonationWithDonor, DonationStatus } from "@/@types";
+import { formatDate } from "@/lib/dateUtils";
 
 interface DonationCardProps {
-  donation: DonationResponse;
+  donation: DonationWithDonor;
 }
 
 const DonationCard: FC<DonationCardProps> = ({ donation }) => {
-  const {
-    formatDate,
-    getTimeRemaining,
-    handleClaimDonation,
-    isClaiming,
-  } = useDonationCard(donation);
+  const { getTimeRemaining, handleClaimDonation, isClaiming } =
+    useDonationCard(donation);
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100">

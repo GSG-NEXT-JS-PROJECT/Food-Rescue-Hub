@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import userService from "@/module/services/user.service";
 import { Types } from "mongoose";
 import * as yup from "yup";
-import { IUser } from "@/@types";
+import { IUser, Role } from "@/@types";
 import { validationSchemaUpdateUser } from "@/app/(front-end)/profile/components/ProfileSidebar/ValidationSchemaUpdateUser";
 
 export type UserRequestBody = Omit<IUser, "isVerified" | "password">;
@@ -10,8 +10,9 @@ export type UserRequestBody = Omit<IUser, "isVerified" | "password">;
 export async function GET(req: NextRequest) {
   try {
     const userId = req.headers.get("x-user-id")!;
+    const role = req.headers.get("x-user-role")! as Role;
     const user = await userService.getUserData(userId);
-    const donations = await userService.getUserDonations(userId);
+    const donations = await userService.getUserDonations(userId, role);
 
     return NextResponse.json({ ...user, donations }, { status: 200 });
   } catch (error) {

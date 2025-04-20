@@ -1,78 +1,68 @@
+'use client';
+
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import food from "../assets/OIP.jpeg"
-import {
-  Package2,
-  Clock,
-  User,
-  ChevronRight,
-  Plus,
-} from "lucide-react";
-import { DonationData } from "../constant";
-import { Role } from "@/@types";
+import noImage from "@/public/no-image.png";
+import { Package2, Clock, User, ChevronRight, Plus } from "lucide-react";
+import { Role, type UserProfile } from "@/@types";
+import Link from "next/link";
+import Pagination from "@/components/Pagination";
+import { formatDate } from "@/lib/dateUtils";
+import { Types } from "mongoose";
+import { useDonationList } from "./hooks/useDonationList";
 
 interface DonationsListProps {
-  donations: DonationData[];
-  userRole: Role;
-  onCreateDonation?: () => void;
+  userData: UserProfile | undefined;
 }
 
-export default function DonationsList({ 
-  donations, 
-  userRole, 
-  onCreateDonation 
-}: DonationsListProps) {
-  
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "available":
-        return "success";
-      case "claimed":
-        return "warning";
-      case "completed":
-        return "secondary";
-      default:
-        return "outline";
-    }
-  };
-
+export default function DonationsList({ userData }: DonationsListProps) {
+  const {
+    donations,
+    currentItems,
+    handlePageChange,
+    getStatusBadgeVariant,
+    itemsPerPage,
+    currentPage,
+  } = useDonationList(userData);
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="px-6 py-5 flex justify-between items-center">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">
-            {userRole === Role.Donor ? "My Donations" : "My Claims"}
+            {userData?.role === Role.Donor ? "My Donations" : "My Claims"}
           </h3>
           <p className="text-sm text-gray-500 mt-1">
-            {userRole === Role.Donor 
-              ? "Track and manage your food donations" 
+            {userData?.role === Role.Donor
+              ? "Track and manage your food donations"
               : "View and manage your claimed items"}
           </p>
         </div>
         <div className="flex gap-2">
-          {userRole === Role.Donor && (
-            <Button 
-              onClick={onCreateDonation}
-              className="bg-emerald-600 hover:bg-emerald-700 rounded-full px-4 shadow-sm"
+          {userData?.role === Role.Donor && (
+            <Link
+              href="/post-donation"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
             >
               <Plus className="mr-2 h-4 w-4" />
               Create Donation
-            </Button>
+            </Link>
           )}
         </div>
       </div>
-      
-      
+
       <div>
         <ul className="divide-y divide-gray-100">
           {donations.length > 0 ? (
-            donations.map((donation) => (
-              <li key={donation.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+            currentItems?.map((donation) => (
+              <li
+                key={donation._id}
+                className="px-6 py-4 hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden bg-gray-100 shadow-sm">
                     <Image
-                      src={food}
+                      src={donation.imageUrl || noImage}
                       alt={donation.title}
                       width={80}
                       height={80}
@@ -95,19 +85,31 @@ export default function DonationsList({
                       </div>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" />
-                        {donation.date}
+                        {/* { userData.role == Role.Donor ? "created at: " : "pickup deadline: " } */}
+                        {userData?.role == Role.Donor
+                          ? formatDate(new Date(donation.createdAt))
+                          : formatDate(new Date(donation.pickupDeadline))}
                       </div>
-                      {donation.claimedBy && (
-                        <div className="flex items-center text-sm text-gray-500">
-                          <User className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" />
-                          {donation.claimedBy}
-                        </div>
-                      )}
+                      {userData?.role === Role.Donor &&
+                        donation?.recipientId &&
+                        !(donation.recipientId instanceof Types.ObjectId) && (
+                          <div className="flex items-center text-sm text-gray-500">
+                            <User className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" />
+                            {donation?.recipientId?.name}
+                          </div>
+                        )}
+                      {userData?.role === Role.Recipient &&
+                        !(donation.donorId instanceof Types.ObjectId) && (
+                          <div className="flex items-center text-sm text-gray-500">
+                            <User className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" />
+                            {donation.donorId.name}
+                          </div>
+                        )}
                     </div>
                   </div>
                   <div className="ml-4">
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="icon"
                       className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-full"
                     >
@@ -125,25 +127,41 @@ export default function DonationsList({
                   No donations yet
                 </h3>
                 <p className="mt-2 text-sm text-gray-500 max-w-xs mx-auto">
-                  {userRole === Role.Donor
+                  {userData?.role === Role.Donor
                     ? "Start sharing your surplus food with those who need it."
                     : "Browse available donations to claim food."}
                 </p>
                 <div className="mt-6">
-                  <Button 
-                    onClick={onCreateDonation}
-                    className="bg-emerald-600 hover:bg-emerald-700 rounded-full px-5 shadow-sm"
+                  <Link
+                    href={
+                      userData?.role === Role.Donor
+                        ? "/post-donation"
+                        : "/donations"
+                    }
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    {userRole === Role.Donor
+                    {userData?.role === Role.Donor
                       ? "Create Donation"
                       : "Find Donations"}
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </li>
           )}
         </ul>
+      </div>
+
+      {/* Only show pagination if there are items and more than one page */}
+      <div className="pb-6">
+        {donations.length > itemsPerPage && (
+          <Pagination
+            page={currentPage}
+            total={donations.length}
+            limit={itemsPerPage}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
     </div>
   );

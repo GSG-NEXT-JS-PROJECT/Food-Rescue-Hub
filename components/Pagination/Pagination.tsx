@@ -7,7 +7,7 @@ interface PaginationProps {
   page: number;
   total: number;
   limit: number;
-  isLoading: boolean;
+  isLoading?: boolean;
   onPageChange: (page: number) => void;
 }
 
@@ -15,7 +15,7 @@ export default function Pagination({
   page,
   total,
   limit,
-  isLoading,
+  isLoading = false,
   onPageChange,
 }: PaginationProps) {
   const totalPages = Math.ceil(total / limit);

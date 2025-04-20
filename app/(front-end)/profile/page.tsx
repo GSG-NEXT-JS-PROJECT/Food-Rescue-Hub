@@ -1,5 +1,6 @@
 import { fetchUser } from "@/lib/getUserData";
 import ProfileSidebar from "./components/ProfileSidebar";
+import MainContent from "./components/MainContent";
 
 export default async function ProfilePage() {
   const user = await fetchUser();
@@ -11,6 +12,9 @@ export default async function ProfilePage() {
           <div className="lg:col-span-1">
             <ProfileSidebar userData={user} />
           </div>
+
+          {/* Main Content */}
+          <MainContent userData={user} />
         </div>
       </main>
     </div>

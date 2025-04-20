@@ -20,3 +20,12 @@ export function getLocalISOStringNow(): string {
     .slice(0, 16);
   return localISOTime;
 }
+
+export const formatDate = (date: Date): string => {
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};

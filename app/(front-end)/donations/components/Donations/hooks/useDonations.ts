@@ -1,15 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import {
-  ApiResponse,
-  DonationResponse,
-  Filters,
-  SearchParamsType,
-} from "../typeDonation";
+import { ApiResponse, Filters, SearchParamsType } from "../typeDonation";
 import { usePathname, useRouter } from "next/navigation";
 import socket from "@/lib/socketClient";
-import { DonationStatus } from "@/@types";
+import { DonationWithDonor, DonationStatus } from "@/@types";
 
 export const useDonations = (
   initialData: ApiResponse,
@@ -61,7 +56,7 @@ export const useDonations = (
     socket.on("connect_error", (err) =>
       console.error("Socket.IO connect error:", err)
     );
-    socket.on("donation-update", (updatedDonation: DonationResponse) => {
+    socket.on("donation-update", (updatedDonation: DonationWithDonor) => {
       setData((prev) => {
         const index = prev.donations.findIndex(
           (d) => d._id === updatedDonation._id
@@ -245,7 +240,7 @@ export const useDonations = (
   }
 
   function checkDonationMatchesFilters(
-    donation: DonationResponse,
+    donation: DonationWithDonor,
     filters: Filters
   ) {
     const {
@@ -255,8 +250,7 @@ export const useDonations = (
       dateFrom = "",
       dateTo = "",
       amountMin = "",
-      amountMax ="",
-
+      amountMax = "",
     } = filters;
 
     if (
