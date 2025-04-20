@@ -2,6 +2,18 @@ import { fetchUser } from "@/lib/getUserData";
 import ProfileSidebar from "./components/ProfileSidebar";
 import MainContent from "./components/MainContent";
 
+export const metadata = {
+  title: "Profile",
+  description:
+    "View and manage your personal details, donation history, and your impact.",
+  keywords: [
+    "user profile",
+    "donation history",
+    "account settings",
+    "food rescue profile",
+  ],
+};
+
 export default async function ProfilePage() {
   const user = await fetchUser();
   return (
