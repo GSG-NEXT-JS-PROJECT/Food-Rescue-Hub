@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import React, { FC } from "react";
 import DonationCard from "../DonationCard";
-import Pagination from "../Pagination";
+import Pagination from "@/components/Pagination";
 import { DonationsReturnType } from "../Donations/typeDonation";
 
 interface DonationsListProps {
@@ -30,11 +30,8 @@ const DonationsList: FC<DonationsListProps> = ({ donationFilter }) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.donations.map((donation, index) => (
-          <DonationCard
-            key={index}
-            donation={donation}
-          />
+        {data.donations.map((donation) => (
+          <DonationCard key={donation._id} donation={donation} />
         ))}
       </div>
 

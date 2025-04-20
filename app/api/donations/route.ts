@@ -14,7 +14,6 @@ export const GET = async (request: NextRequest) => {
     await dbConnect();
 
     const { searchParams } = new URL(request.url);
-    const userId = request.headers.get("x-user-id")!;
     const userRole = request.headers.get("x-user-role")!;
 
     const params = {
@@ -30,12 +29,9 @@ export const GET = async (request: NextRequest) => {
       sortBy: searchParams.get("sortBy") || "createdAt",
       sortOrder: (searchParams.get("sortOrder") as "asc" | "desc") || "desc",
       keyword: searchParams.get("keyword") || undefined,
-      // lat: searchParams.get("lat") ? parseFloat(searchParams.get("lat")) : null,
-      // lng: searchParams.get("lon") ? parseFloat(searchParams.get("lng")) : null,
-      // radius: parseFloat(searchParams.get("radius") || "10"), // Default 10 km
     };
 
-    const result = await donationService.getDonations(userId, userRole, params);
+    const result = await donationService.getDonations(userRole, params);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
@@ -99,53 +95,54 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const PATCH = async (request: NextRequest) => {
-  try {
-    await dbConnect();
+// not ready
+// export const PATCH = async (request: NextRequest) => {
+//   try {
+//     await dbConnect();
 
-    const recipientId = request.headers.get("x-user-id");
-    if (!recipientId) {
-      return new NextResponse(
-        JSON.stringify({ message: "Recipient ID is required" }),
-        { status: 400 }
-      );
-    }
+//     const recipientId = request.headers.get("x-user-id");
+//     if (!recipientId) {
+//       return new NextResponse(
+//         JSON.stringify({ message: "Recipient ID is required" }),
+//         { status: 400 }
+//       );
+//     }
 
-    const { donationId } = await request.json(); 
-    if (!donationId) {
-      return new NextResponse(
-        JSON.stringify({ message: "Donation ID is required" }),
-        { status: 400 }
-      );
-    }
+//     const { donationId } = await request.json();
+//     if (!donationId) {
+//       return new NextResponse(
+//         JSON.stringify({ message: "Donation ID is required" }),
+//         { status: 400 }
+//       );
+//     }
 
-    const updatedDonation = await donationService.updateDonation(
-      donationId,
-      recipientId
-    );
+//     const updatedDonation = await donationService.updateDonation(
+//       donationId,
+//       recipientId
+//     );
 
-    return new NextResponse(
-      JSON.stringify({
-        message: "Donation updated successfully",
-        donation: updatedDonation,
-      }),
-      { status: 200 }
-    );
-  } catch (error) {
-    if (error instanceof Error) {
-      const status =
-        error.message.includes("required") ||
-        error.message.includes("Invalid") ||
-        error.message === "Donation not found"
-          ? 400
-          : 500;
-      return new NextResponse(JSON.stringify({ message: error.message }), {
-        status,
-      });
-    }
-    return new NextResponse(
-      JSON.stringify({ message: "Internal server error" }),
-      { status: 500 }
-    );
-  }
-};
+//     return new NextResponse(
+//       JSON.stringify({
+//         message: "Donation updated successfully",
+//         donation: updatedDonation,
+//       }),
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       const status =
+//         error.message.includes("required") ||
+//         error.message.includes("Invalid") ||
+//         error.message === "Donation not found"
+//           ? 400
+//           : 500;
+//       return new NextResponse(JSON.stringify({ message: error.message }), {
+//         status,
+//       });
+//     }
+//     return new NextResponse(
+//       JSON.stringify({ message: "Internal server error" }),
+//       { status: 500 }
+//     );
+//   }
+// };

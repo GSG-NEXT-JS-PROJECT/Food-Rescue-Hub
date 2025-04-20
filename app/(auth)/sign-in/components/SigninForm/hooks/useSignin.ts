@@ -29,6 +29,7 @@ const useSignin = () => {
       });
 
       if (response.ok) {
+        toast.success("Signin successful");
         router.push("/");
       } else {
         const errorData = await response.json();

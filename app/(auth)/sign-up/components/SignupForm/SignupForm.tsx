@@ -4,44 +4,14 @@ import { roleOptions } from "./constant";
 import { Button } from "@/components/ui/button";
 import { FormikProvider, Form } from "formik";
 import useSignup from "./hooks/useSignup";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
 import Icons from "@/components/ui/icons";
+import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
 
 const SignupForm = () => {
   const { formik } = useSignup();
-  const [location, setLocation] = useState({ lat: 0, lng: 0 });
-
-  useEffect(() => {
-    // Automatically get the location from the browser
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location: ", error);
-          setLocation({
-            lat: 0,
-            lng: 0,
-          });
-        }
-      );
-    } else {
-      console.error("Geolocation not supported");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (location.lat !== 0 && location.lng !== 0) {
-      formik.setFieldValue("location", { lat: location.lat, lng: location.lng });
-    }
-  }, [location]);
 
   return (
     <FormikProvider value={formik}>
@@ -90,20 +60,7 @@ const SignupForm = () => {
         />
 
         {/* Location */}
-        <TextField
-          label="Location"
-          type="text"
-          name="location"
-          placeholder="Your location (Latitude, Longitude)"
-          value={`Lat: ${location.lat}, Lng: ${location.lng}`}
-          onChange={(e) => {
-            formik.setFieldValue("location", {
-              lat: location.lat,
-              lng: location.lng,
-            });
-          }}
-          readOnly
-        />
+        <GooglePlacesAutocomplete />
 
         {/* Role Selection */}
         <SelectField
@@ -120,7 +77,8 @@ const SignupForm = () => {
         <Button
           type="submit"
           className="w-full bg-green-700 text-white border-transparent rounded-xl px-4 py-2 my-2 transition-all duration-300 ease-in-out hover:bg-white hover:border-2 hover:border-green-700 hover:text-green-700 cursor-pointer"
-          disabled={formik.isSubmitting}>
+          disabled={formik.isSubmitting}
+        >
           {formik.isSubmitting ? (
             <Icons.spinner className="mr-3 h-6 w-6 animate-spin" />
           ) : null}
@@ -136,7 +94,7 @@ const SignupForm = () => {
         </p>
       </Form>
     </FormikProvider>
-  )
-}
+  );
+};
 
 export default SignupForm;

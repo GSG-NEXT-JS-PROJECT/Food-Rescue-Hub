@@ -1,11 +1,10 @@
 import { UserProfile } from "@/@types";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
+import { getServerOrigin } from "./getServerOrigin";
 
 export async function fetchUser() : Promise<UserProfile | undefined> {
-  const headersList = headers();
-  const host = (await headersList).get("host"); // e.g., 'localhost:3000'
-  const protocol = (await headersList).get("x-forwarded-proto") || "http";
-  const url = `${protocol}://${host}/api/user/profile`;
+  const serverOrigin = await getServerOrigin();
+  const url = `${serverOrigin}/api/user/profile`;
   try {
     const cookieStore = cookies();
     const token = (await cookieStore).get("Session")?.value;
@@ -15,8 +14,8 @@ export async function fetchUser() : Promise<UserProfile | undefined> {
         Authorization: `Bearer ${token}`, // Pass the token to the API
       },
     });
-    if (!response.ok) throw new Error("Failed to fetch user profile data");
-    return response.json();
+    if (!response.ok) return undefined;
+     return response.json();
   } catch (error) {
     console.error("Fetch error:", error);
     return undefined;

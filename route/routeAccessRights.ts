@@ -2,13 +2,24 @@ import { Role } from "@/@types";
 import { RouteAccess } from "./types";
 
 const routeAccess: RouteAccess = {
-  "/donations/new": {
+  "/post-donation": {
     GET: [Role.Donor],
   },
-  "/api/donations": {
+  "/donations": {
+    GET: [Role.Recipient, Role.Admin],
+  },
+  "/analytics": {
+    GET: [Role.Admin],
+  },
+  "/profile": {
     GET: [Role.Donor, Role.Recipient],
+  },
+  "/api/donations": {
+    GET: [Role.Recipient, Role.Donor],
     POST: [Role.Donor],
-    PATCH: [Role.Recipient, Role.Donor]
+  },
+  "/api/claim-donation": {
+    POST: [Role.Recipient],
   },
 };
 

@@ -1,14 +1,15 @@
-import { DonationStatus, FoodType, IDonation } from "@/@types";
+import {
+  DonationWithDonor,
+  DonationStatus,
+  FoodType,
+  IDonation,
+} from "@/@types";
 import { useDonations } from "./hooks/useDonations";
 
-export type SearchParamsType = { [key: string]: string | string[] | undefined };
-
-export interface DonationResponse extends IDonation {
-  id: string;
-}
+export type SearchParamsType = { [key: string]: string | undefined };
 
 export interface ApiResponse {
-  donations: DonationResponse[];
+  donations: DonationWithDonor[];
   total: number;
   page: number;
   limit: number;
@@ -21,15 +22,15 @@ export interface DonationWithUIDetails extends IDonation {
 }
 
 export interface Filters {
-  keyword?: string | string[];
+  keyword?: string;
   foodType?: string;
   status?: string;
   dateFrom?: string;
   dateTo?: string;
   amountMin?: string;
   amountMax?: string;
-  sortBy?: string | string[];
-  sortOrder?: string | string[];
+  sortBy?: string;
+  sortOrder?: string;
   page?: string;
   limit?: string;
 }

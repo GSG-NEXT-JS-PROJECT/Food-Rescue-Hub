@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 export interface LocationType {
   lat: number;
   lng: number;
+  address: string;
 }
 
 export enum FoodType {
@@ -35,13 +36,14 @@ export enum FoodType {
   Oils = "Oils",
   Soups = "Soups",
   Sauces = "Sauces",
-  Desserts = "Desserts"
+  Desserts = "Desserts",
 }
 
 export enum DonationStatus {
   Available = "available",
   Claimed = "claimed",
   Expired = "expired",
+  Completed = "completed",
 }
 
 export enum Role {
@@ -73,6 +75,22 @@ export interface IDonation {
   pickupInstruction?: string;
 }
 
+export interface DonationWithDonor extends Omit<IDonation, "donorId"> {
+  _id: string;
+  createdAt: string;
+  donorId: IUser & {
+    _id: string;
+  };
+}
+
+export interface DonationWithRecipient extends Omit<IDonation, "recipientId"> {
+  _id: string;
+  createdAt: string;
+  recipientId: IUser & {
+    _id: string;
+  };
+}
+
 export enum RequestMethod {
   Get = "GET",
   Post = "POST",
@@ -93,4 +111,14 @@ export interface EmailTemplateProps {
   button?: string;
 }
 
-export type UserProfile = Omit<IUser, "password" | "isVerified">;
+export type UserProfile = Omit<IUser, "password" | "isVerified"> & {
+  id: string;
+  donations: DonationWithDonor[] | DonationWithRecipient[];
+  createdAt: string;
+};
+
+export interface INotification {
+  userId: Types.ObjectId;
+  message: string;
+  read: boolean;
+}

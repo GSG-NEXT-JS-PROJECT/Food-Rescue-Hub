@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { DonationsReturnType } from "../../Donations/typeDonation";
+import { DonationStatus } from "@/@types";
 
 export const useFilters = (donationFilter: DonationsReturnType) => {
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
@@ -11,7 +12,7 @@ export const useFilters = (donationFilter: DonationsReturnType) => {
   const resetFilters = () => {
     const resetValues = {
       foodType: "",
-      status: "",
+      status: DonationStatus.Available,
       startDate: "",
       endDate: "",
       minAmount: "",

@@ -2,31 +2,28 @@
 
 import { MapPin, Clock, Tag } from "lucide-react";
 import Image from "next/image";
-import food from "./assets/OIP.jpeg";
+import noImage from "@/public/no-image.png";
 import { Button } from "@/components/ui/button";
 import { useDonationCard } from "./hooks/useDonationCard";
 import { FC } from "react";
-import { DonationResponse } from "../Donations/typeDonation";
+import Icons from "@/components/ui/icons";
+import { DonationWithDonor, DonationStatus } from "@/@types";
+import { formatDate } from "@/lib/dateUtils";
 
 interface DonationCardProps {
-  donation: DonationResponse;
+  donation: DonationWithDonor;
 }
 
 const DonationCard: FC<DonationCardProps> = ({ donation }) => {
-  const {
-    location,
-    donorName,
-    formatDate,
-    getTimeRemaining,
-    handleClaimDonation,
-  } = useDonationCard(donation);
+  const { getTimeRemaining, handleClaimDonation, isClaiming } =
+    useDonationCard(donation);
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100">
       {/* Image */}
       <div className="bg-gray-200 h-48 relative">
         <Image
-          src={donation.imageUrl ? donation.imageUrl : food}
+          src={donation.imageUrl ? donation.imageUrl : noImage}
           alt={donation.title}
           className="w-full h-full object-cover"
           width={300}
@@ -56,11 +53,11 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
 
         {/* Donor and location */}
         <div className="flex items-center text-sm text-gray-600 mb-2">
-          <span className="font-medium">{donorName}</span>
+          <span className="font-medium">{donation.donorId.name}</span>
           <span className="mx-2">•</span>
           <span className="flex items-center">
             <MapPin size={14} className="mr-1" />
-            {location}
+            {donation.location.address}
           </span>
         </div>
 
@@ -71,11 +68,14 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
 
         {/* Action button */}
         <Button
-          disabled={Boolean(donation.recipientId)}
+          disabled={donation.status != DonationStatus.Available || isClaiming}
           onClick={handleClaimDonation}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
         >
-          Claim Donation
+          {isClaiming ? (
+            <Icons.spinner className="mr-3 h-6 w-6 animate-spin" />
+          ) : null}
+          Claim
         </Button>
       </div>
     </div>

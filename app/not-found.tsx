@@ -11,7 +11,7 @@ export default function NotFound() {
         </div>
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Page Not Found</h1>
         <p className="max-w-[500px] text-muted-foreground">
-          Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
+          Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved or deleted.
         </p>
         <div className="flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
           <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">

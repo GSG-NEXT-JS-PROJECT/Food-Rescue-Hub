@@ -18,7 +18,7 @@ export const sendEmail = async (
         } as nodemailer.TransportOptions);
 
         const mailOptions = {
-            from: process.env.SMTP_FROM_EMAIL,
+            from: `"Food Rescue Hub" <${process.env.SMTP_USER}>`,
             to: userEmail,
             subject,
             html: message,

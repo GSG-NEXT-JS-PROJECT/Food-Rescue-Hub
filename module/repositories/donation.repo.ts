@@ -1,4 +1,4 @@
-import { IDonation } from "@/@types";
+import { DonationStatus, IDonation } from "@/@types";
 import dbConnect from "@/DB/connection";
 import Donation, { DonationDocument } from "@/DB/model/donation.model";
 import { Types } from "mongoose";
@@ -13,7 +13,7 @@ interface SortOptions {
 
 class DonationRepository {
   async createDonation(donationData: IDonation): Promise<DonationDocument> {
-    dbConnect();
+    await dbConnect();
     const newDonation = new Donation({
       ...donationData,
     });
@@ -30,20 +30,45 @@ class DonationRepository {
     filter: FilterOptions,
     skip: number,
     limit: number,
-    sort: SortOptions
+    sort: SortOptions,
+    populateFields: string[] = ["donorId"]
   ) {
-    return await Donation.find(filter).skip(skip).limit(limit).sort(sort);
+    const query = Donation.find(filter).skip(skip).limit(limit).sort(sort);
+
+    if (populateFields.length > 0) {
+      query.populate(
+        populateFields.map((field) => ({
+          path: field,
+          select: "-password", // Exclude password
+        }))
+      );
+    }
+
+    return await query.exec();
   }
 
-  async updateDonationById(
+  async findByIdAndUpdate(
     donationId: string,
-    updateData: Partial<IDonation>
-  ) {
-    return await Donation.findOneAndUpdate(
-      { _id: new Types.ObjectId(donationId) },
+    updateData: Partial<DonationDocument>
+  ): Promise<DonationDocument> {
+    return await Donation.findByIdAndUpdate(
+      new Types.ObjectId(donationId),
       updateData,
-      { new: true } // Return the updated document
-    );
+      { new: true }
+    ).populate("donorId", "name deviceToken");
+  }
+
+  async findById(id: string): Promise<DonationDocument> {
+    await dbConnect();
+    const donation = await Donation.findById(id);
+    return donation;
+  }
+
+  async findExpiredDonations(currentTime: Date) {
+    return await Donation.find({
+      status: DonationStatus.Available,
+      pickupDeadline: { $lte: currentTime.toISOString() },
+    }).populate("donorId", "name deviceToken");
   }
 }
 

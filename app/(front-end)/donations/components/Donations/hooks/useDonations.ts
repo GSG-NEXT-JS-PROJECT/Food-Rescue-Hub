@@ -1,14 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import {
-  ApiResponse,
-  Filters,
-  SearchParamsType,
-} from "../typeDonation";
+import { ApiResponse, Filters, SearchParamsType } from "../typeDonation";
 import { usePathname, useRouter } from "next/navigation";
-
-// Clean URL params by excluding empty values
+import socket from "@/lib/socketClient";
+import { DonationWithDonor, DonationStatus } from "@/@types";
 
 export const useDonations = (
   initialData: ApiResponse,
@@ -24,13 +20,15 @@ export const useDonations = (
     endDate: initialFilters?.endDate || "",
     minAmount: initialFilters?.minAmount || "",
     maxAmount: initialFilters?.maxAmount || "",
-    status: initialFilters?.status || "",
+    status: initialFilters?.status || DonationStatus.Available,
   });
-  const [sortBy, setSortBy] = useState(initialFilters.sortBy || "date");
+  const [sortBy, setSortBy] = useState(initialFilters.sortBy || "createdAt");
   const [sortOrder, setSortOrder] = useState(
     initialFilters.sortOrder || "desc"
   );
-  const [page, setPage] = useState(parseInt(initialFilters.page as string || "1", 10));
+  const [page, setPage] = useState(
+    parseInt((initialFilters.page as string) || "1", 10)
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
   const initialRender = useRef(true);
@@ -44,19 +42,103 @@ export const useDonations = (
     dateTo: "",
     amountMin: "",
     amountMax: "",
-    sortBy: "date",
+    sortBy: "createdAt",
     sortOrder: "desc",
     page: "1",
     limit: limit.toString(),
   };
 
+  useEffect(() => {
+    console.log("Socket.IO setup: Joining donations room");
+    socket.emit("join-donations");
+
+    socket.on("connect", () => console.log("Socket.IO connected"));
+    socket.on("connect_error", (err) =>
+      console.error("Socket.IO connect error:", err)
+    );
+    socket.on("donation-update", (updatedDonation: DonationWithDonor) => {
+      setData((prev) => {
+        const index = prev.donations.findIndex(
+          (d) => d._id === updatedDonation._id
+        );
+        let newDonations = [...prev.donations];
+
+        if (index >= 0) {
+          if (
+            updatedDonation.status === DonationStatus.Expired ||
+            updatedDonation.status === DonationStatus.Claimed
+          ) {
+            // Remove if status filter is set and not Expired
+            if (tempFilters.status !== updatedDonation.status) {
+              newDonations.splice(index, 1);
+              // Force API refresh to ensure sync
+              return {
+                ...prev,
+                donations: [...newDonations],
+                total: prev.total - 1,
+              };
+            }
+            newDonations[index] = { ...updatedDonation };
+            return {
+              ...prev,
+              donations: newDonations,
+            };
+          }
+          newDonations[index] = updatedDonation;
+          return {
+            ...prev,
+            donations: newDonations,
+          };
+        }
+
+        const matchesFilters = checkDonationMatchesFilters(updatedDonation, {
+          keyword: search,
+          foodType: tempFilters.foodType,
+          status: tempFilters.status,
+          dateFrom: tempFilters.startDate,
+          dateTo: tempFilters.endDate,
+          amountMin: tempFilters.minAmount,
+          amountMax: tempFilters.maxAmount,
+          sortBy,
+          sortOrder,
+        });
+
+        if (
+          !matchesFilters ||
+          updatedDonation.status === DonationStatus.Expired ||
+          updatedDonation.status === DonationStatus.Claimed
+        ) {
+          return prev;
+        }
+
+        newDonations = [updatedDonation, ...newDonations];
+        if (newDonations.length > limit) {
+          newDonations.pop();
+        }
+
+        return {
+          ...prev,
+          donations: newDonations,
+          total: prev.total + 1,
+        };
+      });
+    });
+
+    return () => {
+      console.log("Cleaning up Socket.IO listeners");
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("donation-update");
+      socket.emit("leave-donations");
+    };
+  }, [search, tempFilters, sortBy, sortOrder, limit]);
+
   // Debounced search
   useEffect(() => {
+    if (initialRender.current) {
+      return;
+    }
     const timer = setTimeout(() => {
-      if(initialRender.current) {
-        initialRender.current = false;
-        return;
-      }
       setIsLoading(true);
       startTransition(() => {
         const params = createCleanParams({
@@ -80,6 +162,14 @@ export const useDonations = (
     return () => clearTimeout(timer);
   }, [search]);
 
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
+    applyFilters();
+  }, [sortBy, sortOrder]);
+
   // Apply filters with batch update
   const applyFilters = () => {
     setIsLoading(true);
@@ -98,7 +188,7 @@ export const useDonations = (
         .then((res) => res.json())
         .then((newData: ApiResponse) => {
           setData(newData);
-          setPage(1); // Reset to page 1
+          setPage(1);
           setIsLoading(false);
         })
         .catch(() => setIsLoading(false));
@@ -133,13 +223,11 @@ export const useDonations = (
   const updateSort = (newSortBy: string, newSortOrder: string) => {
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
-    applyFilters();
   };
 
   function createCleanParams(filters: Filters) {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
-      // Only include if value is non-empty and differs from default
       if (
         value &&
         value.trim() !== "" &&
@@ -151,25 +239,62 @@ export const useDonations = (
     return params;
   }
 
+  function checkDonationMatchesFilters(
+    donation: DonationWithDonor,
+    filters: Filters
+  ) {
+    const {
+      keyword = "",
+      foodType = "",
+      status = "",
+      dateFrom = "",
+      dateTo = "",
+      amountMin = "",
+      amountMax = "",
+    } = filters;
+
+    if (
+      keyword &&
+      !donation.title.toLowerCase().includes(keyword.toLowerCase())
+    ) {
+      return false;
+    }
+    if (foodType && donation.foodType !== foodType) {
+      return false;
+    }
+    if (status && donation.status !== status) {
+      return false;
+    }
+    if (dateFrom && new Date(donation.createdAt) < new Date(dateFrom)) {
+      return false;
+    }
+    if (dateTo && new Date(donation.createdAt) > new Date(dateTo)) {
+      return false;
+    }
+    if (amountMin && (donation.quantity || 0) < parseFloat(amountMin)) {
+      return false;
+    }
+    if (amountMax && (donation.quantity || 0) > parseFloat(amountMax)) {
+      return false;
+    }
+
+    return true;
+  }
+
   return {
     isLoading,
     isPending,
     setTempFilters,
-
     search,
     setSearch,
-
     tempFilters,
-
     sortBy,
     sortOrder,
     updateSort,
-
     data,
     page,
     limit,
     changePage,
-
     applyFilters,
   };
 };

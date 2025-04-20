@@ -68,7 +68,7 @@ const HeroSection = ({ user }: { user: UserProfile | undefined }) => {
                 )}
                 {user?.role === Role.Donor && (
                   <Link
-                    href="/donations/new"
+                    href="/post-donation"
                     className="mt-3 sm:mt-0 w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 transition-colors duration-200 md:py-4 md:text-lg md:px-10"
                   >
                     Post Donation
@@ -76,7 +76,7 @@ const HeroSection = ({ user }: { user: UserProfile | undefined }) => {
                 )}
                 {user?.role === Role.Admin && (
                   <Link
-                    href="/dashboard"
+                    href="/analytics"
                     className="mt-3 sm:mt-0 w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 transition-colors duration-200 md:py-4 md:text-lg md:px-10"
                   >
                     Dashboard
