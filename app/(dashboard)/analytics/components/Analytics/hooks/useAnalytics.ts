@@ -4,6 +4,7 @@ import { startTransition, useEffect, useRef, useState } from "react";
 import { AnalyticsData, SearchParamsType } from "../../../analyticsType";
 import { usePathname, useRouter } from "next/navigation";
 import { exportAnalyticsToPDF } from "../../../utils/pdfExport";
+import { toast } from "sonner";
 
 export const useAnalytics = (
   data: AnalyticsData | undefined,
@@ -64,17 +65,10 @@ export const useAnalytics = (
 
       exportAnalyticsToPDF(data);
 
-      // toast({
-      //   title: "Success",
-      //   description: "Analytics data exported to PDF",
-      // });
+      toast.success("Analytics data exported to PDF");
     } catch (error) {
       console.error("Error exporting analytics data:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to export analytics data",
-      //   variant: "destructive"
-      // });
+      toast.error("Failed to export analytics data");
     } finally {
       setIsLoading(false);
     }
@@ -86,5 +80,5 @@ export const useAnalytics = (
     timeRange,
     handleExportData,
     handleTimeRangeChange,
-  }
+  };
 };
