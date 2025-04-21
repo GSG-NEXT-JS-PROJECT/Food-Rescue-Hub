@@ -9,6 +9,7 @@ import Donation, { DonationDocument } from "@/DB/model/donation.model";
 import { convertLocalToISO } from "@/lib/dateUtils";
 import { validationSchemaPostDonation } from "@/app/(site)/post-donation/components/PostDonationForm/ValidationSchemaNewDonation";
 import {
+  DonationDeleteRequestBody,
   DonationPostRequestBody,
   DonationUpdateRequestBody,
 } from "@/app/api/donations/type";
@@ -293,7 +294,6 @@ class DonationService {
     data: DonationUpdateRequestBody,
     role: Role
   ) {
-    
     if (role !== Role.Admin) {
       const donation = await donationRepo.findDonationByIdAndDonor(
         new Types.ObjectId(donationId),
@@ -340,6 +340,30 @@ class DonationService {
     }
 
     return updatedDonation;
+  }
+
+  async deleteDonation(
+    donationId: string,
+    data: DonationDeleteRequestBody,
+    role: Role
+  ) {
+    if (role !== Role.Admin) {
+      const donation = await donationRepo.findDonationByIdAndDonor(
+        new Types.ObjectId(donationId),
+        new Types.ObjectId(data.donorId)
+      );
+      if (!donation) {
+        throw new Error("No donation found for the provided ID and donor.");
+      }
+    }
+
+    const deletedDonation = await donationRepo.findByIdAndDelete(donationId);
+
+    if (!deletedDonation) {
+      throw new Error("Donation not found");
+    }
+
+    return deletedDonation;
   }
 }
 

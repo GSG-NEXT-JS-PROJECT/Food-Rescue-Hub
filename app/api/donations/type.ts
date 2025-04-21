@@ -8,3 +8,9 @@ export type DonationPostRequestBody = Omit<
 export type DonationUpdateRequestBody = IDonation & {
   donationId: string;
 };
+
+
+export type DonationDeleteRequestBody = {
+  donationId: string;
+  donorId: string
+};

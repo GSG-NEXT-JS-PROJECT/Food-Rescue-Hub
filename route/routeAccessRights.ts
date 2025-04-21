@@ -17,7 +17,8 @@ const routeAccess: RouteAccess = {
   "/api/donations": {
     GET: [Role.Recipient, Role.Donor],
     POST: [Role.Donor],
-    PATCH: [Role.Donor, Role.Admin]
+    PATCH: [Role.Donor, Role.Admin],
+    DELETE: [Role.Donor, Role.Admin]
   },
   "/api/claim-donation": {
     POST: [Role.Recipient],
