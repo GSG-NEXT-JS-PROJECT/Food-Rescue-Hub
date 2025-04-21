@@ -21,6 +21,10 @@ const routeAccess: RouteAccess = {
   "/api/claim-donation": {
     POST: [Role.Recipient],
   },
+  "/api/analytics": {
+    GET: [Role.Admin],
+    POST: [Role.Admin]
+  }
 };
 
 export default routeAccess;

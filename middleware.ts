@@ -29,5 +29,6 @@ export const config = {
     "/donations/:path*",
     "/post-donation",
     "/profile",
+    "/analytics",
   ],
 };
