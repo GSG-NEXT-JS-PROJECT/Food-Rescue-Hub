@@ -71,9 +71,20 @@ class DonationRepository {
     }).populate("donorId", "name deviceToken");
   }
 
-  async findDonationByIdAndDonor(donationId: Types.ObjectId, donorId: Types.ObjectId,) {
+  async findDonationByIdAndDonor(
+    donationId: Types.ObjectId,
+    donorId: Types.ObjectId
+  ) {
     await dbConnect();
-    const donation = await Donation.findOne({ _id: donationId, donorId: donorId});
+    const donation = await Donation.findOne({
+      _id: donationId,
+      donorId: donorId,
+    });
+    return donation;
+  }
+
+  async findByIdAndDelete(donationId: string) {
+    const donation = await Donation.findByIdAndDelete(donationId);
     return donation;
   }
 }

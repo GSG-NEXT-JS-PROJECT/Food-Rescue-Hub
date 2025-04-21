@@ -2,9 +2,8 @@ import dbConnect from "@/DB/connection";
 import donationService from "@/module/services/donation.service";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { DonationPostRequestBody, DonationUpdateRequestBody } from "./type";
+import { DonationDeleteRequestBody, DonationPostRequestBody, DonationUpdateRequestBody } from "./type";
 import { Role } from "@/@types";
-
 
 export const GET = async (request: NextRequest) => {
   try {
@@ -97,7 +96,7 @@ export const PATCH = async (request: NextRequest) => {
     await dbConnect();
     const role = request.headers.get("x-user-role") as Role;
 
-    const body = await request.json() as DonationUpdateRequestBody;
+    const body = (await request.json()) as DonationUpdateRequestBody;
     if (!body.donationId) {
       return new NextResponse(
         JSON.stringify({ message: "Donation ID is required" }),
@@ -106,7 +105,10 @@ export const PATCH = async (request: NextRequest) => {
     }
 
     if (!Types.ObjectId.isValid(body.donationId)) {
-      return NextResponse.json({ error: "Invalid Donation ID" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid Donation ID" },
+        { status: 400 }
+      );
     }
 
     const updatedDonation = await donationService.updateDonation(
@@ -138,5 +140,51 @@ export const PATCH = async (request: NextRequest) => {
       JSON.stringify({ message: "Internal server error" }),
       { status: 500 }
     );
+  }
+};
+
+export const DELETE = async (request: NextRequest) => {
+  try {
+
+    await dbConnect();
+    const role = request.headers.get("x-user-role") as Role;
+
+    const body = (await request.json()) as DonationDeleteRequestBody;
+    if (!body.donationId) {
+      return new NextResponse(
+        JSON.stringify({ message: "Donation ID is required" }),
+        { status: 400 }
+      );
+    }
+
+    if (!Types.ObjectId.isValid(body.donationId)) {
+      return NextResponse.json(
+        { error: "Invalid Donation ID" },
+        { status: 400 }
+      );
+    }
+
+    const updatedDonation = await donationService.deleteDonation(
+      body.donationId,
+      body,
+      role
+    );
+
+    return new NextResponse(
+      JSON.stringify({
+        message: "Donation updated successfully",
+        donation: updatedDonation,
+      }),
+      { status: 200 }
+    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return new NextResponse(
+        JSON.stringify({
+          message: `Error in deleting donation ${error.message}`,
+        }),
+        { status: 500 }
+      );
+    }
   }
 };
