@@ -11,11 +11,10 @@ class AnalyticsService {
     const { timeRange } = params;
 
 
-    const validTimeRanges = ['7days', '30days', '90days', '1year', 'custom'];
+    const validTimeRanges = ['7days', '30days', '90days', '1year'];
     if (!validTimeRanges.includes(timeRange)) {
       throw new Error('Invalid time range');
     }
-
 
     const [
       donationStats,

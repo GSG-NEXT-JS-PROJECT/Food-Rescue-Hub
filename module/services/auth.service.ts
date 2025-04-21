@@ -76,6 +76,8 @@ class AuthService {
       throw new Error("Invalid email or password");
     }
 
+    const user2 = await UserRepository.findByIdAndUpdate(user.id, {lastSignin: new Date()});
+    console.log(user2)
     return user;
   }
 

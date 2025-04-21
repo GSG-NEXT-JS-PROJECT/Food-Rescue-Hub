@@ -1,6 +1,5 @@
-
-
-import { DonationByLocationData, DonationStats, FoodType, FoodTypeData, TimeSeriesData, TopDonorsData, UserStats } from "./analyticsType";
+import { FoodType } from "@/@types";
+import { DonationByLocationData, DonationStats, FoodTypeData, TimeSeriesData, TopDonorsData, UserStats } from "./analyticsType";
 
 
 export const TIME_RANGES = {

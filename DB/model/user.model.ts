@@ -46,6 +46,7 @@ const userSchema: Schema<UserDocument> = new Schema(
       type: Date,
     },
     deviceToken: { type: String }, // Store Firebase token
+    lastSignin: { type: Date, required: true, default: new Date() },
   },
   { timestamps: true }
 );

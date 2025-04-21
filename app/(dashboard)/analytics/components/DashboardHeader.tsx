@@ -1,21 +1,13 @@
 'use client';
-import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Search, FileDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { DashboardHeaderProps } from '../analyticsType';
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   timeRange,
-  date,
-  searchTerm,
   onTimeRangeChange,
-  onDateChange,
-  onSearchChange,
   onExportData,
   isExporting = false,
 }) => {
@@ -37,26 +29,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <SelectItem value="30days">30 Days</SelectItem>
               <SelectItem value="90days">90 Days</SelectItem>
               <SelectItem value="1year">1 Year</SelectItem>
-              <SelectItem value="custom">Custom</SelectItem>
             </SelectContent>
           </Select>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="flex gap-2">
-                <CalendarIcon className="h-4 w-4" />
-                {date ? format(date, 'PPP') : 'Pick a date'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={onDateChange}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
         </div>
 
         <div className="flex gap-2">
