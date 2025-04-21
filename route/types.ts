@@ -15,6 +15,7 @@ export type RouteAccessName =
   | "/donations"
   | "/api/claim-donation"
   | "/analytics"
+  | "/api/analytics"
   | "/profile";
 
 export type RouteAccessRight = {
