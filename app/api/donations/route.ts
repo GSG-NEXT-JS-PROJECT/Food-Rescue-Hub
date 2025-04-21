@@ -1,13 +1,10 @@
-import { IDonation } from "@/@types";
 import dbConnect from "@/DB/connection";
 import donationService from "@/module/services/donation.service";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
+import { DonationPostRequestBody, DonationUpdateRequestBody } from "./type";
+import { Role } from "@/@types";
 
-export type DonationRequestBody = Omit<
-  IDonation,
-  "donorId" | "status" | "recipientId"
->;
 
 export const GET = async (request: NextRequest) => {
   try {
@@ -66,7 +63,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const body: DonationRequestBody = await req.json();
+    const body: DonationPostRequestBody = await req.json();
 
     const savedDonation = await donationService.createDonation(donorId, body);
 
@@ -95,54 +92,51 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// not ready
-// export const PATCH = async (request: NextRequest) => {
-//   try {
-//     await dbConnect();
+export const PATCH = async (request: NextRequest) => {
+  try {
+    await dbConnect();
+    const role = request.headers.get("x-user-role") as Role;
 
-//     const recipientId = request.headers.get("x-user-id");
-//     if (!recipientId) {
-//       return new NextResponse(
-//         JSON.stringify({ message: "Recipient ID is required" }),
-//         { status: 400 }
-//       );
-//     }
+    const body = await request.json() as DonationUpdateRequestBody;
+    if (!body.donationId) {
+      return new NextResponse(
+        JSON.stringify({ message: "Donation ID is required" }),
+        { status: 400 }
+      );
+    }
 
-//     const { donationId } = await request.json();
-//     if (!donationId) {
-//       return new NextResponse(
-//         JSON.stringify({ message: "Donation ID is required" }),
-//         { status: 400 }
-//       );
-//     }
+    if (!Types.ObjectId.isValid(body.donationId)) {
+      return NextResponse.json({ error: "Invalid Donation ID" }, { status: 400 });
+    }
 
-//     const updatedDonation = await donationService.updateDonation(
-//       donationId,
-//       recipientId
-//     );
+    const updatedDonation = await donationService.updateDonation(
+      body.donationId,
+      body,
+      role
+    );
 
-//     return new NextResponse(
-//       JSON.stringify({
-//         message: "Donation updated successfully",
-//         donation: updatedDonation,
-//       }),
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       const status =
-//         error.message.includes("required") ||
-//         error.message.includes("Invalid") ||
-//         error.message === "Donation not found"
-//           ? 400
-//           : 500;
-//       return new NextResponse(JSON.stringify({ message: error.message }), {
-//         status,
-//       });
-//     }
-//     return new NextResponse(
-//       JSON.stringify({ message: "Internal server error" }),
-//       { status: 500 }
-//     );
-//   }
-// };
+    return new NextResponse(
+      JSON.stringify({
+        message: "Donation updated successfully",
+        donation: updatedDonation,
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      const status =
+        error.message.includes("required") ||
+        error.message.includes("Invalid") ||
+        error.message === "Donation not found"
+          ? 400
+          : 500;
+      return new NextResponse(JSON.stringify({ message: error.message }), {
+        status,
+      });
+    }
+    return new NextResponse(
+      JSON.stringify({ message: "Internal server error" }),
+      { status: 500 }
+    );
+  }
+};

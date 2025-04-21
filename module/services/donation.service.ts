@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DonationStatus, IDonation } from "@/@types";
+import { DonationStatus, IDonation, Role } from "@/@types";
 import { Types } from "mongoose";
 import donationRepo from "../repositories/donation.repo";
-import { DonationRequestBody } from "@/app/api/donations/route";
 import * as yup from "yup";
 import notificationService from "./notification.service";
 import userRepo from "../repositories/user.repo";
 import Donation, { DonationDocument } from "@/DB/model/donation.model";
 import { convertLocalToISO } from "@/lib/dateUtils";
 import { validationSchemaPostDonation } from "@/app/(site)/post-donation/components/PostDonationForm/ValidationSchemaNewDonation";
+import {
+  DonationPostRequestBody,
+  DonationUpdateRequestBody,
+} from "@/app/api/donations/type";
+import { validationSchemaUpdateDonation } from "@/app/api/donations/ValidationSchemaUpdateDonation";
 
 interface FilterParams {
   scope?: string;
@@ -40,7 +44,7 @@ class DonationService {
     this.SOCKET_IO_URL = SOCKET_IO_URL;
   }
 
-  async createDonation(donorId: string, data: DonationRequestBody) {
+  async createDonation(donorId: string, data: DonationPostRequestBody) {
     try {
       await validationSchemaPostDonation.validate(data, { abortEarly: false });
     } catch (error) {
@@ -282,6 +286,60 @@ class DonationService {
     }
 
     return updatedCount;
+  }
+
+  async updateDonation(
+    donationId: string,
+    data: DonationUpdateRequestBody,
+    role: Role
+  ) {
+    
+    if (role !== Role.Admin) {
+      const donation = await donationRepo.findDonationByIdAndDonor(
+        new Types.ObjectId(donationId),
+        new Types.ObjectId(data.donorId)
+      );
+      if (!donation) {
+        throw new Error("No donation found for the provided ID and donor.");
+      }
+    }
+
+    // Validate request body
+    try {
+      await validationSchemaUpdateDonation.validate(data, {
+        abortEarly: false,
+      });
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        throw new Error(error.errors.join(", "));
+      }
+      throw error;
+    }
+
+    // Prepare update data
+    const updateData: Partial<DonationUpdateRequestBody> = {};
+    if (data.title) updateData.title = data.title;
+    if (data.description) updateData.description = data.description;
+    if (data.quantity) updateData.quantity = data.quantity;
+    if (data.foodType) updateData.foodType = data.foodType;
+    if (data.pickupDeadline) updateData.pickupDeadline = data.pickupDeadline;
+    if (data.location) updateData.location = data.location;
+    if (data.status) updateData.status = data.status;
+    if (data.imageUrl) updateData.imageUrl = data.imageUrl;
+    if (data.pickupInstruction)
+      updateData.pickupInstruction = data.pickupInstruction;
+
+    // Delegate to repository
+    const updatedDonation = await donationRepo.findByIdAndUpdate(
+      donationId,
+      updateData
+    );
+
+    if (!updatedDonation) {
+      throw new Error("Donation not found");
+    }
+
+    return updatedDonation;
   }
 }
 
