@@ -4,7 +4,23 @@ import { getServerOrigin } from "@/lib/getServerOrigin";
 import { cookies } from "next/headers";
 import Analytics from "./components/Analytics";
 
-const fetchAnalyticsData = async (searchParams: SearchParamsType) : Promise<AnalyticsData | undefined> => {
+export const metadata = {
+  title: "Analytics",
+  description:
+    "Track your donation impact, claims, and activity stats on the Food Rescue Hub dashboard.",
+  keywords: [
+    "analytics",
+    "dashboard",
+    "food donation stats",
+    "impact tracking",
+    "user activity",
+    "donation performance",
+  ],
+};
+
+const fetchAnalyticsData = async (
+  searchParams: SearchParamsType
+): Promise<AnalyticsData | undefined> => {
   const serverOrigin = await getServerOrigin();
   const urlSearchParams = new URLSearchParams(
     searchParams as Record<string, string>
@@ -27,7 +43,7 @@ const fetchAnalyticsData = async (searchParams: SearchParamsType) : Promise<Anal
     return await response.json();
   } catch (error) {
     console.error("Error fetching analytics data:", error);
-    return undefined; 
+    return undefined;
   }
 };
 
@@ -38,7 +54,7 @@ interface AnalyticsPageProps {
 const AnalyticsPage: FC<AnalyticsPageProps> = async ({ searchParams }) => {
   const params = await searchParams;
   const data = await fetchAnalyticsData(params);
-  return <Analytics data={data} initialFilters={params}/>
+  return <Analytics data={data} initialFilters={params} />;
 };
 
 export default AnalyticsPage;
