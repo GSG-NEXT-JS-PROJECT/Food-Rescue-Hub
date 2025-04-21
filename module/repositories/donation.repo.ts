@@ -70,6 +70,12 @@ class DonationRepository {
       pickupDeadline: { $lte: currentTime.toISOString() },
     }).populate("donorId", "name deviceToken");
   }
+
+  async findDonationByIdAndDonor(donationId: Types.ObjectId, donorId: Types.ObjectId,) {
+    await dbConnect();
+    const donation = await Donation.findOne({ _id: donationId, donorId: donorId});
+    return donation;
+  }
 }
 
 const donationRepo = new DonationRepository();
