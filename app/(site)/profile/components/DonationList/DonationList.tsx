@@ -127,12 +127,19 @@ export default function DonationsList({ userData }: DonationsListProps) {
             href={
               userData?.role === Role.Donor ? "/post-donation" : "/donations"
             }
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
           >
-            <Plus className="mr-2 h-4 w-4" />
-            {userData?.role === Role.Donor
-              ? "Create Donation"
-              : "Find Donations"}
+            {userData?.role === Role.Donor ? (
+              <>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Donation
+              </>
+            ) : (
+              <>
+                <Search className="mr-2 h-4 w-4" />
+                Browse Donation
+              </>
+            )}
           </Link>
         </div>
       </div>
@@ -235,12 +242,19 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         ? "/post-donation"
                         : "/donations"
                     }
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
                   >
-                    <Plus className="mr-2 h-4 w-4" />
-                    {userData?.role === Role.Donor
-                      ? "Create Donation"
-                      : "Find Donations"}
+                    {userData?.role === Role.Donor ? (
+                      <>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Donation
+                      </>
+                    ) : (
+                      <>
+                        <Search className="mr-2 h-4 w-4" />
+                        Browse Donation
+                      </>
+                    )}
                   </Link>
                 </div>
               </div>
