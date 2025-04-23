@@ -1,15 +1,21 @@
 "use client";
 
-import { ErrorMessage, useFormikContext } from "formik";
+import { ErrorMessage } from "formik";
 import { CldImage, CldUploadButton } from "next-cloudinary";
-import React from "react";
+import React, { FC } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { IPostDonation } from "../PostDonationForm/type";
+import useEditDonation from "@/app/(site)/profile/components/DonationList/EditDonationModal/hooks/useEditDonation";
+import usePostDonation from "@/app/(site)/post-donation/components/PostDonationForm/hooks/usePostDonation";
 
-const ImageUpload = () => {
-  const formik = useFormikContext<IPostDonation>();
+type UpdateDonationFormikType = ReturnType<typeof useEditDonation>["formik"];
+type PostDonationFormikType = ReturnType<typeof usePostDonation>['formik'];
 
+interface ImageUploadProps {
+  formik: UpdateDonationFormikType | PostDonationFormikType
+}
+
+const ImageUpload:FC<ImageUploadProps> = ({formik}) => {
   return (
     <div className="grid grid-cols-1 gap-4 space-y-2">
       <div className="flex items-center gap-4">

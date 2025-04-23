@@ -7,7 +7,7 @@ export const useDonationList = (userData: UserProfile | undefined) => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Number of donations to show per page
-  const donations = userData?.donations || [];
+  const [donations, setDonations] = useState(userData?.donations || []);
 
   const getStatusBadgeVariant = (
     status: string
@@ -27,7 +27,7 @@ export const useDonationList = (userData: UserProfile | undefined) => {
   // Get current page items
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = userData?.donations.slice(
+  const currentItems = donations.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
@@ -39,6 +39,7 @@ export const useDonationList = (userData: UserProfile | undefined) => {
 
   return {
     donations,
+    setDonations,
     currentItems,
     handlePageChange,
     getStatusBadgeVariant,

@@ -2,7 +2,11 @@ import dbConnect from "@/DB/connection";
 import donationService from "@/module/services/donation.service";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
-import { DonationDeleteRequestBody, DonationPostRequestBody, DonationUpdateRequestBody } from "./type";
+import {
+  DonationDeleteRequestBody,
+  DonationPostRequestBody,
+  DonationUpdateRequestBody,
+} from "./type";
 import { Role } from "@/@types";
 
 export const GET = async (request: NextRequest) => {

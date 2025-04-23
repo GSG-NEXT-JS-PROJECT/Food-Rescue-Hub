@@ -1,16 +1,34 @@
-'use client';
+"use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import noImage from "@/public/no-image.png";
-import { Package2, Clock, User, ChevronRight, Plus } from "lucide-react";
-import { Role, type UserProfile } from "@/@types";
+import { Package2, Clock, User, Plus, Pencil, Trash2 } from "lucide-react";
+import {
+  DonationWithDonor,
+  DonationWithRecipient,
+  Role,
+  type UserProfile,
+} from "@/@types";
 import Link from "next/link";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/lib/dateUtils";
 import { Types } from "mongoose";
 import { useDonationList } from "./hooks/useDonationList";
+import EditDonationModal from "./EditDonationModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { IEditDonation } from "./EditDonationModal/type";
 
 interface DonationsListProps {
   userData: UserProfile | undefined;
@@ -19,12 +37,70 @@ interface DonationsListProps {
 export default function DonationsList({ userData }: DonationsListProps) {
   const {
     donations,
+    setDonations,
     currentItems,
     handlePageChange,
     getStatusBadgeVariant,
     itemsPerPage,
     currentPage,
   } = useDonationList(userData);
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedDonation, setSelectedDonation] = useState<
+    DonationWithDonor | DonationWithRecipient | null
+  >(null);
+
+  const handleEditClick = (
+    donation: DonationWithDonor | DonationWithRecipient
+  ) => {
+    setSelectedDonation(donation);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (
+    donation: DonationWithDonor | DonationWithRecipient
+  ) => {
+    setSelectedDonation(donation);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleUpdateClick = (values: IEditDonation) => {
+    if (!selectedDonation) return;
+    const updatedDonation: DonationWithDonor | DonationWithRecipient = {
+      ...selectedDonation,
+      ...values,
+    };
+    const newDonations = donations.map((d) =>
+      d._id === selectedDonation?._id ? updatedDonation : d
+    ) as DonationWithDonor[] | DonationWithRecipient[];
+
+    setDonations(newDonations);
+    setEditModalOpen(false);
+    setSelectedDonation(null);
+  };
+
+  const handleCloseClick = () => {
+    setEditModalOpen(false);
+    setSelectedDonation(null);
+  };
+  const handleDeleteDonation = async () => {
+    try {
+      // Implement your API call to delete the donation
+      // Example: await deleteDonation(selectedDonation._id);
+      // console.log("Deleting donation:", selectedDonation._id)
+
+      // Refresh the donations list
+      // You might need to add a refresh function to your useDonationList hook
+
+      // Close the dialog
+      setDeleteDialogOpen(false);
+      setSelectedDonation(null);
+    } catch (error) {
+      console.error("Error deleting donation:", error);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="px-6 py-5 flex justify-between items-center">
@@ -85,7 +161,6 @@ export default function DonationsList({ userData }: DonationsListProps) {
                       </div>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" />
-                        {/* { userData.role == Role.Donor ? "created at: " : "pickup deadline: " } */}
                         {userData?.role == Role.Donor
                           ? formatDate(new Date(donation.createdAt))
                           : formatDate(new Date(donation.pickupDeadline))}
@@ -107,13 +182,24 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         )}
                     </div>
                   </div>
-                  <div className="ml-4">
+                  <div className="ml-4 flex items-center space-x-1">
                     <Button
                       variant="ghost"
-                      size="icon"
-                      className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-full"
+                      size="sm"
+                      className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
+                      onClick={() => handleEditClick(donation)}
                     >
-                      <ChevronRight className="h-5 w-5" />
+                      <Pencil className="h-4 w-4" />
+                      <span className="sr-only">Edit</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
+                      onClick={() => handleDeleteClick(donation)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Delete</span>
                     </Button>
                   </div>
                 </div>
@@ -163,6 +249,43 @@ export default function DonationsList({ userData }: DonationsListProps) {
           />
         )}
       </div>
+
+      {/* Edit Modal */}
+      {selectedDonation && (
+        <EditDonationModal
+          isOpen={editModalOpen}
+          onClose={handleCloseClick}
+          onUpdate={handleUpdateClick}
+          donation={selectedDonation}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog - more compact */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Donation</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this donation? This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center justify-end gap-2 pt-2">
+            <AlertDialogCancel
+              onClick={() => setDeleteDialogOpen(false)}
+              className="mt-0"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteDonation}
+              className="bg-red-600 hover:bg-red-700 text-white mt-0"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
