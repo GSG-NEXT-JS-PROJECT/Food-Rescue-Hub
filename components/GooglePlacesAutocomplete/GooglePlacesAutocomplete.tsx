@@ -28,8 +28,8 @@ const GooglePlacesAutocomplete: FC<GooglePlacesAutocompleteProps> = ({
     libraries: googleMapsLibraries,
   });
 
-  if(isLoaded){
-return <Spinner type="circle" size="xl" />;
+  if (!isLoaded) {
+    return <Spinner type="circle" size="xl" />;
   }
 
   return (
