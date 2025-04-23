@@ -10,7 +10,7 @@ export function convertISOToLocal(isoDate: string): string {
   const offsetDate = new Date(
     date.getTime() - date.getTimezoneOffset() * 60000
   );
-  return offsetDate.toISOString();
+  return offsetDate.toISOString().slice(0, 16);
 }
 
 export function getLocalISOStringNow(): string {

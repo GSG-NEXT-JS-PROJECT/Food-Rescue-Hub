@@ -1,16 +1,35 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import noImage from "@/public/no-image.png";
-import { Package2, Clock, User, ChevronRight, Plus } from "lucide-react";
+import {
+  Package2,
+  Clock,
+  User,
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+} from "lucide-react";
 import { Role, type UserProfile } from "@/@types";
 import Link from "next/link";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/lib/dateUtils";
 import { Types } from "mongoose";
 import { useDonationList } from "./hooks/useDonationList";
+import EditDonationModal from "../EditDonationModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface DonationsListProps {
   userData: UserProfile | undefined;
@@ -24,7 +43,17 @@ export default function DonationsList({ userData }: DonationsListProps) {
     getStatusBadgeVariant,
     itemsPerPage,
     currentPage,
+    editModalOpen,
+    deleteDialogOpen,
+    handleEditClick,
+    handleDeleteClick,
+    handleCloseClick,
+    handleDeleteDonation,
+    handleUpdateClick,
+    setDeleteDialogOpen,
+    selectedDonation,
   } = useDonationList(userData);
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="px-6 py-5 flex justify-between items-center">
@@ -39,18 +68,26 @@ export default function DonationsList({ userData }: DonationsListProps) {
           </p>
         </div>
         <div className="flex gap-2">
-          {userData?.role === Role.Donor && (
-            <Link
-              href="/post-donation"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Create Donation
-            </Link>
-          )}
+          <Link
+            href={
+              userData?.role === Role.Donor ? "/post-donation" : "/donations"
+            }
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
+          >
+            {userData?.role === Role.Donor ? (
+              <>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Donation
+              </>
+            ) : (
+              <>
+                <Search className="mr-2 h-4 w-4" />
+                Browse Donation
+              </>
+            )}
+          </Link>
         </div>
       </div>
-
       <div>
         <ul className="divide-y divide-gray-100">
           {donations.length > 0 ? (
@@ -74,9 +111,6 @@ export default function DonationsList({ userData }: DonationsListProps) {
                       <h4 className="text-base font-medium text-gray-900">
                         {donation.title}
                       </h4>
-                      <Badge variant={getStatusBadgeVariant(donation.status)}>
-                        {donation.status}
-                      </Badge>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
                       <div className="flex items-center text-sm text-gray-500">
@@ -85,7 +119,6 @@ export default function DonationsList({ userData }: DonationsListProps) {
                       </div>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400" />
-                        {/* { userData.role == Role.Donor ? "created at: " : "pickup deadline: " } */}
                         {userData?.role == Role.Donor
                           ? formatDate(new Date(donation.createdAt))
                           : formatDate(new Date(donation.pickupDeadline))}
@@ -107,15 +140,31 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         )}
                     </div>
                   </div>
-                  <div className="ml-4">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-full"
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </Button>
-                  </div>
+                  <Badge variant={getStatusBadgeVariant(donation.status)}>
+                    {donation.status}
+                  </Badge>
+                  {userData?.role === Role.Donor && (
+                    <div className="ml-4 flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
+                        onClick={() => handleEditClick(donation)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
+                        onClick={() => handleDeleteClick(donation)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </li>
             ))
@@ -138,12 +187,19 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         ? "/post-donation"
                         : "/donations"
                     }
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
                   >
-                    <Plus className="mr-2 h-4 w-4" />
-                    {userData?.role === Role.Donor
-                      ? "Create Donation"
-                      : "Find Donations"}
+                    {userData?.role === Role.Donor ? (
+                      <>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Donation
+                      </>
+                    ) : (
+                      <>
+                        <Search className="mr-2 h-4 w-4" />
+                        Browse Donation
+                      </>
+                    )}
                   </Link>
                 </div>
               </div>
@@ -163,6 +219,43 @@ export default function DonationsList({ userData }: DonationsListProps) {
           />
         )}
       </div>
+
+      {/* Edit Modal */}
+      {selectedDonation && (
+        <EditDonationModal
+          isOpen={editModalOpen}
+          onClose={handleCloseClick}
+          onUpdate={handleUpdateClick}
+          donation={selectedDonation}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog - more compact */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Donation</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this donation? This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center justify-end gap-2 pt-2">
+            <AlertDialogCancel
+              onClick={() => setDeleteDialogOpen(false)}
+              className="mt-0"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteDonation}
+              className="bg-red-600 hover:bg-red-700 text-white mt-0"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

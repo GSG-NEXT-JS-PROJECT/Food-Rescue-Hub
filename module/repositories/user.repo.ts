@@ -3,6 +3,7 @@ import dbConnect from "@/DB/connection";
 import { Types } from "mongoose";
 import donationRepo from "./donation.repo";
 import { DonationWithDonor, DonationWithRecipient, Role } from "@/@types";
+import { SortOptions } from "@/app/api/donations/type";
 
 export class UserRepository {
   async findUserByEmail(email: string): Promise<UserDocument | null> {
@@ -45,12 +46,15 @@ export class UserRepository {
         { recipientId: new Types.ObjectId(userId) },
       ],
     };
+    const sort: SortOptions = {
+      createdAt: -1,
+    };
     if (role === Role.Donor) {
-      return await donationRepo.findDonations(filter, 0, 0, {}, [
+      return await donationRepo.findDonations(filter, 0, 0, sort, [
         "recipientId",
       ]);
     }
-    return await donationRepo.findDonations(filter, 0, 0, {}, ["donorId"]);
+    return await donationRepo.findDonations(filter, 0, 0, sort, ["donorId"]);
   }
 }
 export default new UserRepository();

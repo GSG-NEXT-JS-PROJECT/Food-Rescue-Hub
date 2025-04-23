@@ -151,3 +151,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.cloudinary-button {
+  pointer-events: all !important;
+}
+
+body > [data-testid='uwidget'] {
+  z-index: 99999 !important;
+  pointer-events: all !important;
+}
+
+[data-radix-dialog-content] {
+  transition: pointer-events 0.2s;
+}

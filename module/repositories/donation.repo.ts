@@ -1,15 +1,8 @@
 import { DonationStatus, IDonation } from "@/@types";
+import { FilterOptions, SortOptions } from "@/app/api/donations/type";
 import dbConnect from "@/DB/connection";
 import Donation, { DonationDocument } from "@/DB/model/donation.model";
 import { Types } from "mongoose";
-interface FilterOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}
-
-interface SortOptions {
-  [key: string]: 1 | -1;
-}
 
 class DonationRepository {
   async createDonation(donationData: IDonation): Promise<DonationDocument> {

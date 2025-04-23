@@ -26,6 +26,7 @@ class UserService {
       location: user.location,
       role: user.role,
       createdAt: convertISOToLocal(user.createdAt.toISOString()),
+      lastSignin: user.lastSignin
     };
   }
 

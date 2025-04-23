@@ -12,8 +12,10 @@ import {
   DonationDeleteRequestBody,
   DonationPostRequestBody,
   DonationUpdateRequestBody,
+  FilterOptions,
+  SortOptions,
 } from "@/app/api/donations/type";
-import { validationSchemaUpdateDonation } from "@/app/api/donations/ValidationSchemaUpdateDonation";
+import { validationSchemaUpdateDonation } from "@/app/(site)/profile/components/EditDonationModal/ValidationSchemaUpdateDonation";
 
 interface FilterParams {
   scope?: string;
@@ -129,7 +131,7 @@ class DonationService {
     );
 
     // Build the filter object
-    const filter: any = {};
+    const filter: FilterOptions = {};
 
     // Apply additional filters
     if (status) filter.status = status;
@@ -156,7 +158,7 @@ class DonationService {
     }
 
     // Sort options
-    const sort: { [key: string]: 1 | -1 } = {
+    const sort: SortOptions = {
       [sortBy]: sortOrder === "asc" ? 1 : -1,
     };
 
