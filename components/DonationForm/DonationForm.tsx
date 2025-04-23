@@ -11,15 +11,14 @@ import { Button } from "@/components/ui/button";
 import Icons from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import TextAreaField from "@/components/text-area";
-import useEditDonation from "@/app/(site)/profile/components/DonationList/EditDonationModal/hooks/useEditDonation";
+import useEditDonation from "@/app/(site)/profile/components/EditDonationModal/hooks/useEditDonation";
 import usePostDonation from "@/app/(site)/post-donation/components/PostDonationForm/hooks/usePostDonation";
 
 type UpdateDonationFormikType = ReturnType<typeof useEditDonation>["formik"];
-type PostDonationFormikType = ReturnType<typeof usePostDonation>['formik'];
-
+type PostDonationFormikType = ReturnType<typeof usePostDonation>["formik"];
 
 interface DonationFormProps {
-  formik: UpdateDonationFormikType | PostDonationFormikType
+  formik: UpdateDonationFormikType | PostDonationFormikType;
   isPostForm?: boolean;
   onCancel?: () => void;
 }
@@ -27,7 +26,7 @@ interface DonationFormProps {
 const DonationForm: FC<DonationFormProps> = ({
   isPostForm = false,
   onCancel,
-  formik
+  formik,
 }) => {
   return (
     <FormikProvider value={formik}>

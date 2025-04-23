@@ -13,7 +13,7 @@ import {
   DonationPostRequestBody,
   DonationUpdateRequestBody,
 } from "@/app/api/donations/type";
-import { validationSchemaUpdateDonation } from "@/app/(site)/profile/components/DonationList/EditDonationModal/ValidationSchemaUpdateDonation";
+import { validationSchemaUpdateDonation } from "@/app/(site)/profile/components/EditDonationModal/ValidationSchemaUpdateDonation";
 
 interface FilterParams {
   scope?: string;

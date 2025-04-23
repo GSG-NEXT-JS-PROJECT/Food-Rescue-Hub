@@ -17,7 +17,7 @@ import Pagination from "@/components/Pagination";
 import { formatDate } from "@/lib/dateUtils";
 import { Types } from "mongoose";
 import { useDonationList } from "./hooks/useDonationList";
-import EditDonationModal from "./EditDonationModal";
+import EditDonationModal from "../EditDonationModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { IEditDonation } from "./EditDonationModal/type";
+import { IEditDonation } from "../EditDonationModal/type";
 
 interface DonationsListProps {
   userData: UserProfile | undefined;
