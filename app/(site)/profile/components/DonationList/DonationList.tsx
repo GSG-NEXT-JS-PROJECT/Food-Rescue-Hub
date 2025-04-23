@@ -127,7 +127,7 @@ export default function DonationsList({ userData }: DonationsListProps) {
             href={
               userData?.role === Role.Donor ? "/post-donation" : "/donations"
             }
-            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
           >
             {userData?.role === Role.Donor ? (
               <>
@@ -242,7 +242,7 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         ? "/post-donation"
                         : "/donations"
                     }
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
                   >
                     {userData?.role === Role.Donor ? (
                       <>
