@@ -3,18 +3,8 @@ import { validationSchemaPostDonation } from "@/app/(site)/post-donation/compone
 import { DonationStatus } from "@/@types";
 
 export const validationSchemaUpdateDonation = Yup.object().shape({
-  ...Object.fromEntries(
-    Object.entries(validationSchemaPostDonation.fields).map(([key, schema]) => [
-      key,
-      (schema as Yup.AnySchema).optional(),
-    ])
-  ),
-  location: Yup.object({
-    lat: Yup.number().optional(),
-    lng: Yup.number().optional(),
-    address: Yup.string().optional(),
-  }).optional(),
+  ...Object.fromEntries(Object.entries(validationSchemaPostDonation.fields)),
   status: Yup.string()
     .oneOf(Object.values(DonationStatus), "Invalid status value")
-    .optional(),
+    .required("Status is required"),
 });
