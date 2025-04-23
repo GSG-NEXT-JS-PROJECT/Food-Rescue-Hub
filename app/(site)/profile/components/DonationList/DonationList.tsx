@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,12 +13,7 @@ import {
   Trash2,
   Search,
 } from "lucide-react";
-import {
-  DonationWithDonor,
-  DonationWithRecipient,
-  Role,
-  type UserProfile,
-} from "@/@types";
+import { Role, type UserProfile } from "@/@types";
 import Link from "next/link";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/lib/dateUtils";
@@ -36,7 +30,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { IEditDonation } from "../EditDonationModal/type";
 
 interface DonationsListProps {
   userData: UserProfile | undefined;
@@ -45,69 +38,21 @@ interface DonationsListProps {
 export default function DonationsList({ userData }: DonationsListProps) {
   const {
     donations,
-    setDonations,
     currentItems,
     handlePageChange,
     getStatusBadgeVariant,
     itemsPerPage,
     currentPage,
+    editModalOpen,
+    deleteDialogOpen,
+    handleEditClick,
+    handleDeleteClick,
+    handleCloseClick,
+    handleDeleteDonation,
+    handleUpdateClick,
+    setDeleteDialogOpen,
+    selectedDonation,
   } = useDonationList(userData);
-
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedDonation, setSelectedDonation] = useState<
-    DonationWithDonor | DonationWithRecipient | null
-  >(null);
-
-  const handleEditClick = (
-    donation: DonationWithDonor | DonationWithRecipient
-  ) => {
-    setSelectedDonation(donation);
-    setEditModalOpen(true);
-  };
-
-  const handleDeleteClick = (
-    donation: DonationWithDonor | DonationWithRecipient
-  ) => {
-    setSelectedDonation(donation);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleUpdateClick = (values: IEditDonation) => {
-    if (!selectedDonation) return;
-    const updatedDonation: DonationWithDonor | DonationWithRecipient = {
-      ...selectedDonation,
-      ...values,
-    };
-    const newDonations = donations.map((d) =>
-      d._id === selectedDonation?._id ? updatedDonation : d
-    ) as DonationWithDonor[] | DonationWithRecipient[];
-
-    setDonations(newDonations);
-    setEditModalOpen(false);
-    setSelectedDonation(null);
-  };
-
-  const handleCloseClick = () => {
-    setEditModalOpen(false);
-    setSelectedDonation(null);
-  };
-  const handleDeleteDonation = async () => {
-    try {
-      // Implement your API call to delete the donation
-      // Example: await deleteDonation(selectedDonation._id);
-      // console.log("Deleting donation:", selectedDonation._id)
-
-      // Refresh the donations list
-      // You might need to add a refresh function to your useDonationList hook
-
-      // Close the dialog
-      setDeleteDialogOpen(false);
-      setSelectedDonation(null);
-    } catch (error) {
-      console.error("Error deleting donation:", error);
-    }
-  };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
