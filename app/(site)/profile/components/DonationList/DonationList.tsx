@@ -182,26 +182,28 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         )}
                     </div>
                   </div>
-                  <div className="ml-4 flex items-center space-x-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
-                      onClick={() => handleEditClick(donation)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
-                      onClick={() => handleDeleteClick(donation)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
+                  {userData?.role === Role.Donor && (
+                    <div className="ml-4 flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
+                        onClick={() => handleEditClick(donation)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md h-8 w-8 p-0 flex items-center justify-center"
+                        onClick={() => handleDeleteClick(donation)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </li>
             ))
