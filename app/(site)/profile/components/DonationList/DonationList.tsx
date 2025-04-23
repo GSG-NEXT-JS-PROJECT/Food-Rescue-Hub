@@ -5,7 +5,15 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import noImage from "@/public/no-image.png";
-import { Package2, Clock, User, Plus, Pencil, Trash2 } from "lucide-react";
+import {
+  Package2,
+  Clock,
+  User,
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+} from "lucide-react";
 import {
   DonationWithDonor,
   DonationWithRecipient,
@@ -115,18 +123,19 @@ export default function DonationsList({ userData }: DonationsListProps) {
           </p>
         </div>
         <div className="flex gap-2">
-          {userData?.role === Role.Donor && (
-            <Link
-              href="/post-donation"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Create Donation
-            </Link>
-          )}
+          <Link
+            href={
+              userData?.role === Role.Donor ? "/post-donation" : "/donations"
+            }
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {userData?.role === Role.Donor
+              ? "Create Donation"
+              : "Find Donations"}
+          </Link>
         </div>
       </div>
-
       <div>
         <ul className="divide-y divide-gray-100">
           {donations.length > 0 ? (
@@ -150,9 +159,6 @@ export default function DonationsList({ userData }: DonationsListProps) {
                       <h4 className="text-base font-medium text-gray-900">
                         {donation.title}
                       </h4>
-                      <Badge variant={getStatusBadgeVariant(donation.status)}>
-                        {donation.status}
-                      </Badge>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
                       <div className="flex items-center text-sm text-gray-500">
@@ -182,6 +188,9 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         )}
                     </div>
                   </div>
+                  <Badge variant={getStatusBadgeVariant(donation.status)}>
+                    {donation.status}
+                  </Badge>
                   {userData?.role === Role.Donor && (
                     <div className="ml-4 flex items-center space-x-1">
                       <Button
@@ -226,7 +235,7 @@ export default function DonationsList({ userData }: DonationsListProps) {
                         ? "/post-donation"
                         : "/donations"
                     }
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-4 py-2 flex items-center shadow-sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm 2xl:text-lg rounded-full px-3 py-2 flex items-center shadow-sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     {userData?.role === Role.Donor
