@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Bell, CheckCircle, Circle } from "lucide-react";
 import { useNotifications } from "./hooks/useNotifications";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function Notifications({ userId }: { userId: string }) {
   const { notifications, unreadCount, handleMarkAsRead, handleMarkAllAsRead } =
@@ -17,14 +19,21 @@ export default function Notifications({ userId }: { userId: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="relative focus:outline-none">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="relative h-9 rounded-full px-3 text-sm font-medium text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
+        >
           <Bell className="h-6 w-6" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+            <Badge
+              variant="destructive"
+              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+            >
               {unreadCount}
-            </span>
+            </Badge>
           )}
-        </button>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64 bg-white shadow-lg rounded-md p-2">
         <DropdownMenuLabel className="flex justify-between items-center">
