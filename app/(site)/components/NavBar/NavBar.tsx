@@ -9,7 +9,7 @@ import { LogOut, User } from "lucide-react"
 import { Role, type UserProfile } from "@/@types"
 import Icons from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,7 +113,7 @@ export default function Navbar({ user }: NavbarProps) {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8 border border-gray-200">
-                        {/* <AvatarImage src={user?.image || ""} alt={user?.name || "User"} /> */}
+                        <AvatarImage src={user?.imageUrl || ""} alt={user?.name || "User"} />
                         <AvatarFallback className="bg-green-100 text-green-600">
                           {user?.name ? user?.name.charAt(0).toUpperCase() : "U"}
                         </AvatarFallback>

@@ -5,13 +5,14 @@ import type { FC } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, Edit3, Save, X, Camera } from "lucide-react";
-import { type UserProfile } from "@/@types";
+import { Role, type UserProfile } from "@/@types";
 import { useProfileSidebar } from "./hooks/useProfileSidebar";
 import { FormikProvider, Form } from "formik";
 import Icons from "@/components/ui/icons";
 import TextField from "@/components/text-field";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
 import { cn } from "@/lib/utils";
+import ImageUpload from "@/components/ImageUpload";
 
 interface ProfileSidebarProps {
   userData: UserProfile | undefined;
@@ -27,7 +28,8 @@ const ProfileSidebar: FC<ProfileSidebarProps> = ({ userData }) => {
     getRoleBadgeVariant,
   } = useProfileSidebar(
     userData?.name || "",
-    userData?.location || { lat: 0, lng: 0, address: "" }
+    userData?.location || { lat: 0, lng: 0, address: "" },
+    userData?.imageUrl || ''
   );
 
   return (
@@ -77,24 +79,26 @@ const ProfileSidebar: FC<ProfileSidebarProps> = ({ userData }) => {
             <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
               <div className="group relative">
                 <div className="h-28 w-28 rounded-full border-4 border-white bg-emerald-100 overflow-hidden shadow-lg flex items-center justify-center">
-                  {userData?.profileImage ? (
+                  {formik.values?.imageUrl ? (
                     <Image
-                      src={userData?.profileImage || "/placeholder.svg"}
-                      alt={userData?.name}
+                      src={formik.values.imageUrl || "/placeholder.svg"}
+                      alt={formik.values.name}
                       width={112}
                       height={112}
                       className="h-full w-full object-cover"
                     />
                   ) : (
                     <span className="text-4xl font-bold text-emerald-600">
-                      {userData?.name.charAt(0).toUpperCase()}
+                      {formik.values.name.charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
                 {isEditing && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                    <Camera className="h-8 w-8 text-white" />
-                  </div>
+                  <ImageUpload formik={formik} isImagePreview={false} className="block">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                      <Camera className="h-8 w-8 text-white" />
+                    </div>
+                  </ImageUpload>
                 )}
               </div>
             </div>
@@ -127,10 +131,10 @@ const ProfileSidebar: FC<ProfileSidebarProps> = ({ userData }) => {
 
               <div className="mt-2 flex items-center justify-center">
                 <Badge
-                  variant={getRoleBadgeVariant(userData.role)}
+                  variant={getRoleBadgeVariant(userData?.role || Role.Donor)}
                   className="text-xs px-3 py-1"
                 >
-                  {userData.role.charAt(0).toUpperCase() +
+                  {userData !== undefined && userData.role.charAt(0).toUpperCase() +
                     userData.role.slice(1)}
                 </Badge>
               </div>

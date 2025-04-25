@@ -35,6 +35,7 @@ const userSchema: Schema<UserDocument> = new Schema(
         required: true,
       },
     },
+    imageUrl: { type: String },
     isVerified: {
       type: Boolean,
       default: false,

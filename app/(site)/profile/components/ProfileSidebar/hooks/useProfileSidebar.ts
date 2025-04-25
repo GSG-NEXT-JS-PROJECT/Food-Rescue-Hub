@@ -8,7 +8,7 @@ import { validationSchemaUpdateUser } from "../ValidationSchemaUpdateUser";
 import { toast } from "sonner";
 import { useState } from "react";
 
-export const useProfileSidebar = (name: string, userLocation: LocationType) => {
+export const useProfileSidebar = (name: string, userLocation: LocationType, imageUrl: string) => {
   const [isEditing, setIsEditing] = useState(false);
   async function handleUpdateUser(
     values: IUpdateUser,
@@ -21,6 +21,7 @@ export const useProfileSidebar = (name: string, userLocation: LocationType) => {
       const userUpdatedData: IUpdateUser = {
         name: values.name,
         location: values.location,
+        imageUrl: values.imageUrl
       };
 
       const response = await fetch("/api/user/profile", {
@@ -46,7 +47,7 @@ export const useProfileSidebar = (name: string, userLocation: LocationType) => {
   }
 
   const formik = useFormik<IUpdateUser>({
-    initialValues: generateInitialValues(name, userLocation),
+    initialValues: generateInitialValues(name, userLocation, imageUrl),
     onSubmit: (values, { setSubmitting }) => {
       handleUpdateUser(values, setSubmitting);
     },

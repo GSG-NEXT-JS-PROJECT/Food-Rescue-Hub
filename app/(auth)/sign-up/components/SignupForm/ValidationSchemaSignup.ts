@@ -38,4 +38,6 @@ export const validationSchemaSignup = Yup.object().shape({
   role: Yup.mixed<Role>()
     .oneOf(Object.values(roleOptions), "Invalid role")
     .required("Role is required"),
+
+  imageUrl: Yup.string(),
 });
