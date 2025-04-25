@@ -58,8 +58,9 @@ export interface IUser {
   location: LocationType;
   password: string;
   role: Role;
+  imageUrl: string;
   isVerified: boolean;
-  lastSignin: Date
+  lastSignin: Date;
 }
 
 export interface IDonation {

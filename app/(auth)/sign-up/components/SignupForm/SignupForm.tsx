@@ -9,6 +9,7 @@ import TextField from "@/components/text-field";
 import SelectField from "@/components/select-field";
 import Icons from "@/components/ui/icons";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
+import ImageUpload from "@/components/ImageUpload";
 
 const SignupForm = () => {
   const { formik } = useSignup();
@@ -71,6 +72,8 @@ const SignupForm = () => {
           onValueChange={(value) => formik.setFieldValue("role", value)}
           defaultValue={formik.values.role}
         />
+
+        <ImageUpload formik={formik} />
 
         {/* Submit Button */}
 
