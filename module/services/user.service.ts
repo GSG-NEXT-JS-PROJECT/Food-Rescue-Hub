@@ -52,6 +52,7 @@ class UserService {
     if (data.name) updateData.name = data.name;
     if (data.location) updateData.location = data.location;
     if (data.role) updateData.role = data.role;
+    if (data.imageUrl) updateData.imageUrl = data.imageUrl;
 
     // Delegate to repository
     const updatedUser = await userRepo.findByIdAndUpdate(userId, updateData);

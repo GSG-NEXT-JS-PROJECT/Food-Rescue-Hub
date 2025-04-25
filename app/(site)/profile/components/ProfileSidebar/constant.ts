@@ -3,8 +3,10 @@ import { IUpdateUser } from "./type";
 
 export const generateInitialValues = (
   name: string,
-  location: LocationType
+  location: LocationType,
+  imageUrl: string
 ): IUpdateUser => ({
   name,
   location,
+  imageUrl: imageUrl
 });

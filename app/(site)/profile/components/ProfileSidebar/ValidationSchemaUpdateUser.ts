@@ -22,5 +22,7 @@ export const validationSchemaUpdateUser = yup
         address: yup.string(),
       })
       .optional(),
+
+    imageUrl: yup.string(),
   })
   .strict(true);

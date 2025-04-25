@@ -2,23 +2,32 @@
 
 import { ErrorMessage } from "formik";
 import { CldImage, CldUploadButton } from "next-cloudinary";
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import usePostDonation from "@/app/(site)/post-donation/components/PostDonationForm/hooks/usePostDonation";
 import useEditDonation from "@/app/(site)/profile/components/EditDonationModal/hooks/useEditDonation";
 import { useImageUpload } from "./hooks/useImageUpload";
 import useSignup from "@/app/(auth)/sign-up/components/SignupForm/hooks/useSignup";
+import { useProfileSidebar } from "@/app/(site)/profile/components/ProfileSidebar/hooks/useProfileSidebar";
 
 type UpdateDonationFormikType = ReturnType<typeof useEditDonation>["formik"];
 type PostDonationFormikType = ReturnType<typeof usePostDonation>["formik"];
 type SignupFormikType = ReturnType<typeof useSignup>["formik"];
+type UpdateUserFormikType = ReturnType<typeof useProfileSidebar>["formik"];
 
 interface ImageUploadProps {
-  formik: UpdateDonationFormikType | PostDonationFormikType | SignupFormikType;
+  formik:
+    | UpdateDonationFormikType
+    | PostDonationFormikType
+    | SignupFormikType
+    | UpdateUserFormikType;
+  children?: ReactNode;
+  isImagePreview?: boolean
+  className?: string
 }
 
-const ImageUpload: FC<ImageUploadProps> = ({ formik }) => {
+const ImageUpload: FC<ImageUploadProps> = ({ formik, children, isImagePreview = true, className = ''}) => {
   const { setIsWidgetOpen } = useImageUpload();
 
   return (
@@ -34,10 +43,16 @@ const ImageUpload: FC<ImageUploadProps> = ({ formik }) => {
           }}
           onOpen={() => setIsWidgetOpen(true)}
           onClose={() => setIsWidgetOpen(false)}
-          className="flex h-10 w-full cursor-pointer items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className={`${Boolean(className) ? className : "flex h-10 w-full cursor-pointer items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"}`}
         >
-          <Upload className="mr-2 h-4 w-4" />
-          Upload Image
+          {Boolean(children) ? (
+            children
+          ) : (
+            <>
+              <Upload className="mr-2 h-4 w-4" />
+              Upload Image
+            </>
+          )}
         </CldUploadButton>
         <ErrorMessage
           name="imageUrl"
@@ -47,7 +62,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ formik }) => {
       </div>
 
       {/* Image Preview */}
-      {formik.values.imageUrl && (
+      {isImagePreview && formik.values.imageUrl && (
         <div className="relative mt-2 rounded-md overflow-hidden flex flex-col items-center">
           <p className="text-sm text-gray-600">Image Preview:</p>
           <CldImage
