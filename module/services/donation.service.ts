@@ -101,7 +101,7 @@ class DonationService {
     };
   }
 
-  async getDonations(userRole: string, params: FilterParams) {
+  async getDonations(userId: string, userRole: string, params: FilterParams) {
     const {
       scope = "all",
       page = 1,
@@ -167,6 +167,15 @@ class DonationService {
       case "total": {
         const total = await donationRepo.countDonations(filter);
         return { total };
+      }
+
+      case "user": {
+        // Apply user-based filtering
+        if (userRole === Role.Donor) {
+          filter.donorId = new Types.ObjectId(userId);
+        } else {
+          filter.recipientId = new Types.ObjectId(userId);
+        }
       }
 
       case "all": {
@@ -296,41 +305,49 @@ class DonationService {
     data: DonationUpdateRequestBody,
     role: Role
   ) {
-    if (role !== Role.Admin) {
-      const donation = await donationRepo.findDonationByIdAndDonor(
-        new Types.ObjectId(donationId),
-        new Types.ObjectId(data.donorId)
-      );
-      if (!donation) {
-        throw new Error("No donation found for the provided ID and donor.");
-      }
-    }
-
-    // Validate request body
-    try {
-      await validationSchemaUpdateDonation.validate(data, {
-        abortEarly: false,
-      });
-    } catch (error) {
-      if (error instanceof yup.ValidationError) {
-        throw new Error(error.errors.join(", "));
-      }
-      throw error;
-    }
-
-    // Prepare update data
     const updateData: Partial<DonationUpdateRequestBody> = {};
-    if (data.title) updateData.title = data.title;
-    if (data.description) updateData.description = data.description;
-    if (data.quantity) updateData.quantity = data.quantity;
-    if (data.foodType) updateData.foodType = data.foodType;
-    if (data.pickupDeadline) updateData.pickupDeadline = data.pickupDeadline;
-    if (data.location) updateData.location = data.location;
-    if (data.status) updateData.status = data.status;
-    if (data.imageUrl) updateData.imageUrl = data.imageUrl;
-    if (data.pickupInstruction)
-      updateData.pickupInstruction = data.pickupInstruction;
+    if (role === Role.Recipient) {
+      if (
+        data.status &&
+        (data.status === DonationStatus.Claimed ||
+          data.status === DonationStatus.Completed)
+      )
+        updateData.status = data.status;
+    } else {
+      if (role === Role.Donor) {
+        const donation = await donationRepo.findDonationByIdAndDonor(
+          new Types.ObjectId(donationId),
+          new Types.ObjectId(data.donorId)
+        );
+        if (!donation) {
+          throw new Error("No donation found for the provided ID and donor.");
+        }
+      }
 
+      // Validate request body
+      try {
+        await validationSchemaUpdateDonation.validate(data, {
+          abortEarly: false,
+        });
+      } catch (error) {
+        if (error instanceof yup.ValidationError) {
+          throw new Error(error.errors.join(", "));
+        }
+        throw error;
+      }
+
+      // Prepare update data
+      if (data.title) updateData.title = data.title;
+      if (data.description) updateData.description = data.description;
+      if (data.quantity) updateData.quantity = data.quantity;
+      if (data.foodType) updateData.foodType = data.foodType;
+      if (data.pickupDeadline) updateData.pickupDeadline = data.pickupDeadline;
+      if (data.location) updateData.location = data.location;
+      if (data.status) updateData.status = data.status;
+      if (data.imageUrl) updateData.imageUrl = data.imageUrl;
+      if (data.pickupInstruction)
+        updateData.pickupInstruction = data.pickupInstruction;
+    }
     // Delegate to repository
     const updatedDonation = await donationRepo.findByIdAndUpdate(
       donationId,
