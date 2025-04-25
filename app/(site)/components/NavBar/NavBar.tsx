@@ -103,7 +103,7 @@ export default function Navbar({ user }: NavbarProps) {
             ) : (
               <div className="flex items-center space-x-1 sm:space-x-3">
                 {/* My Donations Button - Only show for Recipients */}
-                {user?.role === Role.Recipient && <MyDonationsButton />}
+                {user?.role === Role.Recipient && <MyDonationsButton userId={user.id} />}
 
                 {/* Notification Icon with Dropdown */}
                 <Notifications userId={user?.id || ""} />

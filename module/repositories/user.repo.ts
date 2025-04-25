@@ -46,15 +46,26 @@ export class UserRepository {
         { recipientId: new Types.ObjectId(userId) },
       ],
     };
-    const sort: SortOptions = {
-      createdAt: -1,
-    };
     if (role === Role.Donor) {
-      return await donationRepo.findDonations(filter, 0, 0, sort, [
-        "recipientId",
-      ]);
+      return await donationRepo.findDonations(
+        filter,
+        0,
+        0,
+        {
+          createdAt: -1,
+        },
+        ["recipientId"]
+      );
     }
-    return await donationRepo.findDonations(filter, 0, 0, sort, ["donorId"]);
+    return await donationRepo.findDonations(
+      filter,
+      0,
+      0,
+      {
+        updatedAt: -1,
+      },
+      ["donorId"]
+    );
   }
 }
 export default new UserRepository();

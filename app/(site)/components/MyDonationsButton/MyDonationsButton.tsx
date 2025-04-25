@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Gift, Check, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,54 +14,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/dateUtils";
+import { useMyDonationsButton } from "./hooks/useMyDonationsButton";
+import { DonationStatus } from "@/@types";
 
-// Define the donation type
-interface ClaimedDonation {
-  id: string;
-  title: string;
-  date: Date;
-  completed: boolean;
-}
-
-export default function MyDonationsButton() {
-  // Mock data - replace with actual API call
-  const [donations, setDonations] = useState<ClaimedDonation[]>([
-    {
-      id: "1",
-      title: "Fresh Vegetables",
-      date: new Date(2023, 4, 15),
-      completed: false,
-    },
-    {
-      id: "2",
-      title: "Canned Goods",
-      date: new Date(2023, 4, 12),
-      completed: false,
-    },
-    {
-      id: "3",
-      title: "Bread and Pastries",
-      date: new Date(2023, 4, 10),
-      completed: true,
-    },
-    {
-      id: "4",
-      title: "Dairy Products",
-      date: new Date(2023, 4, 8),
-      completed: false,
-    },
-  ]);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const activeDonations = donations.filter((d) => !d.completed);
-
-  const handleMarkCompleted = (id: string) => {
-    setDonations(
-      donations.map((donation) =>
-        donation.id === id ? { ...donation, completed: true } : donation
-      )
-    );
-  };
+export default function MyDonationsButton({ userId }: { userId: string }) {
+  const { donations, isLoading, handleMarkCompleted, isOpen, setIsOpen } =
+    useMyDonationsButton(userId);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -73,12 +30,12 @@ export default function MyDonationsButton() {
           className="relative h-9 rounded-full px-3 text-sm font-medium text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
         >
           <Gift className="h-6 w-6" />
-          {activeDonations.length > 0 && (
+          {donations.length > 0 && (
             <Badge
               variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
             >
-              {activeDonations.length}
+              {donations.length}
             </Badge>
           )}
         </Button>
@@ -91,28 +48,32 @@ export default function MyDonationsButton() {
           <div className="flex justify-between items-center">
             <h3 className="font-semibold">My Claimed Donations</h3>
             <Badge variant="outline" className="ml-2">
-              {activeDonations.length} active
+              {donations.length} active
             </Badge>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {donations.length > 0 ? (
+          {isLoading ? (
+            <div className="py-6 text-center">
+              <p className="text-sm text-gray-500">Loading...</p>
+            </div>
+          ) : donations.length > 0 ? (
             donations.map((donation) => (
               <DropdownMenuItem
-                key={donation.id}
+                key={donation._id}
                 className="p-0 focus:bg-transparent"
               >
                 <div
                   className={cn(
                     "flex items-center justify-between w-full p-2 rounded-md transition-all duration-200",
-                    donation.completed
+                    donation.status == DonationStatus.Completed
                       ? "opacity-60 bg-gray-50"
                       : "hover:bg-green-50"
                   )}
                 >
                   <div className="flex items-start space-x-2">
-                    {donation.completed ? (
+                    {donation.status === DonationStatus.Completed ? (
                       <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     ) : (
                       <Gift className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
@@ -121,17 +82,18 @@ export default function MyDonationsButton() {
                       <p
                         className={cn(
                           "text-sm font-medium",
-                          donation.completed && "line-through"
+                          donation.status === DonationStatus.Completed &&
+                            "line-through"
                         )}
                       >
                         {donation.title}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {formatDate(donation.date)}
+                        {formatDate(new Date(donation.pickupDeadline))}
                       </p>
                     </div>
                   </div>
-                  {!donation.completed && (
+                  {donation.status !== DonationStatus.Completed && (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -139,7 +101,7 @@ export default function MyDonationsButton() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleMarkCompleted(donation.id);
+                        handleMarkCompleted(donation._id);
                       }}
                     >
                       <Check className="h-3.5 w-3.5 mr-1" />

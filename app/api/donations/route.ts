@@ -15,6 +15,7 @@ export const GET = async (request: NextRequest) => {
 
     const { searchParams } = new URL(request.url);
     const userRole = request.headers.get("x-user-role")!;
+    const userId = request.headers.get("x-user-id")!;
 
     const params = {
       scope: searchParams.get("scope") || "all",
@@ -31,7 +32,7 @@ export const GET = async (request: NextRequest) => {
       keyword: searchParams.get("keyword") || undefined,
     };
 
-    const result = await donationService.getDonations(userRole, params);
+    const result = await donationService.getDonations(userId, userRole, params);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
@@ -149,7 +150,6 @@ export const PATCH = async (request: NextRequest) => {
 
 export const DELETE = async (request: NextRequest) => {
   try {
-
     await dbConnect();
     const role = request.headers.get("x-user-role") as Role;
 
