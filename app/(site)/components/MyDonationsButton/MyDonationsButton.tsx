@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/dateUtils";
 import { useMyDonationsButton } from "./hooks/useMyDonationsButton";
 import { DonationStatus } from "@/@types";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function MyDonationsButton({ userId }: { userId: string }) {
   const { donations, isLoading, handleMarkCompleted, isOpen, setIsOpen } =
@@ -55,9 +56,7 @@ export default function MyDonationsButton({ userId }: { userId: string }) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {isLoading ? (
-            <div className="py-6 text-center">
-              <p className="text-sm text-gray-500">Loading...</p>
-            </div>
+            <Spinner />
           ) : donations.length > 0 ? (
             donations.map((donation) => (
               <DropdownMenuItem
