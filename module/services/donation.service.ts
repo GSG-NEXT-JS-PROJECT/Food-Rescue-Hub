@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DonationStatus, IDonation, Role } from "@/@types";
 import { Types } from "mongoose";
 import donationRepo from "../repositories/donation.repo";
@@ -230,11 +229,8 @@ class DonationService {
     const { name: recipientName } = await userRepo.findUserById(recipientId);
     const donorId = updatedDonation.donorId._id.toString();
     const message = `Your donation "${updatedDonation.title}" was claimed by ${recipientName}!`;
-    await notificationService.notifyUser(
-      donorId,
-      message,
-      updatedDonation.donorId.deviceToken
-    );
+    const donor = await userRepo.findUserById(donorId);
+    await notificationService.notifyUser(donorId, message, donor.deviceToken);
 
     // Emit donation update
     await this.emitDonationUpdate(updatedDonation);
@@ -287,10 +283,11 @@ class DonationService {
         // Notify donor
         const donorId = updatedDonation.donorId._id.toString();
         const message = `Your donation "${updatedDonation.title}" has expired.`;
+        const donor = await userRepo.findUserById(donorId); // Fetch full user details
         await notificationService.notifyUser(
           donorId,
           message,
-          updatedDonation.donorId.deviceToken
+          donor.deviceToken
         );
         // Emit donation update
         await this.emitDonationUpdate(updatedDonation);

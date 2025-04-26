@@ -40,7 +40,7 @@ export const useAnalytics = (
       });
     }, 500);
     return () => clearTimeout(timer);
-  }, [timeRange]);
+  }, [timeRange, pathname, router]);
 
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);

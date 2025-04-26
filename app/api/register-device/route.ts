@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       { message: "Device token registered" },
       { status: 200 }
     );
-  } catch (error: unknown) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to register device token" },
       { status: 500 }
