@@ -22,7 +22,8 @@ const dbConnect = async () => {
   try {
     await mongoose.connect(MONGODB_URL, {
       dbName: "foodRescueHub",
-      bufferCommands: true,
+      ssl: true, // Required for MongoDB Atlas
+      serverSelectionTimeoutMS: 5000, // Fail fast if no connection
     });
     console.log("Connected");
   } catch (error: unknown) {
