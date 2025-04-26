@@ -19,7 +19,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
     useDonationCard(donation);
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+    <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow border border-gray-100 flex flex-col">
       {/* Image */}
       <div className="bg-gray-200 h-48 relative">
         <Image
@@ -34,7 +34,7 @@ const DonationCard: FC<DonationCardProps> = ({ donation }) => {
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col justify-between">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-bold text-xl">{donation.title}</h3>
           <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
