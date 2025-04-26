@@ -355,6 +355,8 @@ class DonationService {
       throw new Error("Donation not found");
     }
 
+    // Emit donation update
+    await this.emitDonationUpdate(updatedDonation);
     return updatedDonation;
   }
 
