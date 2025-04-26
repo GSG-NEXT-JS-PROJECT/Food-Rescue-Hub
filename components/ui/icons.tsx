@@ -71,7 +71,7 @@ export const Icons = {
       </path>
     </svg>
   ),
-  IconPlus: (props: React.SVGProps<SVGSVGElement>) => (
+  IconPlus: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -87,7 +87,7 @@ export const Icons = {
       />
     </svg>
   ),
-  IconTrue: (props: React.SVGProps<SVGSVGElement>) => (
+  IconTrue: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -103,7 +103,7 @@ export const Icons = {
       />
     </svg>
   ),
-  IconAlert: (props: React.SVGProps<SVGSVGElement>) => (
+  IconAlert: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -119,7 +119,7 @@ export const Icons = {
       />
     </svg>
   ),
-  IconLocation: (props: React.SVGProps<SVGSVGElement>) => (
+  IconLocation: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -140,7 +140,7 @@ export const Icons = {
       />
     </svg>
   ),
-  IconListTask: (props: React.SVGProps<SVGSVGElement>) => (
+  IconListTask: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -156,7 +156,7 @@ export const Icons = {
       />
     </svg>
   ),
-  IconCalculate: (props: React.SVGProps<SVGSVGElement>) => (
+  IconCalculate: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -173,22 +173,22 @@ export const Icons = {
     </svg>
   ),
 
-  IconPlusOutLined: (props: React.SVGProps<SVGSVGElement>) => (
+  IconPlusOutLined: () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
     </svg>
   ),
-  IconCart: (props: React.SVGProps<SVGSVGElement>) => (
+  IconCart: () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
     </svg>
   ),
-  IconImprove: (props: React.SVGProps<SVGSVGElement>) => (
+  IconImprove: () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
     </svg>
   ),
-  IconListNavBar: (props: React.SVGProps<SVGSVGElement>) => (
+  IconListNavBar: () => (
     <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
     </svg>

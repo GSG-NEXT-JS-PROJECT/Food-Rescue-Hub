@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import socket from "@/lib/socketClient";
 import { INotification } from "@/@types";
 
@@ -12,7 +12,7 @@ export const useNotifications = (userId: string) => {
   const [notifications, setNotifications] = useState<NotificationRes[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const fetchNotifications = async () => {
+    const fetchNotifications = useCallback(async () => {
     try {
       const res = await fetch(`/api/notifications?userId=${userId}`, {
         cache: "no-store",
@@ -24,7 +24,7 @@ export const useNotifications = (userId: string) => {
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchNotifications();
@@ -46,7 +46,7 @@ export const useNotifications = (userId: string) => {
       socket.off("connect");
       socket.off("connect_error");
     };
-  }, [userId]);
+  }, [userId, fetchNotifications]);
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {

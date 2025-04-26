@@ -24,7 +24,7 @@ export async function verifyToken(token: string | undefined = ""):Promise<TokenP
             algorithms: ["HS256"],
         });
         return payload as TokenPayload;
-    } catch (error) {
+    } catch {
         return null;
     }
 }

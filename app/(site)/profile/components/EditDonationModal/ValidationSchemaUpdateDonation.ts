@@ -7,7 +7,7 @@ export const validationSchemaUpdateDonation = Yup.object().shape({
   status: Yup.string()
     .oneOf(
       Object.values(DonationStatus).filter(
-        (status) => status !== DonationStatus.Claimed
+        (status) => [DonationStatus.Available, DonationStatus.Expired].includes(status)
       ),
       "Invalid status value"
     )

@@ -7,7 +7,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 type SelectFieldProps = Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "name" | "onChange"> & {
     name: string;
     label?: string;
-    options: any[];
+    options: string[];
     placeholder?: string;
     onValueChange?: (value: string) => void;
     defaultValue?: string;

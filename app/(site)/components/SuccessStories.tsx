@@ -10,7 +10,7 @@ export default function SuccessStories() {
           <div className="relative lg:col-span-1">
             <blockquote className="mt-6 text-white">
               <p className="text-xl font-medium sm:text-2xl">
-                "Food Rescue Hub has transformed how we handle surplus food. Instead of throwing away perfectly good items, we're now able to connect with local charities. It's a win-win for everyone."
+                Food Rescue Hub has transformed how we handle surplus food. Instead of throwing away perfectly good items, we&rsquo;re now able to connect with local charities. It&rsquo;s a win-win for everyone.
               </p>
               <footer className="mt-6">
                 <p className="flex flex-col font-medium">
@@ -24,7 +24,7 @@ export default function SuccessStories() {
             <div className="relative text-center lg:text-left">
               <h3 className="text-2xl font-extrabold text-white tracking-tight sm:text-3xl">Join our growing community</h3>
               <p className="mt-3 text-lg text-green-200">
-                Discover the impact you can make, whether you're a donor or recipient. Get started today and be part of the solution.
+                Discover the impact you can make, whether you&rsquo;re a donor or recipient. Get started today and be part of the solution.
               </p>
               <div className="mt-8">
                 <div className="rounded-md shadow">

@@ -28,8 +28,8 @@ const useSignup = () => {
       }
       resetForm();
       toast.success("Signup successful");
-    } catch (error: any) {
-      toast.error(`Signup error: ${error.message}`);
+    } catch (error: unknown) {
+      toast.error(`Signup error: ${error instanceof Error ? error.message : "Unknown error"}`);
     } finally {
       setSubmitting(false);
     }

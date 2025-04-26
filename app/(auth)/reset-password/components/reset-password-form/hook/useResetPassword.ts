@@ -34,8 +34,8 @@ const useResetPassword = (resetToken: string, id: string) => {
             }
             resetForm();
             toast.success("Password Reset successful");
-        } catch (error: any) {
-            toast.error(`error: ${error.message}`);
+        } catch (error: unknown) {
+            toast.error(`error: ${error instanceof Error ? error.message : "Unknown error"}`);
         } finally {
             setSubmitting(false);
         }

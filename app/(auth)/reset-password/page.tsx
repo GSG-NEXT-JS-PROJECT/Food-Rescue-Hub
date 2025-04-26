@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ResetPasswordForm from "./components/reset-password-form/resetPasswordForm";
 import { useSearchParams } from "next/navigation";
 
-const page = () => {
+const ResetPasswordPage = () => {
     const searchParams = useSearchParams();
     const resetToken = searchParams.get('resetToken');
     const id = searchParams.get('id');
@@ -33,4 +33,4 @@ const page = () => {
     )
 }
 
-export default page;
+export default ResetPasswordPage;

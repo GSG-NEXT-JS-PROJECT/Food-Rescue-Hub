@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { ApiResponse, Filters, SearchParamsType } from "../typeDonation";
 import { usePathname, useRouter } from "next/navigation";
 import socket from "@/lib/socketClient";
@@ -34,19 +41,73 @@ export const useDonations = (
   const initialRender = useRef(true);
   const limit = 10;
 
-  const defaultFilters: Filters = {
-    keyword: "",
-    foodType: "",
-    status: "",
-    dateFrom: "",
-    dateTo: "",
-    amountMin: "",
-    amountMax: "",
-    sortBy: "createdAt",
-    sortOrder: "desc",
-    page: "1",
-    limit: limit.toString(),
-  };
+  const defaultFilters: Filters = useMemo(
+    () => ({
+      keyword: "",
+      foodType: "",
+      status: "",
+      dateFrom: "",
+      dateTo: "",
+      amountMin: "",
+      amountMax: "",
+      sortBy: "createdAt",
+      sortOrder: "desc",
+      page: "1",
+      limit: limit.toString(),
+    }),
+    [limit]
+  );
+
+  const createCleanParams = useCallback(
+    (filters: Filters) => {
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (
+          value &&
+          value.trim() !== "" &&
+          value !== defaultFilters[key as keyof Filters]
+        ) {
+          params.set(key, value);
+        }
+      });
+      return params;
+    },
+    [defaultFilters]
+  );
+
+  // Apply filters with batch update
+  const applyFilters = useCallback(() => {
+    setIsLoading(true);
+    startTransition(() => {
+      const params = createCleanParams({
+        ...tempFilters,
+        keyword: search,
+        sortBy,
+        sortOrder,
+        page: "1",
+        limit: limit.toString(),
+      } as Record<string, string>);
+
+      router.push(`${pathname}?${params.toString()}`);
+      fetch(`/api/donations?${params.toString()}`)
+        .then((res) => res.json())
+        .then((newData: ApiResponse) => {
+          setData(newData);
+          setPage(1);
+          setIsLoading(false);
+        })
+        .catch(() => setIsLoading(false));
+    });
+  }, [
+    createCleanParams,
+    tempFilters,
+    search,
+    sortBy,
+    sortOrder,
+    limit,
+    pathname,
+    router,
+  ]);
 
   useEffect(() => {
     console.log("Socket.IO setup: Joining donations room");
@@ -124,6 +185,26 @@ export const useDonations = (
       });
     });
 
+    socket.on("donation-deleted", ({ donationId }) => {
+      console.log(
+        `Received donation-deleted event for donation: ${donationId}`
+      );
+      setData((prev) => {
+        const newDonations = prev.donations.filter((d) => d._id !== donationId);
+        console.log(
+          "New state:",
+          newDonations.map((d) => ({ id: d._id, status: d.status })),
+          "Total:",
+          prev.total - 1
+        );
+        return {
+          ...prev,
+          donations: newDonations,
+          total: prev.total - 1,
+        };
+      });
+    });
+
     return () => {
       console.log("Cleaning up Socket.IO listeners");
       socket.off("connect");
@@ -160,7 +241,17 @@ export const useDonations = (
       });
     }, 500);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [
+    search,
+    createCleanParams,
+    tempFilters,
+    sortBy,
+    sortOrder,
+    page,
+    limit,
+    pathname,
+    router,
+  ]);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -168,32 +259,7 @@ export const useDonations = (
       return;
     }
     applyFilters();
-  }, [sortBy, sortOrder]);
-
-  // Apply filters with batch update
-  const applyFilters = () => {
-    setIsLoading(true);
-    startTransition(() => {
-      const params = createCleanParams({
-        ...tempFilters,
-        keyword: search,
-        sortBy,
-        sortOrder,
-        page: "1",
-        limit: limit.toString(),
-      } as Record<string, string>);
-
-      router.push(`${pathname}?${params.toString()}`);
-      fetch(`/api/donations?${params.toString()}`)
-        .then((res) => res.json())
-        .then((newData: ApiResponse) => {
-          setData(newData);
-          setPage(1);
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
-    });
-  };
+  }, [sortBy, sortOrder, applyFilters]);
 
   // Change page
   const changePage = (newPage: number) => {
@@ -224,20 +290,6 @@ export const useDonations = (
     setSortBy(newSortBy);
     setSortOrder(newSortOrder);
   };
-
-  function createCleanParams(filters: Filters) {
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (
-        value &&
-        value.trim() !== "" &&
-        value !== defaultFilters[key as keyof Filters]
-      ) {
-        params.set(key, value);
-      }
-    });
-    return params;
-  }
 
   function checkDonationMatchesFilters(
     donation: DonationWithDonor,

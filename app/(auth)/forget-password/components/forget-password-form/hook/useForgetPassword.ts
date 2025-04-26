@@ -30,8 +30,8 @@ const useForgetPassword = () => {
             }
             resetForm();
             toast.success("Email Send successful");
-        } catch (error: any) {
-            toast.error(`error: ${error.message}`);
+        } catch (error: unknown) {
+            toast.error(`error: ${error instanceof Error ? error.message : "Unknown error"}`);
         } finally {
             setSubmitting(false);
         }

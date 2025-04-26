@@ -75,7 +75,9 @@ export default function Map({ donations = [], singleDonation }: MapProps) {
 
   // Determine which data to use
   const isSingleMode = !!singleDonation;
-  const baseMarkersData = isSingleMode ? [singleDonation] : donations;
+  const baseMarkersData = useMemo(() => {
+    return isSingleMode ? [singleDonation] : donations;
+  }, [isSingleMode, singleDonation, donations]);
 
   // Filter donations based on search center
   const markersData = useMemo(() => {

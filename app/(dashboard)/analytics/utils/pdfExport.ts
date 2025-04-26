@@ -1,12 +1,17 @@
 import { jsPDF } from 'jspdf';
-import { autoTable } from 'jspdf-autotable';
+import { autoTable, type UserOptions } from 'jspdf-autotable';
 import { format } from 'date-fns';
 import { FoodType } from '@/@types';
 
+interface AutoTableOptions extends UserOptions {
+  startY?: number;
+  headStyles?: { fillColor: [number, number, number] };
+  theme?: 'striped' | 'grid' | 'plain';
+}
 
 declare module 'jspdf' {
   interface jsPDF {
-    autoTable: (options: any) => any;
+    autoTable: (options: AutoTableOptions) => jsPDF;
     lastAutoTable: { finalY: number };
   }
 }
