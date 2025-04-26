@@ -11,7 +11,7 @@ async function verifyEmail(
   id: string
 ): Promise<VerifyEmailRes> {
   try {
-    const serverOrigin = getServerOrigin();
+    const serverOrigin = await getServerOrigin();
     const url = `${serverOrigin}/api/auth/verify-email?verifyToken=${verifyToken}&id=${id}`;
 
     const res = await fetch(url, {
@@ -35,6 +35,7 @@ const VerifyEmailPage: FC<VerifyEmailPageProps> = async ({ searchParams }) => {
   const params = await searchParams;
   const verifyToken = params.verifyToken;
   const id = params.id;
+  console.log(verifyToken, id)
   if (!verifyToken || !id) {
     return (
       <VerifyEmail initialState={{ success: false, error: "Invalid URL" }} />
