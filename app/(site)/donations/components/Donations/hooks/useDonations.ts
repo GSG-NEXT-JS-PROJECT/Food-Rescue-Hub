@@ -185,6 +185,26 @@ export const useDonations = (
       });
     });
 
+    socket.on("donation-deleted", ({ donationId }) => {
+      console.log(
+        `Received donation-deleted event for donation: ${donationId}`
+      );
+      setData((prev) => {
+        const newDonations = prev.donations.filter((d) => d._id !== donationId);
+        console.log(
+          "New state:",
+          newDonations.map((d) => ({ id: d._id, status: d.status })),
+          "Total:",
+          prev.total - 1
+        );
+        return {
+          ...prev,
+          donations: newDonations,
+          total: prev.total - 1,
+        };
+      });
+    });
+
     return () => {
       console.log("Cleaning up Socket.IO listeners");
       socket.off("connect");

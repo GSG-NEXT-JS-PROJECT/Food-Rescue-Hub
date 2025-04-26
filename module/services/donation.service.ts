@@ -381,7 +381,30 @@ class DonationService {
       throw new Error("Donation not found");
     }
 
+    // Emit donation update
+    await this.emitDonationDelete(deletedDonation._id);
     return deletedDonation;
+  }
+
+  async emitDonationDelete(donationId: string) {
+    try {
+      const socketRes = await fetch(
+        `${this.SOCKET_IO_URL}/emit-donation-deleted`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ donationId }),
+        }
+      );
+      if (!socketRes.ok) {
+        console.error(
+          "Socket.IO donation update failed:",
+          await socketRes.json()
+        );
+      }
+    } catch (error) {
+      console.error("Error emitting donation update:", error);
+    }
   }
 }
 

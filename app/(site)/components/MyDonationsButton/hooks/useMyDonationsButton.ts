@@ -36,6 +36,10 @@ export const useMyDonationsButton = (userId: string) => {
       setDonations((prev) => [...prev, updatedDonation]);
     });
 
+    socket.on("donation-deleted", ({ donationId }) => {
+      setDonations((prev) => prev.filter((d) => d._id !== donationId));
+    });
+
     return () => {
       console.log("Cleaning up Socket.IO listeners");
       socket.off("connect");
