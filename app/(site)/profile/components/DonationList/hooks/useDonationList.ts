@@ -93,6 +93,8 @@ export const useDonationList = (userData: UserProfile | undefined) => {
         return "secondary";
       case "completed":
         return "default";
+      case "confirmed":
+        return "secondary";
       default:
         return "destructive";
     }
