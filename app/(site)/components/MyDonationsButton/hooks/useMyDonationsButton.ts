@@ -1,18 +1,21 @@
-import { DonationStatus } from "@/@types";
-import { useEffect, useState } from "react";
+import { DonationStatus, Role } from "@/@types";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { DonationRes } from "../type";
 import socket from "@/lib/socketClient";
 
-export const useMyDonationsButton = (userId: string) => {
+export const useMyDonationsButton = (userId: string, userRole: Role) => {
   const [donations, setDonations] = useState<DonationRes[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
-  const fetchClaimedDonations = async () => {
+  const fetchDonations = useCallback(async () => {
     try {
-      const res = await fetch("/api/donations?scope=user&status=claimed");
-      console.log(res.status);
+      const res = await fetch(
+        `/api/donations?scope=user&status=${
+          userRole === Role.Donor ? "claimed" : "confirmed"
+        }`
+      );
       if (!res.ok) throw new Error("Failed to fetch claimed donations");
       const data = await res.json();
       setDonations(data.donations);
@@ -21,10 +24,10 @@ export const useMyDonationsButton = (userId: string) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userRole]);
 
   useEffect(() => {
-    fetchClaimedDonations();
+    fetchDonations();
     console.log("Socket.IO setup: Joining donations room");
     socket.emit("join-donations");
 
@@ -47,17 +50,22 @@ export const useMyDonationsButton = (userId: string) => {
       socket.off("donation-update");
       socket.emit("leave-donations");
     };
-  }, [userId]);
+  }, [userId, fetchDonations]);
 
-  const handleMarkCompleted = async (id: string) => {
+  const handleMarkDonation = async (id: string) => {
+    const body = {
+      donationId: id,
+      donorId: userId,
+      status:
+        userRole === Role.Donor
+          ? DonationStatus.Confirmed
+          : DonationStatus.Completed,
+    };
     try {
       const res = await fetch(`/api/donations`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          donationId: id,
-          status: DonationStatus.Completed,
-        }),
+        body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error("Failed to mark donation as completed");
       // Remove locally (Socket.IO will handle other clients)
@@ -71,7 +79,7 @@ export const useMyDonationsButton = (userId: string) => {
   return {
     donations,
     isLoading,
-    handleMarkCompleted,
+    handleMarkDonation,
     isOpen,
     setIsOpen,
   };

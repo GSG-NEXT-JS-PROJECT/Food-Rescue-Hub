@@ -304,10 +304,13 @@ class DonationService {
   ) {
     const updateData: Partial<DonationUpdateRequestBody> = {};
     if (role === Role.Recipient) {
+      const donation = await donationRepo.findById(donationId);
       if (
         data.status &&
-        (data.status === DonationStatus.Claimed ||
-          data.status === DonationStatus.Completed)
+        ((donation.status === DonationStatus.Available &&
+          data.status === DonationStatus.Claimed) ||
+          (donation.status === DonationStatus.Confirmed &&
+            data.status === DonationStatus.Completed))
       )
         updateData.status = data.status;
     } else {

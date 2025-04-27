@@ -1,43 +1,43 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { useState } from "react"
-import { usePathname } from "next/navigation"
-import { LogOut, User } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { LogOut, User } from "lucide-react";
 
-import { Role, type UserProfile } from "@/@types"
-import Icons from "@/components/ui/icons"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Role, type UserProfile } from "@/@types";
+import Icons from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
-import { useNavBar } from "./hooks/useNavBar"
-import { LandingLinks } from "./constant"
-import LandingNavbarLink from "./LandingNavbarLink"
-import NavbarLink from "./NavbarLink"
-import Notifications from "../Notifications"
-import MyDonationsButton from "../MyDonationsButton"
-import logo from "@/public/logo.svg"
+import { useNavBar } from "./hooks/useNavBar";
+import { LandingLinks } from "./constant";
+import LandingNavbarLink from "./LandingNavbarLink";
+import NavbarLink from "./NavbarLink";
+import Notifications from "../Notifications";
+import MyDonationsButton from "../MyDonationsButton";
+import logo from "@/public/logo.svg";
 
 type NavbarProps = {
-  user: UserProfile | undefined
-}
+  user: UserProfile | undefined;
+};
 
 export default function Navbar({ user }: NavbarProps) {
-  const { activeSection, setActiveSection, handleLogout } = useNavBar()
-  const pathname = usePathname()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { activeSection, setActiveSection, handleLogout } = useNavBar();
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   const createNavLinks = (type: "mobile" | "desktop") => {
     if (pathname === "/") {
@@ -50,11 +50,16 @@ export default function Navbar({ user }: NavbarProps) {
           setActiveSection={setActiveSection}
           type={type}
         />
-      ))
+      ));
     } else {
       return (
         <>
-          <NavbarLink href="/" isActive={pathname === "/"} label="Home" type={type} />
+          <NavbarLink
+            href="/"
+            isActive={pathname === "/"}
+            label="Home"
+            type={type}
+          />
           {user?.role == Role.Donor && (
             <NavbarLink
               href="/post-donation"
@@ -64,15 +69,25 @@ export default function Navbar({ user }: NavbarProps) {
             />
           )}
           {user?.role == Role.Recipient && (
-            <NavbarLink href="/donations" isActive={pathname === "/donations"} label="Donations" type={type} />
+            <NavbarLink
+              href="/donations"
+              isActive={pathname === "/donations"}
+              label="Donations"
+              type={type}
+            />
           )}
           {user?.role == Role.Admin && (
-            <NavbarLink href="/analytics" isActive={pathname === "/analytics"} label="Analytics" type={type} />
+            <NavbarLink
+              href="/analytics"
+              isActive={pathname === "/analytics"}
+              label="Analytics"
+              type={type}
+            />
           )}
         </>
-      )
+      );
     }
-  }
+  };
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -83,7 +98,9 @@ export default function Navbar({ user }: NavbarProps) {
               <Image src={logo || "/placeholder.svg"} alt="logo" />
             </span>
           </div>
-          <div className="hidden lg:flex lg:items-center lg:justify-center">{createNavLinks("desktop")}</div>
+          <div className="hidden lg:flex lg:items-center lg:justify-center">
+            {createNavLinks("desktop")}
+          </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
             {!Boolean(user) ? (
               <>
@@ -102,8 +119,13 @@ export default function Navbar({ user }: NavbarProps) {
               </>
             ) : (
               <div className="flex items-center space-x-1 sm:space-x-3">
-                {/* My Donations Button - Only show for Recipients */}
-                {user?.role === Role.Recipient && <MyDonationsButton userId={user.id} />}
+                {/* My Donations Button */}
+                {
+                  <MyDonationsButton
+                    userId={user?.id || ""}
+                    userRole={user?.role || Role.Donor}
+                  />
+                }
 
                 {/* Notification Icon with Dropdown */}
                 <Notifications userId={user?.id || ""} />
@@ -111,29 +133,47 @@ export default function Navbar({ user }: NavbarProps) {
                 {/* User Profile Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
                       <Avatar className="h-8 w-8 border border-gray-200">
-                        <AvatarImage src={user?.imageUrl || ""} alt={user?.name || "User"} />
+                        <AvatarImage
+                          src={user?.imageUrl || ""}
+                          alt={user?.name || "User"}
+                        />
                         <AvatarFallback className="bg-green-100 text-green-600">
-                          {user?.name ? user?.name.charAt(0).toUpperCase() : "U"}
+                          {user?.name
+                            ? user?.name.charAt(0).toUpperCase()
+                            : "U"}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex flex-col space-y-1 p-2">
-                      <p className="text-sm font-medium leading-none">{user?.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/profile" className="cursor-pointer flex w-full items-center">
+                      <Link
+                        href="/profile"
+                        className="cursor-pointer flex w-full items-center"
+                      >
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600" onClick={handleLogout}>
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-600 focus:text-red-600"
+                      onClick={handleLogout}
+                    >
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
                     </DropdownMenuItem>
@@ -154,9 +194,14 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
         </div>
       </div>
-      <div className={`lg:hidden ${isMobileMenuOpen ? "" : "hidden"}`} id="mobile-menu">
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">{createNavLinks("mobile")}</div>
+      <div
+        className={`lg:hidden ${isMobileMenuOpen ? "" : "hidden"}`}
+        id="mobile-menu"
+      >
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          {createNavLinks("mobile")}
+        </div>
       </div>
     </nav>
-  )
+  );
 }
