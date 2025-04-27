@@ -55,7 +55,11 @@ export default function MyDonationsButton({
       >
         <DropdownMenuLabel className="font-normal">
           <div className="flex justify-between items-center">
-            <h3 className="font-semibold">My Claimed Donations</h3>
+            <h3 className="font-semibold">
+              {userRole == Role.Donor
+                ? "Claimed Donations"
+                : "Confirmed Donations"}
+            </h3>
             <Badge variant="outline" className="ml-2">
               {donations.length} active
             </Badge>
