@@ -263,26 +263,7 @@ export const useDonations = (
 
   // Change page
   const changePage = (newPage: number) => {
-    setIsLoading(true);
-    startTransition(() => {
       setPage(newPage);
-      const params = createCleanParams({
-        ...tempFilters,
-        keyword: search,
-        sortBy,
-        sortOrder,
-        page: newPage.toString(),
-        limit: limit.toString(),
-      } as Record<string, string>);
-      router.push(`${pathname}?${params.toString()}`);
-      fetch(`/api/donations?${params.toString()}`)
-        .then((res) => res.json())
-        .then((newData: ApiResponse) => {
-          setData(newData);
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
-    });
   };
 
   // Update sort and trigger apply
