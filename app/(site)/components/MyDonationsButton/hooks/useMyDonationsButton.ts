@@ -60,7 +60,7 @@ export const useMyDonationsButton = (userId: string, userRole: Role) => {
       socket.off("donation-update");
       socket.emit("leave-donations");
     };
-  }, [userId, fetchDonations]);
+  }, [userId, fetchDonations, userRole]);
 
   const handleMarkDonation = async (id: string) => {
     const body = {
