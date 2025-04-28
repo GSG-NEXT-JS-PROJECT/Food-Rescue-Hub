@@ -74,9 +74,11 @@ const DonationForm: FC<DonationFormProps> = ({
               <SelectField
                 label="Status"
                 name="status"
-                options={Object.values(DonationStatus).filter((d) =>
-                  [DonationStatus.Available, DonationStatus.Expired].includes(d)
-                )}
+                options={[
+                  DonationStatus.Available,
+                  DonationStatus.Expired,
+                  DonationStatus.Confirmed,
+                ]}
                 placeholder="Select a donation status"
                 onValueChange={(value) => formik.setFieldValue("status", value)}
                 defaultValue={formik.values.status}

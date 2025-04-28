@@ -15,12 +15,20 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/dateUtils";
 import { useMyDonationsButton } from "./hooks/useMyDonationsButton";
-import { DonationStatus } from "@/@types";
+import { DonationStatus, Role } from "@/@types";
 import { Spinner } from "@/components/ui/spinner";
 
-export default function MyDonationsButton({ userId }: { userId: string }) {
-  const { donations, isLoading, handleMarkCompleted, isOpen, setIsOpen } =
-    useMyDonationsButton(userId);
+interface MyDonationsButtonProps {
+  userId: string;
+  userRole: Role;
+}
+
+export default function MyDonationsButton({
+  userId,
+  userRole,
+}: MyDonationsButtonProps) {
+  const { donations, isLoading, handleMarkDonation, isOpen, setIsOpen } =
+    useMyDonationsButton(userId, userRole);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -47,7 +55,11 @@ export default function MyDonationsButton({ userId }: { userId: string }) {
       >
         <DropdownMenuLabel className="font-normal">
           <div className="flex justify-between items-center">
-            <h3 className="font-semibold">My Claimed Donations</h3>
+            <h3 className="font-semibold">
+              {userRole == Role.Donor
+                ? "Claimed Donations"
+                : "Confirmed Donations"}
+            </h3>
             <Badge variant="outline" className="ml-2">
               {donations.length} active
             </Badge>
@@ -58,9 +70,9 @@ export default function MyDonationsButton({ userId }: { userId: string }) {
           {isLoading ? (
             <Spinner />
           ) : donations.length > 0 ? (
-            donations.map((donation) => (
+            donations.map((donation, index) => (
               <DropdownMenuItem
-                key={donation._id}
+                key={`${donation._id} ${index}`}
                 className="p-0 focus:bg-transparent"
               >
                 <div
@@ -100,11 +112,11 @@ export default function MyDonationsButton({ userId }: { userId: string }) {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleMarkCompleted(donation._id);
+                        handleMarkDonation(donation._id);
                       }}
                     >
                       <Check className="h-3.5 w-3.5 mr-1" />
-                      Complete
+                      {userRole === Role.Donor ? "confirm" : "complete"}
                     </Button>
                   )}
                 </div>
