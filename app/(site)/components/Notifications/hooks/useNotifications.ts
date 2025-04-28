@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import socket from "@/lib/socketClient";
 import { INotification } from "@/@types";
+import { useRouter } from "next/navigation";
 
 interface NotificationRes extends INotification {
   _id: string;
@@ -11,10 +12,11 @@ interface NotificationRes extends INotification {
 export const useNotifications = (userId: string) => {
   const [notifications, setNotifications] = useState<NotificationRes[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const router = useRouter();
 
-    const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
-      const res = await fetch(`/api/notifications?userId=${userId}`, {
+      const res = await fetch("/api/notifications", {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("Failed to fetch notifications");
@@ -24,7 +26,7 @@ export const useNotifications = (userId: string) => {
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     fetchNotifications();
@@ -47,6 +49,10 @@ export const useNotifications = (userId: string) => {
       socket.off("connect_error");
     };
   }, [userId, fetchNotifications]);
+
+  useEffect(() => {
+    router.refresh();
+  },[router])
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
