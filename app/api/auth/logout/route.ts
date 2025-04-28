@@ -5,7 +5,7 @@ export async function POST() {
 
   response.cookies.set("Session", "", {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     path: "/",
     expires: new Date(0),
   });
