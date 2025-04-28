@@ -5,48 +5,50 @@ import { INITIAL_VALUES } from "../constant";
 import { validationSchema } from "../validationSchema";
 import { toast } from "sonner";
 import { FormValues } from "../type";
+import { useRouter } from "next/navigation";
 
 const useForgetPassword = () => {
-    const handleForgetPassword = async (
-        values: FormValues,
-        resetForm: () => void,
-        setSubmitting: (isSubmitting: boolean) => void
-    ) => {
-        try {
-            const response = await fetch(
-                `/api/auth/forget-password`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(values),
-                }
-            );
-            const data = await response.json();
-            if (!response.ok) {
-                toast.error(`${data.error}`);
-                return;
-            }
-            resetForm();
-            toast.success("Email Send successful");
-        } catch (error: unknown) {
-            toast.error(`error: ${error instanceof Error ? error.message : "Unknown error"}`);
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const formik = useFormik<FormValues>({
-        initialValues: INITIAL_VALUES,
-        onSubmit: (values, { resetForm, setSubmitting }) => {
-            handleForgetPassword(values, resetForm, setSubmitting);
+  const router = useRouter();
+  const handleForgetPassword = async (
+    values: FormValues,
+    resetForm: () => void,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    try {
+      const response = await fetch(`/api/auth/forget-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        validationSchema,
-        validateOnMount: true,
-    });
+        body: JSON.stringify(values),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(`${data.error}`);
+        return;
+      }
+      resetForm();
+      toast.success("Email Send successful");
+      router.push("sign-in");
+    } catch (error: unknown) {
+      toast.error(
+        `error: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-    return { formik };
+  const formik = useFormik<FormValues>({
+    initialValues: INITIAL_VALUES,
+    onSubmit: (values, { resetForm, setSubmitting }) => {
+      handleForgetPassword(values, resetForm, setSubmitting);
+    },
+    validationSchema,
+    validateOnMount: true,
+  });
+
+  return { formik };
 };
 
 export default useForgetPassword;
