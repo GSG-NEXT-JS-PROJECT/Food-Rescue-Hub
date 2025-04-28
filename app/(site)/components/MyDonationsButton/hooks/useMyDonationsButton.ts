@@ -36,7 +36,17 @@ export const useMyDonationsButton = (userId: string, userRole: Role) => {
       console.error("Socket.IO connect error:", err)
     );
     socket.on("donation-update", (updatedDonation) => {
-      setDonations((prev) => [...prev, updatedDonation]);
+      if (
+        userRole === Role.Donor &&
+        updatedDonation.status === DonationStatus.Claimed
+      ) {
+        setDonations((prev) => [...prev, updatedDonation]);
+      } else if (
+        userRole === Role.Recipient &&
+        updatedDonation.status === DonationStatus.Confirmed
+      ) {
+        setDonations((prev) => [...prev, updatedDonation]);
+      }
     });
 
     socket.on("donation-deleted", ({ donationId }) => {
