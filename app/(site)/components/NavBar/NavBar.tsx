@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, User } from "lucide-react";
 
 import { Role, type UserProfile } from "@/@types";
@@ -34,6 +34,11 @@ export default function Navbar({ user }: NavbarProps) {
   const { activeSection, setActiveSection, handleLogout } = useNavBar();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    router.refresh();
+  }, [router]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -120,12 +125,10 @@ export default function Navbar({ user }: NavbarProps) {
             ) : (
               <div className="flex items-center space-x-1 sm:space-x-3">
                 {/* My Donations Button */}
-                {
-                  <MyDonationsButton
-                    userId={user?.id || ""}
-                    userRole={user?.role || Role.Donor}
-                  />
-                }
+                <MyDonationsButton
+                  userId={user?.id || ""}
+                  userRole={user?.role || ("" as Role)}
+                />
 
                 {/* Notification Icon with Dropdown */}
                 <Notifications userId={user?.id || ""} />

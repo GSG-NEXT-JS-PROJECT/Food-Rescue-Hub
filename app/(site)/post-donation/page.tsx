@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { UserProfile } from "@/@types";
 import PostDonationForm from "./components/PostDonationForm";
 import { getServerOrigin } from "@/lib/getServerOrigin";
