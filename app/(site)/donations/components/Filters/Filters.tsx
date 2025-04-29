@@ -61,6 +61,7 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
               <Select
                 value={donationFilter.sortOrder as string}
                 onValueChange={(value) => donationFilter.updateSort(donationFilter.sortBy as string, value)}
+                disabled={donationFilter.isPending}
               >
                 <SelectTrigger className="w-[140px] bg-gray-50">
                   <SelectValue placeholder="Sort order" />
