@@ -8,7 +8,7 @@ const server = http.createServer((req, res) => {
     req.on("data", (chunk) => (body += chunk));
     req.on("end", () => {
       try {
-        const { userId, type, notification, donation } = JSON.parse(body);
+        const { userId, type, notification } = JSON.parse(body);
         if (!userId || !notification) {
           throw new Error("Missing userId or notification");
         }
@@ -16,12 +16,7 @@ const server = http.createServer((req, res) => {
           `Received HTTP request to emit notification to ${userId}:`,
           { type, notification }
         );
-        io.to(`user:${userId}`).emit("notification", {
-          userId,
-          type,
-          notification,
-          donation,
-        });
+        io.to(`user:${userId}`).emit("notification", notification);
         console.log(
           `Emitted notification to room user:${userId}, type: ${type}`
         );
