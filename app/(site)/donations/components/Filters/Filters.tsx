@@ -45,7 +45,7 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
               <Select
                 value={donationFilter.sortBy as string}
                 onValueChange={(value) => donationFilter.updateSort(value, donationFilter.sortOrder as string)}
-                disabled={donationFilter.isLoading}
+                disabled={donationFilter.isPending}
               >
                 <SelectTrigger className="w-[140px] bg-gray-50">
                   <SelectValue placeholder="Sort by" />
@@ -136,7 +136,7 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
                       <Select
                         value={tempFilters.foodType as string}
                         onValueChange={(value) => handleTempFilterChange("foodType", value)}
-                        disabled={donationFilter.isLoading}
+                        disabled={donationFilter.isPending}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select food type" />
@@ -156,6 +156,7 @@ const Filters: FC<FiltersProps> = ({ setViewMode, donationFilter, viewMode }) =>
                       <Select
                         value={tempFilters.status as string}
                         onValueChange={(value) => handleTempFilterChange("status", value)}
+                        disabled={donationFilter.isPending}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select status" />

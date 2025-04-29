@@ -23,7 +23,7 @@ export default function Pagination({
   const isLastPage = page >= totalPages;
 
   return (
-    <div className="mt-8 flex justify-center">
+    <div className="flex justify-center">
       <div className="flex items-center gap-2 sm:gap-4">
         <Button
           variant="outline"

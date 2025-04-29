@@ -1,7 +1,6 @@
 import { Search } from "lucide-react";
-import React, { FC } from "react";
+import React, { FC, } from "react";
 import DonationCard from "../DonationCard";
-import Pagination from "@/components/Pagination";
 import { DonationsReturnType } from "../Donations/typeDonation";
 
 interface DonationsListProps {
@@ -10,7 +9,6 @@ interface DonationsListProps {
 
 const DonationsList: FC<DonationsListProps> = ({ donationFilter }) => {
   const data = donationFilter.data;
-  const { limit, isLoading } = donationFilter;
 
   return (
     <>
@@ -35,15 +33,6 @@ const DonationsList: FC<DonationsListProps> = ({ donationFilter }) => {
         ))}
       </div>
 
-      {data.donations.length > 0 && (
-        <Pagination
-          page={data.page}
-          total={data.total}
-          limit={limit}
-          isLoading={isLoading}
-          onPageChange={(newPage) => donationFilter.changePage(newPage)}
-        />
-      )}
     </>
   );
 };
