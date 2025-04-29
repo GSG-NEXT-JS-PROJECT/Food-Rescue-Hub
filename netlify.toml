@@ -1,10 +1,12 @@
 [build]
   command = "npm run build"
-  publish = "out"
+  publish = ".next"
 
-[plugins]
+# Fixed plugins section (array syntax)
+[[plugins]]
   package = "@netlify/plugin-nextjs"
 
+# Cache headers
 [[headers]]
   for = "/*"
   [headers.values]
@@ -12,10 +14,5 @@
 
 [[headers]]
   for = "/_next/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/static/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
