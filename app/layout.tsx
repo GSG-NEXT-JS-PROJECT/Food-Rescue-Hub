@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import "@geoapify/geocoder-autocomplete/styles/minimal.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { Toaster } from "sonner";
 import { initServer } from "@/lib/cron/coreServer";
 
