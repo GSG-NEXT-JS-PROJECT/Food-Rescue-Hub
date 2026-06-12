@@ -1,10 +1,8 @@
 "use client";
 
-import React, { FC } from "react";
-import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
+import React, { FC, useEffect, useRef } from "react";
+import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 import { ErrorMessage } from "formik";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import useGooglePlacesAutocomplete from "./hooks/useGooglePlacesAutocomplete";
 
 interface GooglePlacesAutocompleteProps {
@@ -13,24 +11,55 @@ interface GooglePlacesAutocompleteProps {
   isLabelRemoved?: boolean;
 }
 
-const googleMapsLibraries: "places"[] = ["places"];
-const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "";
+interface GeoapifyFeature {
+  properties: {
+    lat: number;
+    lon: number;
+    formatted: string;
+  };
+}
+
+const GEOAPIFY_API_KEY = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY || "";
 
 const GooglePlacesAutocomplete: FC<GooglePlacesAutocompleteProps> = ({
   defaultAddress,
   className = "",
   isLabelRemoved = false,
 }) => {
-  const { handleLoad, handlePlaceChanged } = useGooglePlacesAutocomplete();
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: GOOGLE_API_KEY,
-    libraries: googleMapsLibraries,
-  });
+  const { setLocation } = useGooglePlacesAutocomplete();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  if (!isLoaded) {
-    return <Spinner type="circle" size="xl" />;
-  }
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const autocomplete = new GeocoderAutocomplete(
+      container,
+      GEOAPIFY_API_KEY,
+      {
+        placeholder: "Enter or select a location",
+        lang: "en",
+        limit: 5,
+      }
+    );
+
+    if (defaultAddress) {
+      autocomplete.setValue(defaultAddress);
+    }
+
+    autocomplete.on("select", (location: GeoapifyFeature | null) => {
+      if (!location) return;
+      setLocation({
+        lat: location.properties.lat,
+        lng: location.properties.lon,
+        address: location.properties.formatted,
+      });
+    });
+
+    return () => {
+      container.innerHTML = "";
+    };
+  }, [setLocation, defaultAddress]);
 
   return (
     <div className="space-y-2">
@@ -40,32 +69,18 @@ const GooglePlacesAutocomplete: FC<GooglePlacesAutocompleteProps> = ({
         </label>
       )}
 
-      {isLoaded && (
-        <>
-          <Autocomplete onLoad={handleLoad} onPlaceChanged={handlePlaceChanged}>
-            <Input
-              type="text"
-              placeholder="Enter or select a location"
-              className={`${
-                Boolean(className)
-                  ? className
-                  : "mt-1 py-2 px-3 block w-full bg-gray-100 border-none outline-none"
-              }`}
-              defaultValue={defaultAddress}
-            />
-          </Autocomplete>
-          <ErrorMessage name="location">
-            {(error) => (
-              <div className="text-red-500 text-sm">
-                {typeof error === "string"
-                  ? error
-                  : (error as Record<string, string>)?.address ??
-                    Object.values(error as Record<string, string>)[0]}
-              </div>
-            )}
-          </ErrorMessage>
-        </>
-      )}
+      <div ref={containerRef} className={className || "w-full relative"} />
+
+      <ErrorMessage name="location">
+        {(error) => (
+          <div className="text-red-500 text-sm">
+            {typeof error === "string"
+              ? error
+              : (error as Record<string, string>)?.address ??
+                Object.values(error as Record<string, string>)[0]}
+          </div>
+        )}
+      </ErrorMessage>
     </div>
   );
 };
