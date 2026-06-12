@@ -54,11 +54,16 @@ const GooglePlacesAutocomplete: FC<GooglePlacesAutocompleteProps> = ({
               defaultValue={defaultAddress}
             />
           </Autocomplete>
-          <ErrorMessage
-            name="location"
-            component="div"
-            className="text-red-500 text-sm"
-          />
+          <ErrorMessage name="location">
+            {(error) => (
+              <div className="text-red-500 text-sm">
+                {typeof error === "string"
+                  ? error
+                  : (error as Record<string, string>)?.address ??
+                    Object.values(error as Record<string, string>)[0]}
+              </div>
+            )}
+          </ErrorMessage>
         </>
       )}
     </div>
