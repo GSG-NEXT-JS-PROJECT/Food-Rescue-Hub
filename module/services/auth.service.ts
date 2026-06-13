@@ -43,8 +43,14 @@ class AuthService {
       button: "Verify Email",
     });
 
-    await sendEmail(newUser?.email, "Email Verification", message);
-    return { user: newUser };
+    let emailSent = true;
+    try {
+      await sendEmail(newUser?.email, "Email Verification", message);
+    } catch (error) {
+      emailSent = false;
+      console.error("Verification email failed for", newUser?.email, error);
+    }
+    return { user: newUser, emailSent };
   }
 
   async signIn({ email, password }: { email: string; password: string }) {

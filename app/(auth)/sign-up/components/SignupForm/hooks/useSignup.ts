@@ -27,7 +27,13 @@ const useSignup = () => {
         return;
       }
       resetForm();
-      toast.success("Signup successful");
+      if (data.emailSent === false) {
+        toast.warning(
+          "Account created, but we couldn't send the verification email. Try resend."
+        );
+      } else {
+        toast.success("Signup successful");
+      }
     } catch (error: unknown) {
       toast.error(`Signup error: ${error instanceof Error ? error.message : "Unknown error"}`);
     } finally {

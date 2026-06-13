@@ -10,11 +10,12 @@ export async function POST(req: NextRequest) {
     if (!data) {
       return NextResponse.json({ error: "Data is required" }, { status: 400 });
     }
-    const { user } = await AuthService.signUp(data);
+    const { user, emailSent } = await AuthService.signUp(data);
     return NextResponse.json(
       {
         message: "User created successfully",
         user,
+        emailSent,
       },
       { status: 201 }
     );
